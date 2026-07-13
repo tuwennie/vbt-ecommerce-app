@@ -1,3 +1,26 @@
+# node
+node_modules/
+npm-debug.log*
+
+# env
+.env
+.env.local
+
+# playwright
+/qa-tests/playwright/test-results/
+/qa-tests/playwright/playwright-report/
+/qa-tests/playwright/blob-report/
+/qa-tests/playwright/playwright/.cache/
+/qa-tests/playwright/node_modules/
+
+# next.js
+frontend/.next/
+frontend/out/
+
+# os
+.DS_Store
+Thumbs.db
+
 # Logs
 logs
 *.log
