@@ -9,11 +9,148 @@
   "item": [
     {
       "name": "Users",
-      "item": []
+      "item": [
+        {
+          "name": "Update Current User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Ikram Irzayev\",\r\n  \"phone\": \"+905071743010\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     },
     {
       "name": "Products",
-      "item": []
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?page=1&size=20&search&categoryId&minPrice&maxPrice&sort=price&includeInactive=false",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "type": "text"
+                },
+                {
+                  "key": "search",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "categoryId",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "minPrice",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": null,
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "price",
+                  "type": "text"
+                },
+                {
+                  "key": "includeInactive",
+                  "value": "false",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product Detail",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
     },
     {
       "name": "Health",
@@ -54,11 +191,710 @@
     },
     {
       "name": "Orders",
-      "item": []
+      "item": [
+        {
+          "name": "Get Order Detail",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Idempotency-Key",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"addressId\": \"{{address_id}}\",\r\n  \"paymentMethod\": \"CREDIT_CARD\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
     },
     {
       "name": "Auth",
-      "item": []
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Type",
+                "value": "{{client_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"ikram@example.com\",\r\n  \"password\": \"Sifre123!\",\r\n  \"fullName\": \"Ikram Irzayev\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Type",
+                "value": "{{client_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"ikram@example.com\",\r\n  \"password\": \"Sifre123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Type",
+                "value": "{{client_type}}",
+                "equals": true,
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Type",
+                "value": "{{client_type}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Addresses",
+      "item": [
+        {
+          "name": "List Addresses",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/addresses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Address",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Ev\",\r\n  \"recipientName\": \"Ikram Irzayev\",\r\n  \"phone\": \"+905071743010\",\r\n  \"city\": \"İstanbul\",\r\n  \"district\": \"Kadıköy\",\r\n  \"addressLine\": \"Bahariye Cad. No:12 D:4\",\r\n  \"postalCode\": \"34710\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/addresses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Ev\",\r\n  \"recipientName\": \"Ikram Irzayev\",\r\n  \"phone\": \"+905071743010\",\r\n  \"city\": \"İstanbul\",\r\n  \"district\": \"Kadıköy\",\r\n  \"addressLine\": \"Bahariye Cad. No:12 D:4\",\r\n  \"postalCode\": \"34710\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/addresses/{{address_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "addresses",
+                "{{address_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Address",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/addresses/{{address_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "addresses",
+                "{{address_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Categories",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories?includeInactive=false",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "includeInactive",
+                  "value": "false",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Add Cart Item",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"productId\": \"{{product_id}}\",\r\n  \"quantity\": 2\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/items",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cart",
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cart Item",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"quantity\": 3\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/items/{{cart_item_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cart",
+                "items",
+                "{{cart_item_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Cart Item",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cart/items/{{cart_item_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cart",
+                "items",
+                "{{cart_item_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Create Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Elektronik\",\r\n  \"slug\": \"elektronik\",\r\n  \"isActive\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Elektronik\",\r\n  \"slug\": \"elektronik\",\r\n  \"isActive\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/categories/{{category_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "categories",
+                "{{category_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Kablosuz Kulaklık\",\r\n  \"description\": \"Gürültü engelleme özellikli bluetooth kulaklık.\",\r\n  \"price\": 899.90,\r\n  \"stock\": 50,\r\n  \"categoryId\": \"{{category_id}}\",\r\n  \"isActive\": true,\r\n  \"images\": [\r\n    { \"imageUrl\": \"https://example.com/images/kulaklik-1.jpg\", \"isPrimary\": true, \"sortOrder\": 0 }\r\n  ]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Elektronik\",\r\n  \"slug\": \"elektronik\",\r\n  \"isActive\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/products/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "products",
+                "{{product_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "List Favorites",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Add Favorite",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"productId\": \"{{product_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/favorites",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "favorites"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Favorite",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/favorites/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "favorites",
+                "{{product_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
