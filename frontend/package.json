@@ -5,7 +5,7 @@
   "scripts": {
     "predev": "npm run tokens:build",
     "dev": "next dev -p 3001",
-    "prebuild": "npm run tokens:build",
+    "prebuild": "npm run tokens:build && npm run generate:api-types",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
