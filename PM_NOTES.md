@@ -1,8 +1,7 @@
 # E-Ticaret Projesi - PM Notları
+**Katılımcılar:** Tuba (PM/Design), Kübra (Backend), İkram (Frontend/QA), Zeliha (Mobil)
 
 ## Gün 1 - 13.07.2026 / Başlangıç ve Planlama Stand-up'ı
-
-**Katılımcılar:** Tuba (PM/Design), Kübra (Backend), İkram (Frontend/QA), Zeliha (Mobil)
 
 *   **Tuba (PM/Design):** 
     *   *Bugün Yapılanlar:* GitHub reposu ve Projects board'u kuruldu.
@@ -11,7 +10,7 @@
         Tasarım token'ları çıkarılarak İkram'a iletildi ve ekibin Figma Dev Mode üzerinden tüm token'ları doğrudan alabilmesi sağlandı.
     *   *Engel (Blocker):* Yok.
 *   **Kübra (Backend):**
-    *   *Bugün Yapılanlar:* Proje kapsamı belirlendi ve analiz onaylandı. OpenAPI (Swagger) sözleşmesi hazırlandı.
+    *   *Bugün Yapılanlar:*   * Proje kapsamı belirlendi ve analiz onaylandı. OpenAPI (Swagger) sözleşmesi hazırlandı.
     *   *Engel (Blocker):* Yok.
 *   **İkram (Frontend/QA):**
     *   *Bugün Yapılanlar:* Frontend proje kurulumu yapıldı (Next.js App Router + TypeScript + Tailwind CSS). Tasarım sistemi ve `openapi-typescript` altyapısı kurulup test edildi. Test & CI altyapısı (Postman koleksiyonu, Playwright E2E health-check, CI pipeline) kurularak PR'dan yeşil ışık alındı. Atanan issue'lar PR ile merge edilerek başarıyla kapatıldı (Closed).
@@ -21,3 +20,23 @@
     *   *Engel (Blocker):* Yok.
 
 **PM Günlük Özeti:** Projenin ilk gününde tüm mimari altyapılar ve CI/CD pipeline'ı sorunsuz şekilde kuruldu. Tasarım token'larının teslim edilmesiyle Frontend'in bekleme durumu (blocker) ortadan kalktı ve ilk Issue'lar başarıyla ana branch'e merge edildi. Backend sözleşmesinin (OpenAPI) tamamlanması ve tasarımların hazır olmasıyla takım mükemmel bir senkron yakaladı. Çok verimli bir ilk gün oldu.
+
+## Gün 2 - 14 Temmuz 2026
+
+*   **Tuba (PM/Design)**
+    *   *Bugün Yapılanlar:* Web kullanıcı (B2C) paneli tasarımları Figma üzerinde tamamlandı. Kübra ile API sözleşmesindeki kritik eksiklikler giderilerek son halinin yayınlanması (PR #19) süreci yönetildi. Projenin genel gidişatı takip edildi ve İkram için QA Task 2 planlanarak ataması yapıldı.
+    *   *Engel:* Yok.
+
+*   **Kübra (Backend)**
+    *   *Bugün Yapılanlar:* OpenAPI 3.1 sözleşmesinin son hali hazırlandı, gözden geçirildi ve GitHub'da paylaşıldı (PR #19 onaylandı). Backend altyapısı için gerekli olan PostgreSQL kurulumu Docker üzerinden başarıyla tamamlandı.
+    *   *Engel:* Yok.
+
+*   **İkram (Frontend/QA)**
+    *   *Bugün Yapılanlar:* Admin paneli giriş (Login) ekranı responsive olarak kodlandı, Dashboard iskeleti ve Nav-Bar tasarımı tamamlandı. Login ve Admin Dashboard sayfaları için Playwright testleri yazıldı. Postman koleksiyonu, güncel API sözleşmesine göre güncellendi.
+    *   *Engel:* Yok.
+
+*   **Zeliha (Mobil)**
+    *   *Bugün Yapılanlar:* Kişisel işleri nedeniyle bugün geliştirme faaliyetlerine katılamadı ancak daha önceki günlerdeki tasklarının takibi ve bir sonraki aşamaya hazırlık süreci devam etmektedir.
+    *   *Engel:* Yok.
+
+**PM Günlük Özeti:** Bugün, projenin teknik temelini oluşturan API sözleşmesini (OpenAPI) başarıyla yayına alarak çok kritik bir aşamayı geçtik. Backend tarafında veri tabanı kurulumu tamamlanırken, frontend tarafında hem Admin panelinin iskeleti kuruldu hem de test altyapısı (Playwright & Postman) güncellendi. Ekip, belirlenen takvime uygun şekilde ilerliyor; teknik engeller temizlendi ve geliştirme süreçleri standartlara oturtuldu. Yarın odak noktamız, B2C tarafındaki kullanıcı ekranlarının (FE-2) tamamlanması ve backend tarafında veri tabanı modellemesinin (Prisma) başlatılması olacaktır.
