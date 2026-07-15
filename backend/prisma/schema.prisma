@@ -19,14 +19,14 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  fullName  String
-  phone     String?
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  phone        String?
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   addresses     Address[]
   refreshTokens RefreshToken[]
@@ -66,7 +66,7 @@ model Category {
   id        String   @id @default(cuid())
   name      String
   slug      String   @unique
-  isActive  Boolean  @default(true) // isactive kullandık çünkü sözleşmede kategori silinmesin aktif pasif yapılsın dedik.
+  isActive  Boolean  @default(true) // Kategoriler kalici olarak silinmez; aktif veya pasif duruma getirilir
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -128,8 +128,6 @@ model CartItem {
   @@unique([cartId, productId])
 }
 
-/// NOT: OpenAPI sozlesmesinde Order.status kucuk harfle (pending, paid, shipped, delivered).
-/// Order response DTO'sunda PrismaOrderStatus -> kucuk harf donusumu yapilacak (Order servisi yazilirken).
 enum OrderStatus {
   PENDING
   PAID
@@ -137,13 +135,19 @@ enum OrderStatus {
   DELIVERED
 }
 
+enum PaymentMethod {
+  CREDIT_CARD
+}
+
 model Order {
-  id        String      @id @default(cuid())
-  status    OrderStatus @default(PENDING)
-  total     Decimal     @db.Decimal(10, 2)
-  currency  String      @default("TRY")
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id             String        @id @default(cuid())
+  status         OrderStatus   @default(PENDING)
+  total          Decimal       @db.Decimal(10, 2)
+  currency       String        @default("TRY")
+  paymentMethod  PaymentMethod @default(CREDIT_CARD)
+  idempotencyKey String        @unique
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
