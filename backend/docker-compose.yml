@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vbt-ecommerce-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vbt_user
+      POSTGRES_PASSWORD: vbt_password
+      POSTGRES_DB: vbt_ecommerce
+    ports:
+      - "5432:5432"
+    volumes:
+      - vbt_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  vbt_postgres_data:
