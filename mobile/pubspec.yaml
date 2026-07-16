@@ -1,0 +1,50 @@
+name: vbt_ecommerce_mobile
+description: "VBT E-Ticaret - Mobil Uygulama (Flutter)"
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.5.1
+
+  # Network
+  dio: ^5.5.0
+
+  # Typed models / serialization
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # Routing
+  go_router: ^14.2.0
+
+  # Secure storage (token saklama)
+  flutter_secure_storage: ^9.2.2
+
+  # Tasarım / tipografi (design token: font.sans -> Inter)
+  google_fonts: ^6.2.1
+
+  # Ürün görselleri için network image cache
+  cached_network_image: ^3.4.1
+
+  cupertino_icons: ^1.0.8
+
+  # Repository dönüş tipi için (Either<Failure, T>)
+  dartz: ^0.10.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  build_runner: ^2.4.11
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

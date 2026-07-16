@@ -1,0 +1,29 @@
+﻿# Flutter/Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+pubspec.lock
+
+# Generated code
+**/*.freezed.dart
+**/*.g.dart
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Platform (henuz flutter create . calistirilmadi; calistirilinca bu klasorler olusacak)
+android/
+ios/
+macos/
+linux/
+windows/
+web/
+
+# Env
+.env
