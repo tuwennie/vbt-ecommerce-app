@@ -1,0 +1,242 @@
+[
+  {
+    "id": "prod_001",
+    "name": "Akıllı Telefon",
+    "price": "15000.00",
+    "stock": 20,
+    "categoryId": "cat_001",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_002",
+    "name": "Laptop",
+    "price": "25000.00",
+    "stock": 10,
+    "categoryId": "cat_001",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_003",
+    "name": "Bluetooth Kulaklık",
+    "price": "800.00",
+    "stock": 50,
+    "categoryId": "cat_001",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_004",
+    "name": "Akıllı Saat",
+    "price": "2500.00",
+    "stock": 30,
+    "categoryId": "cat_001",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_005",
+    "name": "Tablet",
+    "price": "7000.00",
+    "stock": 15,
+    "categoryId": "cat_001",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_006",
+    "name": "Pamuklu Tişört",
+    "price": "250.00",
+    "stock": 100,
+    "categoryId": "cat_002",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_007",
+    "name": "Kot Pantolon",
+    "price": "600.00",
+    "stock": 80,
+    "categoryId": "cat_002",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_008",
+    "name": "Ceket",
+    "price": "1200.00",
+    "stock": 40,
+    "categoryId": "cat_002",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_009",
+    "name": "Spor Ayakkabı",
+    "price": "950.00",
+    "stock": 60,
+    "categoryId": "cat_002",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_010",
+    "name": "Şapka",
+    "price": "150.00",
+    "stock": 200,
+    "categoryId": "cat_002",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_011",
+    "name": "Masa Lambası",
+    "price": "450.00",
+    "stock": 40,
+    "categoryId": "cat_003",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_012",
+    "name": "Ofis Sandalyesi",
+    "price": "3500.00",
+    "stock": 10,
+    "categoryId": "cat_003",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_013",
+    "name": "Çalışma Masası",
+    "price": "4500.00",
+    "stock": 5,
+    "categoryId": "cat_003",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_014",
+    "name": "Kahve Makinesi",
+    "price": "2000.00",
+    "stock": 25,
+    "categoryId": "cat_003",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_015",
+    "name": "Duvar Saati",
+    "price": "300.00",
+    "stock": 60,
+    "categoryId": "cat_003",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_016",
+    "name": "Diş Fırçası",
+    "price": "100.00",
+    "stock": 200,
+    "categoryId": "cat_004",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_017",
+    "name": "Şampuan",
+    "price": "150.00",
+    "stock": 150,
+    "categoryId": "cat_004",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_018",
+    "name": "Nemlendirici Krem",
+    "price": "400.00",
+    "stock": 80,
+    "categoryId": "cat_004",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_019",
+    "name": "Parfüm",
+    "price": "800.00",
+    "stock": 45,
+    "categoryId": "cat_004",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_020",
+    "name": "Tıraş Makinesi",
+    "price": "1200.00",
+    "stock": 30,
+    "categoryId": "cat_004",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_021",
+    "name": "Dambıl Seti",
+    "price": "600.00",
+    "stock": 20,
+    "categoryId": "cat_005",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_022",
+    "name": "Yoga Matı",
+    "price": "350.00",
+    "stock": 70,
+    "categoryId": "cat_005",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_023",
+    "name": "Futbol Topu",
+    "price": "400.00",
+    "stock": 50,
+    "categoryId": "cat_005",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_024",
+    "name": "Koşu Bandı",
+    "price": "12000.00",
+    "stock": 3,
+    "categoryId": "cat_005",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_025",
+    "name": "Eşofman Takımı",
+    "price": "900.00",
+    "stock": 40,
+    "categoryId": "cat_005",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_026",
+    "name": "Roman (Klasik)",
+    "price": "200.00",
+    "stock": 300,
+    "categoryId": "cat_006",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_027",
+    "name": "Kişisel Gelişim",
+    "price": "180.00",
+    "stock": 250,
+    "categoryId": "cat_006",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_028",
+    "name": "Tarih Kitabı",
+    "price": "250.00",
+    "stock": 120,
+    "categoryId": "cat_006",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_029",
+    "name": "Bilim Kurgu",
+    "price": "220.00",
+    "stock": 150,
+    "categoryId": "cat_006",
+    "imageUrl": "https://placehold.co/400x400"
+  },
+  {
+    "id": "prod_030",
+    "name": "Çocuk Masalları",
+    "price": "120.00",
+    "stock": 400,
+    "categoryId": "cat_006",
+    "imageUrl": "https://placehold.co/400x400"
+  }
+]

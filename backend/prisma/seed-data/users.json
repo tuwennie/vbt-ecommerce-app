@@ -1,0 +1,37 @@
+[
+  {
+    "id": "user_001",
+    "email": "admin@vbt.com",
+    "fullName": "Admin Kullanıcı",
+    "role": "ADMIN",
+    "address": {
+      "recipientName": "Admin Kullanıcı",
+      "phone": "05551234567",
+      "city": "İstanbul",
+      "district": "Kadıköy",
+      "addressLine": "Doğuş Caddesi, No:1",
+      "postalCode": "34000"
+    }
+  },
+  {
+    "id": "user_002",
+    "email": "test@vbt.com",
+    "fullName": "Test Kullanıcı",
+    "role": "USER",
+    "address": {
+      "recipientName": "Test Kullanıcı",
+      "phone": "05551234567",
+      "city": "İstanbul",
+      "district": "Kadıköy",
+      "addressLine": "Bağdat Caddesi, No:55",
+      "postalCode": "34700"
+    }
+  },
+  {
+    "id": "user_003",
+    "email": "ahmet@example.com",
+    "fullName": "Ahmet Yılmaz",
+    "role": "USER",
+    "address": null
+  }
+]
