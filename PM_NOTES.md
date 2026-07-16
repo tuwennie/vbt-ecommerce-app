@@ -40,3 +40,23 @@
     *   *Engel:* Yok.
 
 **PM Günlük Özeti:** Bugün, projenin teknik temelini oluşturan API sözleşmesini (OpenAPI) başarıyla yayına alarak çok kritik bir aşamayı geçtik. Backend tarafında veri tabanı kurulumu tamamlanırken, frontend tarafında hem Admin panelinin iskeleti kuruldu hem de test altyapısı (Playwright & Postman) güncellendi. Ekip, belirlenen takvime uygun şekilde ilerliyor; teknik engeller temizlendi ve geliştirme süreçleri standartlara oturtuldu. Yarın odak noktamız, B2C tarafındaki kullanıcı ekranlarının (FE-2) tamamlanması ve backend tarafında veri tabanı modellemesinin (Prisma) başlatılması olacaktır.
+
+## Gün 3 - 16 Temmuz 2026
+
+*   **Tuba (PM/Design)**
+    *   *Bugün Yapılanlar:* Backend şemasına tam uyumlu "Golden Dataset" hazırlandı; veriler categories, products ve users olarak üç ayrı modüler JSON dosyasına ayrıldı. Seed işlemleri için Kübra ile koordineli şekilde süreç başlatıldı. API sözleşme denetimi ve dokümantasyon takibi sürece yayılmış bir görev olarak aktif tutuluyor. Ekibin iş akışını hızlandırmak adına teknik ve yönetimsel tasklar (MOB-3,4,5 ve BE-6 gibi) oluşturularak ekip üyelerine atandı.
+    *   *Engel:* Yok.
+
+*   **Kübra (Backend)**
+    *   *Bugün Yapılanlar:* NestJS mimarisi ve Docker-PostgreSQL altyapısı ayağa kaldırıldı. Prisma ORM entegrasyonu tamamlandı. openapi.yaml dokümantasyonuyla tam uyumlu 11 veritabanı modeli oluşturularak migration süreçleri uygulandı.
+    *   *Engel:* Yok.
+
+*   **İkram (Frontend/QA)**
+    *   *Bugün Yapılanlar:* Login, Register ve Ana Sayfa (Hero Banner + Ürünler) arayüzleri responsive olarak kodlandı. Arama/Filtreleme mekanizması (kategori, sıralama, sayfalama) TanStack Query ile mock veri üzerinden entegre edildi. Ürün listeleme, query parametreleri, responsive yükleme durumları ve hata yönetimi senaryoları doğrulandı.
+    *   *Engel:* Yok.
+
+*   **Zeliha (Mobil)**
+    *   *Bugün Yapılanlar:* Proje mimarisi "Feature-First" standardıyla (presentation, domain, data) kuruldu. AppColors token'ları tanımlandı. CustomButton, CustomTextField ve ProductCard komponentleri geliştirildi. Main UI kataloğu üzerinden interaktif render testleri sorunsuz şekilde doğrulandı.
+    *   *Engel:* Yok.
+
+**PM Günlük Özeti:** Projemizin tüm katmanlarında (Mobil, Frontend, Backend) altyapı kurulumları ve temel entegrasyonlar başarıyla tamamlandı. Gerçek veri entegrasyonuna geçiş için gereken veri seti hazırlıkları ve ekip görev dağılımları tamamlandı.
