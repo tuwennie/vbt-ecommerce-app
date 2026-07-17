@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Heart, ShoppingCart, ImageOff } from "lucide-react";
-import type { FeaturedProduct } from "@/lib/services/featured-products";
+import type { FeaturedProduct } from "@/lib/services/products-api";
 
 function formatPrice(value: number | undefined, currency: string | undefined) {
   if (value === undefined) return "—";
@@ -21,7 +21,6 @@ export function ProductCard({ product }: { product: FeaturedProduct }) {
     <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-surface">
       <div className="relative aspect-square bg-neutral">
         {imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img src={imageUrl} alt={product.name ?? ""} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-text-muted">
