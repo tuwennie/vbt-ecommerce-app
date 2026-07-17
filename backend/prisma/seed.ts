@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma/client';
+import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -66,7 +66,7 @@ async function main() {
   }
   console.log(`${categories.length} kategori eklendi/güncellendi.`);
 
-  const products = readJson<SeedProduct[]>("products.json");
+  const products = readJson<SeedProduct[]>('products.json');
   for (const prod of products) {
     await prisma.product.upsert({
       where: { id: prod.id },
@@ -96,8 +96,8 @@ async function main() {
   }
   console.log(`${products.length} ürün eklendi/güncellendi.`);
 
-  const passwordHash = bcrypt.hashSync("password123!", 10);
-  const users = readJson<SeedUser[]>("users.json");
+  const passwordHash = bcrypt.hashSync('password123!', 10);
+  const users = readJson<SeedUser[]>('users.json');
 
   for (const u of users) {
     await prisma.user.upsert({
