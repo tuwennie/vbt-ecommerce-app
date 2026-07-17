@@ -1,10 +1,16 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
+import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
-import * as crypto from 'crypto';
+import { LoginDto } from './dto/login.dto';
+import { RefreshDto } from './dto/refresh.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,6 +42,95 @@ export class AuthService {
       },
     });
 
+    return this.buildAuthResponse(user);
+  }
+
+  async login(dto: LoginDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Geçersiz email veya şifre.');
+    }
+
+    const passwordMatches = bcrypt.compareSync(dto.password, user.passwordHash);
+
+    if (!passwordMatches) {
+      throw new UnauthorizedException('Geçersiz email veya şifre.');
+    }
+
+    return this.buildAuthResponse(user);
+  }
+
+  async refresh(dto: RefreshDto) {
+    let payload: { sub: string };
+
+    try {
+      payload = await this.jwtService.verifyAsync(dto.refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
+    } catch {
+      throw new UnauthorizedException(
+        'Refresh token geçersiz veya süresi dolmuş.',
+      );
+    }
+
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(dto.refreshToken)
+      .digest('hex');
+
+    const storedToken = await this.prisma.refreshToken.findUnique({
+      where: { tokenHash },
+    });
+
+    if (
+      !storedToken ||
+      storedToken.revoked ||
+      storedToken.expiresAt < new Date()
+    ) {
+      throw new UnauthorizedException(
+        'Refresh token geçersiz veya süresi dolmuş.',
+      );
+    }
+
+    await this.prisma.refreshToken.update({
+      where: { id: storedToken.id },
+      data: { revoked: true },
+    });
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Kullanıcı bulunamadı.');
+    }
+
+    return this.buildAuthResponse(user);
+  }
+
+  async logout(dto: RefreshDto) {
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(dto.refreshToken)
+      .digest('hex');
+
+    await this.prisma.refreshToken.updateMany({
+      where: { tokenHash },
+      data: { revoked: true },
+    });
+  }
+
+  private async buildAuthResponse(user: {
+    id: string;
+    email: string;
+    fullName: string;
+    phone: string | null;
+    role: string;
+    createdAt: Date;
+  }) {
     const accessToken = await this.jwtService.signAsync({
       sub: user.id,
       email: user.email,
@@ -58,6 +153,7 @@ export class AuthService {
       },
     };
   }
+
   private async generateRefreshToken(userId: string): Promise<string> {
     const refreshToken = await this.jwtService.signAsync(
       { sub: userId },
