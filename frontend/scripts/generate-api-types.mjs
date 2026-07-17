@@ -6,7 +6,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
 
 const source =
-  process.env.API_SCHEMA_URL || path.join(root, "openapi", "schema.yaml");
+  process.env.API_SCHEMA_URL ||
+  path.join(root, "..", "backend", "docs", "openapi.yaml");
 
 const outFile = path.join(root, "src", "types", "api.generated.ts");
 

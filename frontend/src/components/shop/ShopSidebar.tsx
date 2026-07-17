@@ -2,21 +2,16 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { X, Home, Laptop2, Shirt, Armchair, Sparkles, Dumbbell, BookOpen } from "lucide-react";
+import {
+  X,
+  Home,
+} from "lucide-react";
+import { SHOP_CATEGORIES } from "@/lib/shop-categories";
 
 interface ShopSidebarProps {
   open: boolean;
   onClose: () => void;
 }
-
-const CATEGORIES = [
-  { label: "Elektronik", slug: "elektronik", icon: Laptop2 },
-  { label: "Moda", slug: "moda", icon: Shirt },
-  { label: "Ev & Ofis", slug: "ev-ofis", icon: Armchair },
-  { label: "Güzellik", slug: "guzellik", icon: Sparkles },
-  { label: "Spor", slug: "spor", icon: Dumbbell },
-  { label: "Kitap", slug: "kitap", icon: BookOpen },
-];
 
 export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
   const pathname = usePathname();
@@ -26,7 +21,11 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-40 bg-primary/40 md:hidden" onClick={onClose} aria-hidden="true" />
+        <div
+          className="fixed inset-0 z-40 bg-primary/40 md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
       )}
 
       <aside
@@ -35,8 +34,15 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
         }`}
       >
         <div className="flex items-center justify-between px-6 py-6 md:hidden">
-          <Link href="/" onClick={onClose} className="text-lg font-bold text-secondary">ShopSwift</Link>
-          <button type="button" onClick={onClose} aria-label="Menüyü kapat" className="text-text-muted hover:text-text-main">
+          <Link href="/" onClick={onClose} className="text-lg font-bold text-secondary">
+            ShopSwift
+          </Link>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Menüyü kapat"
+            className="text-text-muted hover:text-text-main"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -46,16 +52,20 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
             href="/"
             onClick={onClose}
             className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-              pathname === "/" ? "bg-secondary/10 text-secondary" : "text-text-main hover:bg-neutral"
+              pathname === "/"
+                ? "bg-secondary/10 text-secondary"
+                : "text-text-main hover:bg-neutral"
             }`}
           >
             <Home className="h-4 w-4 shrink-0" />
             Ana Sayfa
           </Link>
 
-          <p className="px-3 pb-1 pt-4 text-xs font-medium uppercase tracking-wide text-text-muted">Categories</p>
+          <p className="px-3 pb-1 pt-4 text-xs font-medium uppercase tracking-wide text-text-muted">
+            Categories
+          </p>
 
-          {CATEGORIES.map((category) => {
+          {SHOP_CATEGORIES.map((category) => {
             const href = `/search?category=${category.slug}`;
             const Icon = category.icon;
             const isActive = activeCategory === category.slug;
@@ -65,7 +75,9 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
                 href={href}
                 onClick={onClose}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive ? "bg-secondary/10 text-secondary" : "text-text-main hover:bg-neutral"
+                  isActive
+                    ? "bg-secondary/10 text-secondary"
+                    : "text-text-main hover:bg-neutral"
                 }`}
               >
                 <Icon className="h-4 w-4 shrink-0" />
@@ -76,7 +88,9 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
         </nav>
 
         <div className="flex items-center gap-3 border-t border-border px-6 py-4">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-white">JD</span>
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-white">
+            JD
+          </span>
           <div>
             <p className="text-sm font-medium text-text-main">John Doe</p>
             <p className="text-xs text-text-muted">Premium Member</p>

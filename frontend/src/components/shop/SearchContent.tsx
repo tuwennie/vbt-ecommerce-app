@@ -2,7 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useProducts } from "@/hooks/use-products";
-import { getCategoryMeta, type SortOption } from "@/lib/services/products-catalog";
+import { getCategoryLabel } from "@/lib/shop-categories";
+import type { SortOption } from "@/lib/services/products-api";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductGridSkeleton } from "@/components/shop/ProductGridSkeleton";
 import { ProductGridError } from "@/components/shop/ProductGridError";
@@ -18,10 +19,10 @@ export function SearchContent() {
   const page = Number(searchParams.get("page") ?? "1");
   const simulateError = searchParams.get("simulateError") === "true";
 
-  const meta = search ? { title: `"${search}" için sonuçlar`, description: "" } : getCategoryMeta(category);
+  const title = search ? `"${search}" için sonuçlar` : getCategoryLabel(category);
 
   const { data, isLoading, isError, error, refetch } = useProducts({
-    category,
+    categoryId: category,
     search,
     sort,
     page,
@@ -32,8 +33,7 @@ export function SearchContent() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text-main">{meta.title}</h1>
-          {meta.description && <p className="mt-1 text-sm text-text-muted">{meta.description}</p>}
+          <h1 className="text-2xl font-bold text-text-main">{title}</h1>
         </div>
         <SortDropdown />
       </div>
@@ -41,12 +41,16 @@ export function SearchContent() {
       <div data-testid="search-results-region">
         {isLoading && <ProductGridSkeleton count={8} />}
 
-        {isError && <ProductGridError message={getApiErrorMessage(error)} onRetry={() => refetch()} />}
+        {isError && (
+          <ProductGridError message={getApiErrorMessage(error)} onRetry={() => refetch()} />
+        )}
 
         {data && !isLoading && !isError && (
           <>
             {data.items.length === 0 ? (
-              <p className="py-16 text-center text-sm text-text-muted">Bu kritere uygun ürün bulunamadı.</p>
+              <p className="py-16 text-center text-sm text-text-muted">
+                Bu kritere uygun ürün bulunamadı.
+              </p>
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 {data.items.map((product) => (

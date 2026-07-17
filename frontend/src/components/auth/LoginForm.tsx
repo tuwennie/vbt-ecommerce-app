@@ -5,8 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { getApiErrorMessage, type ApiErrorResponse } from "@/lib/api-error";
 
-// TODO: Backend hazır olunca bu sabit kontrol kaldırılıp gerçek
-// POST /auth/login isteğiyle (X-Client-Type: WEB header'ı dahil) değiştirilecek.
 const MOCK_EMAIL = "admin@shopswift.com";
 const MOCK_PASSWORD = "admin123";
 
