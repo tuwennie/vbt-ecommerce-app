@@ -4,14 +4,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { X, LogOut } from "lucide-react";
 import { NAV_ITEMS } from "./nav-items";
+import { clearAccessTokenCookie } from "@/lib/auth-token";
 
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
-}
-
-function clearAccessTokenCookie() {
-  document.cookie = "access_token=; path=/; max-age=0";
 }
 
 export function Sidebar({ open, onClose }: SidebarProps) {
@@ -26,8 +23,13 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
   return (
     <>
+      {/* Mobilde drawer açıkken arkayı karartan katman */}
       {open && (
-        <div className="fixed inset-0 z-40 bg-primary/40 md:hidden" onClick={onClose} aria-hidden="true" />
+        <div
+          className="fixed inset-0 z-40 bg-primary/40 md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
       )}
 
       <aside
@@ -37,7 +39,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       >
         <div className="flex items-center justify-between px-6 py-6">
           <Link href="/admin/dashboard" onClick={onClose}>
-            <p className="text-lg font-bold leading-tight text-secondary">ShopSwift Admin</p>
+            <p className="text-lg font-bold leading-tight text-secondary">
+              ShopSwift Admin
+            </p>
             <p className="text-xs text-text-muted">Kurumsal Yönetim</p>
           </Link>
           <button
@@ -54,13 +58,16 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           {NAV_ITEMS.map((item) => {
             const isActive = pathname.startsWith(item.href);
             const Icon = item.icon;
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive ? "bg-secondary text-white" : "text-text-main hover:bg-neutral"
+                  isActive
+                    ? "bg-secondary text-white"
+                    : "text-text-main hover:bg-neutral"
                 }`}
               >
                 <Icon className="h-4 w-4 shrink-0" />

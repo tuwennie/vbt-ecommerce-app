@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import { ShoppingCart } from "lucide-react";
 
 const stats = [

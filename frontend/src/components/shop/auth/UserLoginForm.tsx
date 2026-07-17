@@ -5,16 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { getApiErrorMessage, type ApiErrorResponse } from "@/lib/api-error";
-
-const MOCK_EMAIL = "test@shopswift.com";
-const MOCK_PASSWORD = "Sifre123!";
-
-const MOCK_INVALID_CREDENTIALS_ERROR: ApiErrorResponse = {
-  success: false,
-  message: "E-posta veya şifre hatalı.",
-  statusCode: 401,
-  status: "UNAUTHORIZED",
-};
+import { login } from "@/lib/services/auth";
+import { setAccessTokenCookie } from "@/lib/auth-token";
 
 export function UserLoginForm() {
   const router = useRouter();
@@ -22,7 +14,7 @@ export function UserLoginForm() {
   const [error, setError] = useState<ApiErrorResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     setIsSubmitting(true);
@@ -31,15 +23,15 @@ export function UserLoginForm() {
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "");
 
-    if (email === MOCK_EMAIL && password === MOCK_PASSWORD) {
+    try {
+      const auth = await login({ email, password });
+      setAccessTokenCookie(auth.accessToken ?? "", auth.expiresIn ?? 900);
       router.push("/");
-      return;
+    } catch (err) {
+      setError(err as ApiErrorResponse);
+      setIsSubmitting(false);
     }
-
-    setError(MOCK_INVALID_CREDENTIALS_ERROR);
-    setIsSubmitting(false);
   }
-
   return (
     <form className="w-full max-w-sm" onSubmit={handleSubmit}>
       <h1 className="text-[clamp(1.125rem,4.5vw,1.5rem)] font-semibold text-text-main">
