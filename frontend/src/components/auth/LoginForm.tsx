@@ -124,11 +124,11 @@ export function LoginForm() {
         </label>
       </div>
 
-      {error && (
-        <p className="mt-[clamp(0.75rem,3vw,1rem)] rounded-lg bg-error/10 px-3 py-2 text-[clamp(0.75rem,2.5vw,0.875rem)] text-error">
-          {getApiErrorMessage(error)}
-        </p>
-      )}
+        {error && (
+          <p data-testid="auth-error" className="mt-[clamp(0.75rem,3vw,1rem)] rounded-lg bg-error/10 px-3 py-2 text-[clamp(0.75rem,2.5vw,0.875rem)] text-error">
+    {getApiErrorMessage(error)}
+          </p>
+        )}
 
       <button
         type="submit"
