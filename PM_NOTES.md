@@ -60,3 +60,23 @@
     *   *Engel:* Yok.
 
 **PM Günlük Özeti:** Projemizin tüm katmanlarında (Mobil, Frontend, Backend) altyapı kurulumları ve temel entegrasyonlar başarıyla tamamlandı. Gerçek veri entegrasyonuna geçiş için gereken veri seti hazırlıkları ve ekip görev dağılımları tamamlandı.
+
+## Gün 4 - 17 Temmuz 2026
+
+*   **Tuba (PM/Design)**
+    *   *Bugün Yapılanlar:* Frontend ve QA alanlarında İkram'ın sorumluluk alanını genişleten dört yeni task oluşturuldu ve atandı. Kübra tarafından hazırlanan "Golden Dataset" (ürünler, kategoriler, kullanıcılar) yapıları Zeliha'ya iletilerek, mobil uygulamanın backend anahtarlarıyla tam uyumlu hale getirilmesi sağlandı. Ekip içi koordinasyon ve teknik süreç takibi yapıldı.
+    *   *Engel:* Yok.
+
+*   **Kübra (Backend)**
+    *   *Bugün Yapılanlar:* Golden dataset (kategoriler, ürünler, kullanıcılar) Prisma seed script'i ile veritabanına entegre edildi. Script, tekrar çalıştırıldığında veri çakışmasını önlemek adına idempotent (upsert) mantığıyla tasarlandı; npx prisma db seed komutu ve Prisma Studio üzerinden doğrulandı.
+    *   *Engel:* Yok.
+
+*   **İkram (Frontend/QA)**
+    *   *Bugün Yapılanlar:* Tip güvenli (type-safe) API katmanı kuruldu. Ana sayfa ve arama/filtreleme sayfaları gerçek products API'sine entegre edildi. Mevcut geliştirmelere uygun olarak Playwright testleri güncellendi. (Mock veriler kaldırıldı, veritabanı seed işlemi sonrası canlı verilerin çekilmesine hazır hale getirildi.)
+    *   *Engel:* Yok.
+
+*   **Zeliha (Mobil)**
+    *   *Bugün Yapılanlar:* LoginScreen ve RegisterScreen arayüzleri Figma tasarımlarıyla %100 uyumlu olarak geliştirildi. Formlara validasyon kuralları (boş geçilemez, e-posta formatı) eklendi. go_router ile navigasyon akışları (Keşfet -> Detay) bağlandı. UI ve iş mantığı AsyncNotifierProvider ile izole edilerek ekranlar state dinleyecek şekilde yapılandırıldı. openapi.yaml şemasına uygun ProductModel veri yapısı kuruldu ve skeleton/loading grid arayüzü entegre edildi.
+    *   *Engel:* Yok.
+
+**PM Günlük Özeti:** Projemizde bugün tüm katmanların gerçek veri entegrasyonuna (Live Data) geçişi için kritik altyapı çalışmaları tamamlandı. Backend'de veritabanı seed süreci otomatize edilirken, Frontend ve Mobil taraflarında API servis katmanları bu yapıya göre standartlaştırıldı. Ekip, canlı veritabanı üzerinden uçtan uca çalışmaya hazır durumda. Çok verimli bir geliştirme günü oldu.
