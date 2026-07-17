@@ -4,22 +4,15 @@ import { useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { getApiErrorMessage, type ApiErrorResponse } from "@/lib/api-error";
+import { login } from "@/lib/services/auth";
+import { setAccessTokenCookie } from "@/lib/auth-token";
 
-// TODO: Backend hazır olunca bu sabit kontrol kaldırılıp gerçek
-// POST /auth/login isteğiyle (X-Client-Type: WEB header'ı dahil) değiştirilecek.
-const MOCK_EMAIL = "admin@shopswift.com";
-const MOCK_PASSWORD = "admin123";
-
-const MOCK_INVALID_CREDENTIALS_ERROR: ApiErrorResponse = {
+const NOT_ADMIN_ERROR: ApiErrorResponse = {
   success: false,
-  message: "E-posta veya şifre hatalı.",
-  statusCode: 401,
-  status: "UNAUTHORIZED",
+  message: "Bu hesabın yönetim paneline erişim yetkisi yok.",
+  statusCode: 403,
+  status: "FORBIDDEN",
 };
-
-function setAccessTokenCookie(token: string) {
-  document.cookie = `access_token=${token}; path=/; max-age=${15 * 60}; SameSite=Lax`;
-}
 
 export function LoginForm() {
   const router = useRouter();
@@ -28,7 +21,7 @@ export function LoginForm() {
   const [error, setError] = useState<ApiErrorResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     setIsSubmitting(true);
@@ -37,15 +30,22 @@ export function LoginForm() {
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "");
 
-    if (email === MOCK_EMAIL && password === MOCK_PASSWORD) {
-      setAccessTokenCookie("mock-access-token");
+    try {
+      const auth = await login({ email, password });
+
+      if (auth.user?.role !== "ADMIN") {
+        setError(NOT_ADMIN_ERROR);
+        setIsSubmitting(false);
+        return;
+      }
+
+      setAccessTokenCookie(auth.accessToken ?? "", auth.expiresIn ?? 900);
       const redirectTo = searchParams.get("redirectTo") || "/admin/dashboard";
       router.push(redirectTo);
-      return;
+    } catch (err) {
+      setError(err as ApiErrorResponse);
+      setIsSubmitting(false);
     }
-
-    setError(MOCK_INVALID_CREDENTIALS_ERROR);
-    setIsSubmitting(false);
   }
 
   return (
@@ -58,7 +58,10 @@ export function LoginForm() {
       </p>
 
       <div className="mt-[clamp(1rem,4vw,1.5rem)]">
-        <label htmlFor="email" className="mb-1.5 block text-[clamp(0.75rem,2.5vw,0.875rem)] font-medium text-text-main">
+        <label
+          htmlFor="email"
+          className="mb-1.5 block text-[clamp(0.75rem,2.5vw,0.875rem)] font-medium text-text-main"
+        >
           E-posta
         </label>
         <div className="relative">
@@ -75,7 +78,10 @@ export function LoginForm() {
       </div>
 
       <div className="mt-[clamp(0.75rem,3vw,1rem)]">
-        <label htmlFor="password" className="mb-1.5 block text-[clamp(0.75rem,2.5vw,0.875rem)] font-medium text-text-main">
+        <label
+          htmlFor="password"
+          className="mb-1.5 block text-[clamp(0.75rem,2.5vw,0.875rem)] font-medium text-text-main"
+        >
           Şifre
         </label>
         <div className="relative">
@@ -94,7 +100,11 @@ export function LoginForm() {
             aria-label={showPassword ? "Şifreyi gizle" : "Şifreyi göster"}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-main"
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>
@@ -106,7 +116,10 @@ export function LoginForm() {
           type="checkbox"
           className="h-4 w-4 rounded border-border text-secondary focus:ring-secondary"
         />
-        <label htmlFor="remember" className="text-[clamp(0.75rem,2.5vw,0.875rem)] text-text-main">
+        <label
+          htmlFor="remember"
+          className="text-[clamp(0.75rem,2.5vw,0.875rem)] text-text-main"
+        >
           Beni hatırla
         </label>
       </div>
@@ -129,9 +142,13 @@ export function LoginForm() {
       <hr className="mt-[clamp(1rem,4vw,1.5rem)] border-border" />
 
       <div className="mt-[clamp(0.75rem,3vw,1rem)] flex flex-col items-center justify-center gap-2 text-[clamp(0.75rem,2.5vw,0.875rem)] text-text-muted sm:flex-row sm:gap-4">
-        <a href="#" className="hover:text-text-main">Yardım ve Destek</a>
+        <a href="#" className="hover:text-text-main">
+          Yardım ve Destek
+        </a>
         <span className="hidden text-border sm:inline">|</span>
-        <a href="#" className="hover:text-text-main">Güvenlik Politikası</a>
+        <a href="#" className="hover:text-text-main">
+          Güvenlik Politikası
+        </a>
       </div>
     </form>
   );
