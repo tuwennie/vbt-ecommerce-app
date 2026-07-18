@@ -10,7 +10,6 @@ import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { RefreshDto } from './dto/refresh.dto';
 
 @Injectable()
 export class AuthService {
@@ -63,11 +62,11 @@ export class AuthService {
     return this.buildAuthResponse(user);
   }
 
-  async refresh(dto: RefreshDto) {
+  async refresh(refreshToken: string) {
     let payload: { sub: string };
 
     try {
-      payload = await this.jwtService.verifyAsync(dto.refreshToken, {
+      payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
     } catch {
@@ -78,7 +77,7 @@ export class AuthService {
 
     const tokenHash = crypto
       .createHash('sha256')
-      .update(dto.refreshToken)
+      .update(refreshToken)
       .digest('hex');
 
     const storedToken = await this.prisma.refreshToken.findUnique({
@@ -111,10 +110,10 @@ export class AuthService {
     return this.buildAuthResponse(user);
   }
 
-  async logout(dto: RefreshDto) {
+  async logout(refreshToken: string) {
     const tokenHash = crypto
       .createHash('sha256')
-      .update(dto.refreshToken)
+      .update(refreshToken)
       .digest('hex');
 
     await this.prisma.refreshToken.updateMany({
