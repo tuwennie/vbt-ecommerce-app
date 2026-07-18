@@ -1,0 +1,34 @@
+[
+   {
+      "id":"user_001",
+      "email":"admin@vbt.com",
+      "fullName":"Admin Kullanıcı",
+      "passwordHash":"$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p363Pq1Wz.T3n3pP/s22P/mG",
+      "role":"ADMIN",
+      "address":{
+         "street":"Doğuş Caddesi, No:1",
+         "city":"İstanbul",
+         "zipCode":"34000"
+      }
+   },
+   {
+      "id":"user_002",
+      "email":"test@vbt.com",
+      "fullName":"Test Kullanıcı",
+      "passwordHash":"$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p363Pq1Wz.T3n3pP/s22P/mG",
+      "role":"USER",
+      "address":{
+         "street":"Bağdat Caddesi, No:55",
+         "city":"İstanbul",
+         "zipCode":"34700"
+      }
+   },
+   {
+      "id":"user_003",
+      "email":"ahmet@example.com",
+      "fullName":"Ahmet Yılmaz",
+      "passwordHash":"$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p363Pq1Wz.T3n3pP/s22P/mG",
+      "role":"USER",
+      "address":null
+   }
+]
