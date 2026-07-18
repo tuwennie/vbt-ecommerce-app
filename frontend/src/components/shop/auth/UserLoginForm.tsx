@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { getApiErrorMessage, type ApiErrorResponse } from "@/lib/api-error";
 import { login } from "@/lib/services/auth";
-import { setAccessTokenCookie } from "@/lib/auth-token";
+import { setAccessTokenCookie, setUserDisplayName } from "@/lib/auth-token";
 
 export function UserLoginForm() {
   const router = useRouter();
@@ -14,23 +14,26 @@ export function UserLoginForm() {
   const [error, setError] = useState<ApiErrorResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-    setIsSubmitting(true);
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      setError(null);
+      setIsSubmitting(true);
 
-    const formData = new FormData(event.currentTarget);
-    const email = String(formData.get("email") ?? "").trim();
-    const password = String(formData.get("password") ?? "");
+      const formData = new FormData(event.currentTarget);
+      const email = String(formData.get("email") ?? "").trim();
+      const password = String(formData.get("password") ?? "");
 
-    try {
-      const auth = await login({ email, password });
-      setAccessTokenCookie(auth.accessToken ?? "", auth.expiresIn ?? 900);
-      router.push("/");
-    } catch (err) {
-      setError(err as ApiErrorResponse);
-      setIsSubmitting(false);
-    }
+      try {
+        const auth = await login({ email, password });
+        setAccessTokenCookie(auth.accessToken ?? "", auth.expiresIn ?? 900);
+        if (auth.user?.fullName) {
+          setUserDisplayName(auth.user.fullName);
+        }
+        router.push("/");
+      } catch (err) {
+        setError(err as ApiErrorResponse);
+        setIsSubmitting(false);
+      }
   }
   return (
     <form className="w-full max-w-sm" onSubmit={handleSubmit}>

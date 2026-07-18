@@ -1,22 +1,55 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import {
-  X,
-  Home,
-} from "lucide-react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { X, Home, LogOut, LogIn } from "lucide-react";
 import { SHOP_CATEGORIES } from "@/lib/shop-categories";
+import {
+  clearAccessTokenCookie,
+  clearUserDisplayName,
+  getAccessTokenFromCookie,
+  getUserDisplayName,
+} from "@/lib/auth-token";
 
 interface ShopSidebarProps {
   open: boolean;
   onClose: () => void;
 }
 
+function initialsOf(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
 export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const activeCategory = pathname === "/search" ? searchParams.get("category") : null;
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [displayName, setDisplayName] = useState<string | null>(null);
+
+  useEffect(() => {
+
+    setIsLoggedIn(!!getAccessTokenFromCookie());
+    setDisplayName(getUserDisplayName());
+  }, [pathname]);
+
+  function handleLogout() {
+    clearAccessTokenCookie();
+    clearUserDisplayName();
+    setIsLoggedIn(false);
+    setDisplayName(null);
+    onClose();
+    router.push("/login");
+  }
 
   return (
     <>
@@ -87,14 +120,38 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
           })}
         </nav>
 
-        <div className="flex items-center gap-3 border-t border-border px-6 py-4">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-white">
-            JD
-          </span>
-          <div>
-            <p className="text-sm font-medium text-text-main">John Doe</p>
-            <p className="text-xs text-text-muted">Premium Member</p>
-          </div>
+        <div className="border-t border-border">
+          {isLoggedIn ? (
+            <>
+              <div className="flex items-center gap-3 px-6 py-4">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-white">
+                  {displayName ? initialsOf(displayName) : "?"}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-text-main">
+                    {displayName ?? "Kullanıcı"}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 px-6 py-3 text-sm font-medium text-error hover:bg-error/5"
+              >
+                <LogOut className="h-4 w-4" />
+                Çıkış Yap
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              onClick={onClose}
+              className="flex w-full items-center gap-3 px-6 py-4 text-sm font-medium text-secondary hover:bg-neutral"
+            >
+              <LogIn className="h-4 w-4" />
+              Giriş Yap
+            </Link>
+          )}
         </div>
       </aside>
     </>

@@ -16,6 +16,18 @@ export interface RegisterPayload {
   fullName: string;
 }
 
+function unwrapAuthResponse(raw: unknown): AuthResponse {
+  const candidate = raw as { data?: AuthResponse; accessToken?: string };
+
+  const auth = candidate?.data ?? (candidate as AuthResponse);
+
+  if (!auth?.accessToken) {
+    throw new Error("Beklenmeyen bir yanıt alındı.");
+  }
+
+  return auth;
+}
+
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
   const { data, error } = await apiClient.POST("/auth/login", {
     params: { header: { "X-Client-Type": "WEB" } },
@@ -26,11 +38,7 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
     throw error as ApiErrorResponse;
   }
 
-  if (!data.data) {
-    throw new Error("Beklenmeyen bir yanıt alındı.");
-  }
-
-  return data.data;
+  return unwrapAuthResponse(data);
 }
 
 export async function register(payload: RegisterPayload): Promise<AuthResponse> {
@@ -43,9 +51,5 @@ export async function register(payload: RegisterPayload): Promise<AuthResponse> 
     throw error as ApiErrorResponse;
   }
 
-  if (!data.data) {
-    throw new Error("Beklenmeyen bir yanıt alındı.");
-  }
-
-  return data.data;
+  return unwrapAuthResponse(data);
 }

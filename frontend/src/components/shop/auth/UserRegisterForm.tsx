@@ -10,7 +10,7 @@ import {
   type ApiValidationErrorResponse,
 } from "@/lib/api-error";
 import { register } from "@/lib/services/auth";
-import { setAccessTokenCookie } from "@/lib/auth-token";
+import { setAccessTokenCookie, setUserDisplayName } from "@/lib/auth-token";
 
 export function UserRegisterForm() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export function UserRegisterForm() {
   const [error, setError] = useState<ApiErrorResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     setIsSubmitting(true);
@@ -61,6 +61,9 @@ export function UserRegisterForm() {
     try {
       const auth = await register({ email, password, fullName });
       setAccessTokenCookie(auth.accessToken ?? "", auth.expiresIn ?? 900);
+      if (auth.user?.fullName) {
+        setUserDisplayName(auth.user.fullName);
+      }
       router.push("/");
     } catch (err) {
       setError(err as ApiErrorResponse);
