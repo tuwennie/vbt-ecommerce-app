@@ -2,10 +2,10 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Info } from "lucide-react";
 import { getApiErrorMessage, type ApiErrorResponse } from "@/lib/api-error";
 import { login } from "@/lib/services/auth";
-import { setAccessTokenCookie } from "@/lib/auth-token";
+import { persistAuthSession } from "@/lib/auth-token";
 
 const NOT_ADMIN_ERROR: ApiErrorResponse = {
   success: false,
@@ -17,6 +17,7 @@ const NOT_ADMIN_ERROR: ApiErrorResponse = {
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const sessionExpired = searchParams.get("sessionExpired") === "true";
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<ApiErrorResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,7 +40,7 @@ export function LoginForm() {
         return;
       }
 
-      setAccessTokenCookie(auth.accessToken ?? "", auth.expiresIn ?? 900);
+      persistAuthSession(auth);
       const redirectTo = searchParams.get("redirectTo") || "/admin/dashboard";
       router.push(redirectTo);
     } catch (err) {
@@ -50,6 +51,13 @@ export function LoginForm() {
 
   return (
     <form className="w-full max-w-sm" onSubmit={handleSubmit}>
+      {sessionExpired && (
+        <div className="mb-[clamp(0.75rem,3vw,1rem)] flex items-start gap-2 rounded-lg bg-secondary/10 px-3 py-2 text-[clamp(0.75rem,2.5vw,0.875rem)] text-secondary">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>Oturumun sona erdi. Devam etmek için tekrar giriş yap.</span>
+        </div>
+      )}
+
       <h1 className="text-[clamp(1.125rem,4.5vw,1.5rem)] font-semibold text-text-main">
         Giriş Yap
       </h1>
@@ -124,11 +132,14 @@ export function LoginForm() {
         </label>
       </div>
 
-        {error && (
-          <p data-testid="auth-error" className="mt-[clamp(0.75rem,3vw,1rem)] rounded-lg bg-error/10 px-3 py-2 text-[clamp(0.75rem,2.5vw,0.875rem)] text-error">
-    {getApiErrorMessage(error)}
-          </p>
-        )}
+      {error && (
+        <p
+          data-testid="auth-error"
+          className="mt-[clamp(0.75rem,3vw,1rem)] rounded-lg bg-error/10 px-3 py-2 text-[clamp(0.75rem,2.5vw,0.875rem)] text-error"
+        >
+          {getApiErrorMessage(error)}
+        </p>
+      )}
 
       <button
         type="submit"

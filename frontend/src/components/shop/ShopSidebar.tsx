@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { X, Home, LogOut, LogIn } from "lucide-react";
+import { X, Home, LogOut, LogIn, User as UserIcon } from "lucide-react";
 import { SHOP_CATEGORIES } from "@/lib/shop-categories";
 import {
   clearAccessTokenCookie,
@@ -11,6 +11,7 @@ import {
   getAccessTokenFromCookie,
   getUserDisplayName,
 } from "@/lib/auth-token";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface ShopSidebarProps {
   open: boolean;
@@ -34,19 +35,22 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
   const activeCategory = pathname === "/search" ? searchParams.get("category") : null;
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [displayName, setDisplayName] = useState<string | null>(null);
+  const [cachedName, setCachedName] = useState<string | null>(null);
 
   useEffect(() => {
-
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(!!getAccessTokenFromCookie());
-    setDisplayName(getUserDisplayName());
+    setCachedName(getUserDisplayName());
   }, [pathname]);
+
+  const { data: user } = useCurrentUser();
+  const displayName = user?.fullName ?? cachedName ?? "Kullanıcı";
 
   function handleLogout() {
     clearAccessTokenCookie();
     clearUserDisplayName();
     setIsLoggedIn(false);
-    setDisplayName(null);
+    setCachedName(null);
     onClose();
     router.push("/login");
   }
@@ -62,7 +66,7 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-border bg-surface transition-transform duration-200 md:static md:z-auto md:w-64 md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-border bg-surface transition-transform duration-200 md:w-64 md:translate-x-0 ${
           open ? "translate-x-0" : ""
         }`}
       >
@@ -80,7 +84,7 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
           </button>
         </div>
 
-        <nav className="flex-1 space-y-1 px-3 pt-3 md:pt-6">
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 pt-3 md:pt-6">
           <Link
             href="/"
             onClick={onClose}
@@ -93,6 +97,21 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
             <Home className="h-4 w-4 shrink-0" />
             Ana Sayfa
           </Link>
+
+          {isLoggedIn && (
+            <Link
+              href="/account"
+              onClick={onClose}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                pathname === "/account"
+                  ? "bg-secondary/10 text-secondary"
+                  : "text-text-main hover:bg-neutral"
+              }`}
+            >
+              <UserIcon className="h-4 w-4 shrink-0" />
+              Profilim
+            </Link>
+          )}
 
           <p className="px-3 pb-1 pt-4 text-xs font-medium uppercase tracking-wide text-text-muted">
             Categories
@@ -120,19 +139,23 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
           })}
         </nav>
 
-        <div className="border-t border-border">
+        <div className="shrink-0 border-t border-border">
           {isLoggedIn ? (
             <>
-              <div className="flex items-center gap-3 px-6 py-4">
+              <Link
+                href="/account"
+                onClick={onClose}
+                className="flex items-center gap-3 px-6 py-4 hover:bg-neutral"
+              >
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-white">
-                  {displayName ? initialsOf(displayName) : "?"}
+                  {initialsOf(displayName)}
                 </span>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-text-main">
-                    {displayName ?? "Kullanıcı"}
+                    {displayName}
                   </p>
                 </div>
-              </div>
+              </Link>
               <button
                 type="button"
                 onClick={handleLogout}

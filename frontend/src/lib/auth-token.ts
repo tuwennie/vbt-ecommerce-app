@@ -27,3 +27,20 @@ export function getUserDisplayName(): string | null {
   const match = document.cookie.match(/(?:^|; )user_name=([^;]*)/);
   return match ? decodeURIComponent(match[1]) : null;
 }
+
+export function persistAuthSession(auth: {
+  accessToken?: string;
+  expiresIn?: number;
+  user?: { fullName?: string };
+}) {
+  if (!auth.accessToken) {
+    throw new Error("Giriş başarılı ama token alınamadı.");
+  }
+
+  const maxAge = auth.expiresIn && auth.expiresIn > 0 ? auth.expiresIn : 900;
+  setAccessTokenCookie(auth.accessToken, maxAge);
+
+  if (auth.user?.fullName) {
+    setUserDisplayName(auth.user.fullName);
+  }
+}

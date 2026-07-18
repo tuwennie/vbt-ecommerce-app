@@ -10,7 +10,7 @@ import {
   type ApiValidationErrorResponse,
 } from "@/lib/api-error";
 import { register } from "@/lib/services/auth";
-import { setAccessTokenCookie, setUserDisplayName } from "@/lib/auth-token";
+import { persistAuthSession } from "@/lib/auth-token";
 
 export function UserRegisterForm() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export function UserRegisterForm() {
   const [error, setError] = useState<ApiErrorResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     setIsSubmitting(true);
@@ -60,10 +60,7 @@ export function UserRegisterForm() {
 
     try {
       const auth = await register({ email, password, fullName });
-      setAccessTokenCookie(auth.accessToken ?? "", auth.expiresIn ?? 900);
-      if (auth.user?.fullName) {
-        setUserDisplayName(auth.user.fullName);
-      }
+      persistAuthSession(auth);
       router.push("/");
     } catch (err) {
       setError(err as ApiErrorResponse);
@@ -187,7 +184,7 @@ export function UserRegisterForm() {
       </div>
 
       {error && (
-        <div className="mt-[clamp(0.75rem,3vw,1rem)] rounded-lg bg-error/10 px-3 py-2 text-[clamp(0.75rem,2.5vw,0.875rem)] text-error">
+        <div data-testid="auth-error" className="mt-[clamp(0.75rem,3vw,1rem)] rounded-lg bg-error/10 px-3 py-2 text-[clamp(0.75rem,2.5vw,0.875rem)] text-error">
           <p>{getApiErrorMessage(error)}</p>
         </div>
       )}

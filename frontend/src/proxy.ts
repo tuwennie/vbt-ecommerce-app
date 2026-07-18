@@ -1,20 +1,29 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const LOGIN_PATH = "/admin";
 const AUTH_COOKIE = "access_token";
+
+const PROTECTED_AREAS = [
+  { prefix: "/admin", loginPath: "/admin" },
+  { prefix: "/account", loginPath: "/login" },
+] as const;
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname === LOGIN_PATH) {
+  const area = PROTECTED_AREAS.find((a) => pathname.startsWith(a.prefix));
+  if (!area) {
+    return NextResponse.next();
+  }
+
+  if (pathname === area.loginPath) {
     return NextResponse.next();
   }
 
   const token = request.cookies.get(AUTH_COOKIE)?.value;
 
   if (!token) {
-    const loginUrl = new URL(LOGIN_PATH, request.url);
+    const loginUrl = new URL(area.loginPath, request.url);
     loginUrl.searchParams.set("redirectTo", pathname);
     return NextResponse.redirect(loginUrl);
   }
@@ -23,5 +32,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/account/:path*"],
 };
