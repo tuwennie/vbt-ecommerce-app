@@ -80,3 +80,23 @@
     *   *Engel:* Yok.
 
 **PM Günlük Özeti:** Projemizde bugün tüm katmanların gerçek veri entegrasyonuna (Live Data) geçişi için kritik altyapı çalışmaları tamamlandı. Backend'de veritabanı seed süreci otomatize edilirken, Frontend ve Mobil taraflarında API servis katmanları bu yapıya göre standartlaştırıldı. Ekip, canlı veritabanı üzerinden uçtan uca çalışmaya hazır durumda. Çok verimli bir geliştirme günü oldu.
+
+## Gün 5 - 18.07.2026
+
+*   **Tuba (PM/Design):** 
+    *   *Bugün Yapılanlar:* Ekibin genel görev takibi ve koordinasyonu yönetildi. Üyelerin birbirini beklemesini engelleyecek yönlendirmeler yapılarak iş akışının eşzamanlı ve kesintisiz yürütülmesi sağlandı. Frontend ve QA tarafında İkram’a yönelik dört yeni görev ataması gerçekleştirildi.
+    *   *Engel (Blocker):* Yok.
+
+*   **Kübra (Backend):**
+    *   *Bugün Yapılanlar:* Kimlik doğrulama modülü (BE-3) tamamlandı ve uçtan uca test edildi. POST /auth/register, login, refresh ve logout endpoint'leri; başarılı senaryoların yanı sıra hatalı şifre, mükerrer e-posta ve süresi dolmuş/kullanılmış token gibi negatif senaryolarla sözleşmeye tam uyumlu şekilde doğrulandı.
+    *   *Engel (Blocker):* Yok.
+
+*   **İkram (Frontend/QA):**
+    *   *Bugün Yapılanlar:* FE-7 görevleri tamamlandı. Auth modülü gerçek API ile entegre edildi. openapi-fetch + cookie + Next.js middleware tabanlı güvenli mimari korunarak Auth süreçlerine yönelik Playwright testleri iyileştirildi. (Kübra’nın merge işleminin ardından manuel testler için hazırlıklar tamamlandı.)
+    *   *Engel (Blocker):* Yok (Token'lar teslim alındı).
+
+*   **Zeliha (Mobil):**
+    *   *Bugün Yapılanlar:* Backend API'sinden gelen güncel veri yapısı ile ürün listesi mimariye entegre edilerek ProductModel güncellendi. Hatalı veri alımı durumunda uygulamanın çökmesini engelleyen güvenlik kontrolleri eklendi. Bağlantı zaman aşımı senaryoları simüle edildi ve arayüze "Yeniden Dene" (Retry) butonu kazandırılarak kullanıcı deneyimi iyileştirildi.
+    *   *Engel (Blocker):* Yok.
+
+**PM Günlük Özeti:** Projemizde bugün güvenlik ve veri kararlılığı odaklı bir gün geride bırakıldı. Backend tarafında Auth servisleri sözleşme ile tam uyumlu hale getirilirken, Frontend'de güvenli bir oturum yönetimi mimarisi kuruldu. Mobil taraf ise gerçek API verileriyle hata yönetimi ve dayanıklılık (resilience) testlerini başarıyla tamamladı. Ekip, canlı veritabanı entegrasyonu ile tam kapasite çalışmaya devam ediyor.
