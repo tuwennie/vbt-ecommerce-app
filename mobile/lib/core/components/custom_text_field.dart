@@ -37,14 +37,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.labelText,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+        if (widget.labelText.isNotEmpty) ...[
+          Text(
+            widget.labelText,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
           ),
-        ),
+          const SizedBox(height: 6),
+        ],
         const SizedBox(height: 6),
         TextFormField(
           controller: widget.controller,
