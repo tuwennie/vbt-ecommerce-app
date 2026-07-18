@@ -4,27 +4,40 @@ import { useState } from "react";
 import { Heart, ShoppingCart, ImageOff } from "lucide-react";
 import type { FeaturedProduct } from "@/lib/services/products-api";
 
-function formatPrice(value: number | undefined, currency: string | undefined) {
-  if (value === undefined) return "—";
-  return value.toLocaleString("tr-TR", {
+function formatPrice(value: number | string | undefined, currency: string | undefined) {
+  if (value === undefined || value === null) return "—";
+  const numeric = typeof value === "string" ? Number(value) : value;
+  if (Number.isNaN(numeric)) return "—";
+
+  return numeric.toLocaleString("tr-TR", {
     style: "currency",
     currency: currency ?? "TRY",
     maximumFractionDigits: 0,
   });
 }
 
+function isPlaceholderImage(url: string) {
+  return /placeholder|dummyimage|via\.placeholder/i.test(url);
+}
+
 export function ProductCard({ product }: { product: FeaturedProduct }) {
   const [isFavorite, setIsFavorite] = useState(false);
-  const imageUrl = product.images?.[0]?.imageUrl;
+  const rawImageUrl = product.images?.[0]?.imageUrl;
+  const imageUrl = rawImageUrl && !isPlaceholderImage(rawImageUrl) ? rawImageUrl : null;
 
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-surface">
       <div className="relative aspect-square bg-neutral">
         {imageUrl ? (
-          <img src={imageUrl} alt={product.name ?? ""} className="h-full w-full object-cover" />
+          <img
+            src={imageUrl}
+            alt={product.name ?? ""}
+            className="h-full w-full object-cover"
+          />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-text-muted">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-text-muted">
             <ImageOff className="h-8 w-8" />
+            <span className="text-xs">Görsel yakında</span>
           </div>
         )}
 
@@ -35,7 +48,9 @@ export function ProductCard({ product }: { product: FeaturedProduct }) {
           aria-pressed={isFavorite}
           className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm hover:bg-white"
         >
-          <Heart className={`h-4 w-4 ${isFavorite ? "fill-error text-error" : "text-text-muted"}`} />
+          <Heart
+            className={`h-4 w-4 ${isFavorite ? "fill-error text-error" : "text-text-muted"}`}
+          />
         </button>
       </div>
 
@@ -43,7 +58,9 @@ export function ProductCard({ product }: { product: FeaturedProduct }) {
         <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
           {product.category?.name ?? "Genel"}
         </p>
-        <p className="mt-1 line-clamp-2 text-sm font-semibold text-text-main">{product.name}</p>
+        <p className="mt-1 line-clamp-2 text-sm font-semibold text-text-main">
+          {product.name}
+        </p>
 
         <div className="mt-2 flex items-baseline gap-2">
           <span className="text-base font-semibold text-text-main">
