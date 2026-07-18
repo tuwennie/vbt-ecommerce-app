@@ -33,7 +33,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-border bg-surface transition-transform duration-200 md:static md:z-auto md:w-64 md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-border bg-surface transition-transform duration-200 md:w-64 md:translate-x-0 ${
           open ? "translate-x-0" : ""
         }`}
       >
@@ -54,7 +54,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </button>
         </div>
 
-        <nav className="flex-1 space-y-1 px-3">
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname.startsWith(item.href);
             const Icon = item.icon;
@@ -77,7 +77,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           })}
         </nav>
 
-        <div className="border-t border-border">
+        <div className="shrink-0 border-t border-border">
           <div className="flex items-center gap-3 px-6 py-4">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-white">
               AD
