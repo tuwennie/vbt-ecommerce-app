@@ -8,12 +8,15 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
+import { AuthThrottlerGuard } from './guards/auth-throttler.guard';
 
 const REFRESH_COOKIE_NAME = 'refreshToken';
 const REFRESH_COOKIE_PATH = '/api/v1/auth';
@@ -24,6 +27,8 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(AuthThrottlerGuard)
+  @Throttle({ auth: { limit: 5, ttl: 60000 } })
   async register(
     @Body() dto: RegisterDto,
     @Headers('x-client-type') clientType: string,
@@ -35,6 +40,8 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthThrottlerGuard)
+  @Throttle({ auth: { limit: 5, ttl: 60000 } })
   async login(
     @Body() dto: LoginDto,
     @Headers('x-client-type') clientType: string,
@@ -46,6 +53,8 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthThrottlerGuard)
+  @Throttle({ auth: { limit: 5, ttl: 60000 } })
   async refresh(
     @Body() dto: RefreshDto,
     @Headers('x-client-type') clientType: string,
