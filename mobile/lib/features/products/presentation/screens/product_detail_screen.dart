@@ -50,7 +50,7 @@ class ProductDetailScreen extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           image: DecorationImage(
-                            image: NetworkImage(product.imageUrls.first),
+                            image: NetworkImage(product.images.first.imageUrl),
                             fit: BoxFit.cover,
                           ),
                         ),

@@ -4,9 +4,13 @@
 class ApiEndpoints {
   ApiEndpoints._();
 
-  static const String defaultBaseUrl = 'http://10.0.2.2:3000/api/v1';
+  static const String defaultBaseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:3000/api/v1',
+  );
   // Not: Android emülatörde localhost yerine 10.0.2.2 kullanılır.
   // iOS simülatörde http://localhost:3000/api/v1 çalışır.
+
 
   // Auth
   static const String register = '/auth/register';

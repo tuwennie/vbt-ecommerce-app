@@ -25,11 +25,53 @@ class ProductListScreen extends ConsumerWidget {
       body: productsState.when(
         // 1. Durum: Veri Yüklenirken (DoD Kriteri: Skeleton Görünümü)
         loading: () => _buildSkeletonGrid(),
-        
+
         // 2. Durum: Hata Alındığında
-        error: (err, stack) => Center(
-          child: Text('Ürünler yüklenirken bir hata oluştu: $err'),
-        ),
+        error: (err, stack) {
+
+          final cleanErrorMessage = err.toString().replaceAll("Exception: ", "");
+
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline_rounded, 
+                    color: Colors.redAccent, 
+                    size: 48,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    cleanErrorMessage,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 16, 
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // Riverpod'ın bu provider'ı sıfırlayıp API'yi tekrar tetiklemesini sağlar
+                      ref.invalidate(productListProvider);
+                    },
+                    icon: const Icon(Icons.refresh_rounded),
+                    label: const Text("Yeniden Dene"),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
         
         // 3. Durum: Veri Başarıyla Geldiğinde (Grid Listeleme)
         data: (products) {
@@ -47,7 +89,6 @@ class ProductListScreen extends ConsumerWidget {
               
               return GestureDetector(
                 onTap: () {
-                  // go_router ile ekstra parametre göndererek detay sayfasına dallanıyoruz
                   context.push(
                     AppRouter.productDetail,
                     extra: {
@@ -57,7 +98,6 @@ class ProductListScreen extends ConsumerWidget {
                   );
                 },
                 child: Container(
-                  // Eski Container kodlarının tamamı aynen kalıyor...
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(12),
@@ -68,13 +108,38 @@ class ProductListScreen extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: Container(
+                          width: double.infinity,
                           decoration: BoxDecoration(
                             color: Colors.grey[200],
                             borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                            image: DecorationImage(
-                              image: NetworkImage(product.imageUrls.first),
-                              fit: BoxFit.cover,
-                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                            child: product.images.isNotEmpty
+                                ? Image.network(
+                                    // model yapısına göre liste elemanının 'imageUrl' alanına ulaşıyoruz.
+                                    product.images.first.imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        color: Colors.grey[300],
+                                        child: const Icon(
+                                          Icons.image_not_supported_outlined,
+                                          color: Colors.grey,
+                                          size: 32,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                // Eğer backend'den hiç görsel gelmediyse (.first çökmesini önlemek için) direkt hata widget'ını gösteriyoruz.
+                                : Container(
+                                    color: Colors.grey[300],
+                                    child: const Icon(
+                                      Icons.image_not_supported_outlined,
+                                      color: Colors.grey,
+                                      size: 32,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),

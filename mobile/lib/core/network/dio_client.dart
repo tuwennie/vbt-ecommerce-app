@@ -2,13 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'api_endpoints.dart';
 
-/// Tüm mobil isteklerinin geçtiği tekil Dio istemcisi.
-///
-/// Sözleşme kuralları (backend/docs/openapi.yaml):
-/// - Her istekte `X-Client-Type: MOBILE` header'ı ZORUNLU (auth uçları için).
-///   Bu sayede refreshToken cookie yerine JSON gövdede döner.
-/// - Başarılı yanıtlar `{ success: true, data: ... }` zarfıyla döner.
-/// - Hata yanıtları `{ success: false, message, statusCode, status }` şemasında.
+/// Tüm mobil isteklerinin geçtiği tekil Dio istemcisi ve merkezi hata yönetim katmanı.
 class DioClient {
   DioClient._internal(this._storage) {
     _dio = Dio(
@@ -32,10 +26,32 @@ class DioClient {
           }
           handler.next(options);
         },
-        onError: (error, handler) {
-          // TODO(Zeliha): 401 alındığında refresh token akışıyla otomatik
-          // yenileme + orijinal isteği tekrar deneme (retry) burada eklenecek.
-          handler.next(error);
+        onError: (DioException error, handler) {
+          final statusCode = error.response?.statusCode;
+          String errorMessage = "Beklenmedik bir ağ hatası oluştu.";
+
+          if (statusCode == 401) {
+            errorMessage = "Oturum süreniz doldu, lütfen tekrar giriş yapın (401).";
+          
+          } else if (statusCode == 404) {
+            errorMessage = "Aradığınız kaynak sunucuda bulunamadı (404).";
+          } else if (statusCode != null && statusCode >= 500) {
+            errorMessage = "Sunucu şu anda yanıt vermiyor. Lütfen daha sonra tekrar deneyin (500).";
+          } else if (error.type == DioExceptionType.connectionTimeout || 
+                     error.type == DioExceptionType.receiveTimeout) {
+            errorMessage = "Sunucu bağlantı zaman aşımına uğradı, lütfen internetinizi kontrol edin.";
+          } else if (error.message != null && error.message!.contains('SocketException')) {
+            errorMessage = "İnternet bağlantısı bulunamadı.";
+          }
+
+          final customError = DioException(
+            requestOptions: error.requestOptions,
+            response: error.response,
+            type: error.type,
+            error: errorMessage,
+          );
+
+          return handler.next(customError);
         },
       ),
     );
