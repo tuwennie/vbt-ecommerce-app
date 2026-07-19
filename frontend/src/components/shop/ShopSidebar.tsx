@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { X, Home, LogOut, LogIn, User as UserIcon } from "lucide-react";
 import { SHOP_CATEGORIES } from "@/lib/shop-categories";
 import {
@@ -12,6 +13,7 @@ import {
   getUserDisplayName,
 } from "@/lib/auth-token";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { CART_QUERY_KEY } from "@/hooks/use-cart";
 
 interface ShopSidebarProps {
   open: boolean;
@@ -32,6 +34,7 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const activeCategory = pathname === "/search" ? searchParams.get("category") : null;
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -49,6 +52,9 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
   function handleLogout() {
     clearAccessTokenCookie();
     clearUserDisplayName();
+    // DoD: kullanıcı çıkış yapınca sepet temizlenmeli — bir sonraki
+    // ziyaretçi/kullanıcı önceki kişinin sepetini görmemeli.
+    queryClient.removeQueries({ queryKey: CART_QUERY_KEY });
     setIsLoggedIn(false);
     setCachedName(null);
     onClose();

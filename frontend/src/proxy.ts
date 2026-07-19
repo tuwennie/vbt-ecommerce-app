@@ -4,6 +4,7 @@ import type { NextRequest } from "next/server";
 const PROTECTED_AREAS = [
   { prefix: "/admin", loginPath: "/admin", cookieName: "admin_access_token" },
   { prefix: "/account", loginPath: "/login", cookieName: "access_token" },
+  { prefix: "/cart", loginPath: "/login", cookieName: "access_token" },
 ] as const;
 
 export function proxy(request: NextRequest) {
@@ -30,5 +31,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/account/:path*"],
+  matcher: ["/admin/:path*", "/account/:path*", "/cart/:path*"],
 };
