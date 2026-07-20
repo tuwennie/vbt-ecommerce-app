@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const AUTH_COOKIE = "access_token";
-
 const PROTECTED_AREAS = [
-  { prefix: "/admin", loginPath: "/admin" },
-  { prefix: "/account", loginPath: "/login" },
+  { prefix: "/admin", loginPath: "/admin", cookieName: "admin_access_token" },
+  { prefix: "/account", loginPath: "/login", cookieName: "access_token" },
+  { prefix: "/cart", loginPath: "/login", cookieName: "access_token" },
 ] as const;
 
 export function proxy(request: NextRequest) {
@@ -20,7 +19,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get(AUTH_COOKIE)?.value;
+  const token = request.cookies.get(area.cookieName)?.value;
 
   if (!token) {
     const loginUrl = new URL(area.loginPath, request.url);
@@ -32,5 +31,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/account/:path*"],
+  matcher: ["/admin/:path*", "/account/:path*", "/cart/:path*"],
 };

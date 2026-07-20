@@ -39,8 +39,8 @@ export function LoginForm() {
         setIsSubmitting(false);
         return;
       }
+      persistAuthSession(auth, "admin");
 
-      persistAuthSession(auth);
       const redirectTo = searchParams.get("redirectTo") || "/admin/dashboard";
       router.push(redirectTo);
     } catch (err) {

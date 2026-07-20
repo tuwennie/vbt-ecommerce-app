@@ -16,7 +16,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
   const router = useRouter();
 
   function handleLogout() {
-    clearAccessTokenCookie();
+    clearAccessTokenCookie("admin");
     onClose();
     router.push("/admin");
   }
