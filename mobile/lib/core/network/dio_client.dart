@@ -21,18 +21,19 @@ class DioClient {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           final token = await _storage.read(key: _accessTokenKey);
-          if (token != null) {
+          if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
-          handler.next(options);
+          return handler.next(options);
         },
-        onError: (DioException error, handler) {
+        onError: (DioException error, handler) async {
           final statusCode = error.response?.statusCode;
           String errorMessage = "Beklenmedik bir ağ hatası oluştu.";
 
           if (statusCode == 401) {
             errorMessage = "Oturum süreniz doldu, lütfen tekrar giriş yapın (401).";
-          
+            // 401 hatası alındığında güvenli hafızadaki token'ları otomatik temizle
+            await clearTokens();
           } else if (statusCode == 404) {
             errorMessage = "Aradığınız kaynak sunucuda bulunamadı (404).";
           } else if (statusCode != null && statusCode >= 500) {
@@ -71,13 +72,56 @@ class DioClient {
 
   Dio get dio => _dio;
 
-  Future<void> saveTokens({required String accessToken, required String refreshToken}) async {
+  // Token İşlemleri
+  Future<void> saveTokens({required String accessToken, String? refreshToken}) async {
     await _storage.write(key: _accessTokenKey, value: accessToken);
-    await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    if (refreshToken != null) {
+      await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    }
+  }
+
+  Future<String?> getAccessToken() async {
+    return await _storage.read(key: _accessTokenKey);
   }
 
   Future<void> clearTokens() async {
     await _storage.delete(key: _accessTokenKey);
     await _storage.delete(key: _refreshTokenKey);
+  }
+
+  // Repository Katmanı İçin Yardımcı HTTP Metotları
+  Future<Response> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    return await _dio.get(path, queryParameters: queryParameters, options: options);
+  }
+
+  Future<Response> post(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    return await _dio.post(path, data: data, queryParameters: queryParameters, options: options);
+  }
+
+  Future<Response> put(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    return await _dio.put(path, data: data, queryParameters: queryParameters, options: options);
+  }
+
+  Future<Response> delete(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    return await _dio.delete(path, data: data, queryParameters: queryParameters, options: options);
   }
 }
