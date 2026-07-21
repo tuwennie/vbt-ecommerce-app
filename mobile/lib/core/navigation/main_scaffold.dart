@@ -1,73 +1,136 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/app_colors.dart';
-import 'app_router.dart';
+import '../../core/navigation/app_router.dart';
 
 class MainScaffold extends StatelessWidget {
   final Widget child;
+
   const MainScaffold({super.key, required this.child});
+
+  int _calculateSelectedIndex(BuildContext context) {
+    final String location = GoRouterState.of(context).uri.path;
+    if (location.startsWith(AppRouter.categories)) return 1;
+    if (location.startsWith(AppRouter.cart)) return 2;
+    if (location.startsWith(AppRouter.profile)) return 3;
+    return 0; // Default: Home / ProductList
+  }
+
+  void _onItemTapped(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        context.go(AppRouter.productList);
+        break;
+      case 1:
+        context.go(AppRouter.categories);
+        break;
+      case 2:
+        context.go(AppRouter.cart);
+        break;
+      case 3:
+        context.go(AppRouter.profile);
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Mevcut rotaya göre hangi sekmenin aktif olduğunu hesaplayalım
-    final String location = GoRouterState.of(context).uri.toString();
-    int currentIndex = 0;
-    if (location.startsWith(AppRouter.cart)) currentIndex = 1;
-    if (location.startsWith(AppRouter.favorites)) currentIndex = 2;
-    if (location.startsWith(AppRouter.profile)) currentIndex = 3;
+    final selectedIndex = _calculateSelectedIndex(context);
 
     return Scaffold(
       body: child,
+      // Alt boşluğu sıfırlayıp bar'ı sayfanın alt tarafında süzülen bir kart gibi konumlandırıyoruz
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppColors.border, width: 0.5)),
+        color: Colors.transparent,
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 8),
+        child: Container(
+          height: 68,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(36), // Tam oval kapsül görünümü
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
+            border: Border.all(
+              color: const Color(0xFFF3F4F6),
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(
+                context,
+                index: 0,
+                selectedIndex: selectedIndex,
+                icon: Icons.home_rounded,
+                unselectedIcon: Icons.home_outlined,
+              ),
+              _buildNavItem(
+                context,
+                index: 1,
+                selectedIndex: selectedIndex,
+                icon: Icons.menu_rounded, // Tasarımdaki 3 çizgili ikon
+                unselectedIcon: Icons.menu_rounded,
+              ),
+              _buildNavItem(
+                context,
+                index: 2,
+                selectedIndex: selectedIndex,
+                icon: Icons.shopping_cart_rounded,
+                unselectedIcon: Icons.shopping_cart_outlined,
+              ),
+              _buildNavItem(
+                context,
+                index: 3,
+                selectedIndex: selectedIndex,
+                icon: Icons.person_rounded,
+                unselectedIcon: Icons.person_outline_rounded,
+              ),
+            ],
+          ),
         ),
-        child: BottomNavigationBar(
-          currentIndex: currentIndex,
-          backgroundColor: AppColors.surface,
-          selectedItemColor: AppColors.brandBlue, // Aktif sekme Tuba'nın marka mavisi
-          unselectedItemColor: AppColors.textSecondary, // Pasif sekmeler gri
-          type: BottomNavigationBarType.fixed,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
-          unselectedLabelStyle: const TextStyle(fontSize: 11),
-          onTap: (index) {
-            switch (index) {
-              case 0:
-                context.go(AppRouter.productList);
-                break;
-              case 1:
-                context.go(AppRouter.cart);
-                break;
-              case 2:
-                context.go(AppRouter.favorites);
-                break;
-              case 3:
-                context.go(AppRouter.profile);
-                break;
-            }
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.explore_outlined),
-              activeIcon: Icon(Icons.explore),
-              label: 'Keşfet',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart_outlined),
-              activeIcon: Icon(Icons.shopping_cart),
-              label: 'Sepetim',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border),
-              activeIcon: Icon(Icons.favorite),
-              label: 'Favorilerim',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'Profilim',
-            ),
-          ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+    BuildContext context, {
+    required int index,
+    required int selectedIndex,
+    required IconData icon,
+    required IconData unselectedIcon,
+  }) {
+    final isSelected = index == selectedIndex;
+
+    return GestureDetector(
+      onTap: () => _onItemTapped(index, context),
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        width: 52,
+        height: 52,
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF3B82F6) : Colors.transparent, // Seçilince Parlak Mavi Yuvarlak
+          shape: BoxShape.circle,
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFF3B82F6).withOpacity(0.35),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [],
+        ),
+        child: Icon(
+          isSelected ? icon : unselectedIcon,
+          color: isSelected ? Colors.white : const Color(0xFF4B5563),
+          size: 26,
         ),
       ),
     );

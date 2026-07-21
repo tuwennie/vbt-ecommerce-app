@@ -90,7 +90,7 @@ class ProductDetailScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              product.description ?? 'Bu ürün için bir açıklama girilmemiş.',
+                              product.description,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: AppColors.textSecondary,
