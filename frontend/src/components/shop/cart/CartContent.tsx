@@ -147,14 +147,13 @@ export function CartContent() {
           <span className="text-text-muted">Toplam</span>
           <span className="text-lg font-semibold text-text-main">{formatPrice(cart?.total)}</span>
         </div>
-        <button
-          type="button"
-          disabled
-          title="Sipariş akışı henüz kurulmadı"
-          className="mt-4 w-full cursor-not-allowed rounded-lg bg-tertiary py-2.5 text-sm font-semibold text-white opacity-60"
+        <Link
+          href="/checkout"
+          data-testid="go-to-checkout-button"
+          className="mt-4 flex w-full items-center justify-center rounded-lg bg-tertiary py-2.5 text-sm font-semibold text-white hover:bg-tertiary/90"
         >
           Ödemeye Geç
-        </button>
+      </Link>
       </div>
     </div>
   );
