@@ -5,19 +5,17 @@ const PROTECTED_AREAS = [
   { prefix: "/admin", loginPath: "/admin", cookieName: "admin_access_token" },
   { prefix: "/account", loginPath: "/login", cookieName: "access_token" },
   { prefix: "/cart", loginPath: "/login", cookieName: "access_token" },
+  { prefix: "/checkout", loginPath: "/login", cookieName: "access_token" },
+  { prefix: "/order-success", loginPath: "/login", cookieName: "access_token" },
 ] as const;
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const area = PROTECTED_AREAS.find((a) => pathname.startsWith(a.prefix));
-  if (!area) {
-    return NextResponse.next();
-  }
+  if (!area) return NextResponse.next();
 
-  if (pathname === area.loginPath) {
-    return NextResponse.next();
-  }
+  if (pathname === area.loginPath) return NextResponse.next();
 
   const token = request.cookies.get(area.cookieName)?.value;
 
@@ -31,5 +29,11 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/account/:path*", "/cart/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/account/:path*",
+    "/cart/:path*",
+    "/checkout/:path*",
+    "/order-success/:path*",
+  ],
 };
