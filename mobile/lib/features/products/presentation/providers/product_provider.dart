@@ -2,31 +2,33 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../data/models/product_model.dart';
-import '../../data/repositories/product_repository_impl.dart'; // 👈 Somut uygulamayı (impl) import ediyoruz
+import '../../data/repositories/product_repository_impl.dart';
 import '../../domain/repositories/product_repository.dart';
 
-// Repository katmanını sağlayan basit bir provider
+// Repository katmanını sağlayan provider
 final productRepositoryProvider = Provider<ProductRepository>((ref) {
-  // DioClient singleton'ı doğru şekilde get etiyoruz
   return ProductRepositoryImpl(DioClient());
 });
 
 // UI katmanının dinleyeceği asenkron durum yöneticisi (AsyncNotifier)
 class ProductListNotifier extends AsyncNotifier<List<ProductModel>> {
-  late final ProductRepository _repository;
-
+  
+  // 🛡️ 'late final' kalıbını kaldırdık! 
+  // Repository'yi build metodu içinde güvenle alıyoruz.
   @override
   FutureOr<List<ProductModel>> build() async {
-    _repository = ref.watch(productRepositoryProvider);
     return _fetchLiveProducts();
   }
 
   Future<List<ProductModel>> _fetchLiveProducts() async {
-    // Arayüzdeki skeleton animasyonunu test etmek için bu gecikmeyi tutabilirsin
+    // Repository'yi her istek anında provider'dan güvenle çekiyoruz
+    final repository = ref.read(productRepositoryProvider);
+
+    // Arayüzdeki skeleton animasyonunu test etmek için gecikme
     await Future.delayed(const Duration(seconds: 1));
     
     // Canlı API çağrısını tetikliyoruz
-    return await _repository.getProducts();
+    return await repository.getProducts();
   }
 }
 

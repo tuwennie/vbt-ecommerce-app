@@ -2,6 +2,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'api_endpoints.dart';
 
+/// UI ve Repository katmanına anlaşılır mesaj dönmek için özel Exception sınıfı
+class CustomApiException implements Exception {
+  final String message;
+  final int? statusCode;
+
+  CustomApiException(this.message, {this.statusCode});
+
+  @override
+  String toString() => message;
+}
+
 /// Tüm mobil isteklerinin geçtiği tekil Dio istemcisi ve merkezi hata yönetim katmanı.
 class DioClient {
   DioClient._internal(this._storage) {
@@ -10,6 +21,7 @@ class DioClient {
         baseUrl: ApiEndpoints.defaultBaseUrl,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
+        sendTimeout: const Duration(seconds: 10),
         headers: const {
           'Content-Type': 'application/json',
           'X-Client-Type': 'MOBILE',
@@ -30,26 +42,37 @@ class DioClient {
           final statusCode = error.response?.statusCode;
           String errorMessage = "Beklenmedik bir ağ hatası oluştu.";
 
+          // 1. HTTP Durum Kodları Kontrolü
           if (statusCode == 401) {
-            errorMessage = "Oturum süreniz doldu, lütfen tekrar giriş yapın (401).";
-            // 401 hatası alındığında güvenli hafızadaki token'ları otomatik temizle
-            await clearTokens();
+            errorMessage = "Oturum süreniz doldu, lütfen tekrar giriş yapın.";
+            await clearTokens(); // Güvenli hafızadaki token'ları temizle
           } else if (statusCode == 404) {
             errorMessage = "Aradığınız kaynak sunucuda bulunamadı (404).";
           } else if (statusCode != null && statusCode >= 500) {
-            errorMessage = "Sunucu şu anda yanıt vermiyor. Lütfen daha sonra tekrar deneyin (500).";
-          } else if (error.type == DioExceptionType.connectionTimeout || 
-                     error.type == DioExceptionType.receiveTimeout) {
-            errorMessage = "Sunucu bağlantı zaman aşımına uğradı, lütfen internetinizi kontrol edin.";
+            errorMessage = "Sunucu şu anda yanıt vermiyor. Lütfen daha sonra tekrar deneyin.";
+          } 
+          // 2. Dio Zaman Aşımı ve Bağlantı Hataları Kontrolü
+          else if (error.type == DioExceptionType.connectionTimeout || 
+                   error.type == DioExceptionType.receiveTimeout ||
+                   error.type == DioExceptionType.sendTimeout) {
+            errorMessage = "Sunucu bağlantı zaman aşımına uğradı, lütfen internetinizi ve sunucuyu kontrol edin.";
+          } else if (error.type == DioExceptionType.connectionError) {
+            errorMessage = "Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin.";
           } else if (error.message != null && error.message!.contains('SocketException')) {
             errorMessage = "İnternet bağlantısı bulunamadı.";
           }
+
+          // 3. Hata Nesnesini Düzgün Bir Exception Olarak Paketleme
+          final customException = CustomApiException(
+            errorMessage,
+            statusCode: statusCode,
+          );
 
           final customError = DioException(
             requestOptions: error.requestOptions,
             response: error.response,
             type: error.type,
-            error: errorMessage,
+            error: customException, // String yerine Exception nesnesi veriyoruz
           );
 
           return handler.next(customError);

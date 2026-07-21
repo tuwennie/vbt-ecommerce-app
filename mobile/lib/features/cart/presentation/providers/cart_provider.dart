@@ -52,6 +52,21 @@ class CartNotifier extends StateNotifier<CartState> {
     }
   }
 
+  // Adet Güncelleme (Eklendi ➕)
+  Future<void> updateQuantity(String productId, int newQuantity) async {
+    if (newQuantity <= 0) {
+      await removeFromCart(productId);
+      return;
+    }
+    try {
+      // Repository'de isteği atıp güncel sepeti alıyoruz
+      final updatedCart = await _cartRepository.addToCart(productId: productId, quantity: newQuantity);
+      state = state.copyWith(cart: updatedCart);
+    } catch (e) {
+      state = state.copyWith(errorMessage: 'Adet güncellenemedi.');
+    }
+  }
+
   // Sepetten Ürün Çıkar
   Future<void> removeFromCart(String productId) async {
     try {
@@ -60,6 +75,11 @@ class CartNotifier extends StateNotifier<CartState> {
     } catch (e) {
       state = state.copyWith(errorMessage: 'Ürün sepetten silinemedi.');
     }
+  }
+
+  // Sepeti Sıfırla (Eklendi 🧹)
+  void clearCart() {
+    state = CartState(cart: CartModel(items: [], totalPrice: 0));
   }
 }
 

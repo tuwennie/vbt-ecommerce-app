@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
+import '../../features/cart/presentation/screens/cart_screen.dart';
 import '../../features/products/presentation/screens/product_list_screen.dart';
 import '../../features/products/presentation/screens/product_detail_screen.dart';
 import 'main_scaffold.dart';
@@ -21,7 +22,7 @@ class AppRouter {
   static const String productList = '/products';
   static const String productDetail = '/product-detail';
   static const String cart = '/cart';
-  static const String favorites = '/favorites';
+  static const String categories = '/categories';
   static const String profile = '/profile';
 
   // Global navigasyon anahtarı
@@ -30,7 +31,7 @@ class AppRouter {
 
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: login, // İlk açılışta Tuba'nın Giriş ekranı gelsin
+    initialLocation: login, 
     routes: [
       // Auth Rotaları (Alt bar görünmeyecek olan bağımsız ekranlar)
       GoRoute(
@@ -44,7 +45,7 @@ class AppRouter {
         builder: (context, state) => const RegisterScreen(),
       ),
       
-      // Ürün Detay (Alt barın üstünü kaplaması için rootNavigatorKey ile açıyoruz)
+      // Ürün Detay
       GoRoute(
         path: productDetail,
         parentNavigatorKey: rootNavigatorKey,
@@ -57,7 +58,7 @@ class AppRouter {
         },
       ),
 
-      // Tuba'nın BottomNavBar tasarımını içeren sekmeli yapı (ShellRoute)
+      // BottomNavBar 
       ShellRoute(
         navigatorKey: shellNavigatorKey,
         builder: (context, state, child) {
@@ -69,12 +70,12 @@ class AppRouter {
             builder: (context, state) => const ProductListScreen(),
           ),
           GoRoute(
-            path: cart,
-            builder: (context, state) => const PlaceholderScreen(title: 'Sepetim Ekranı'),
+            path: categories,
+            builder: (context, state) => const PlaceholderScreen(title: 'Kategoriler Ekranı'),
           ),
           GoRoute(
-            path: favorites,
-            builder: (context, state) => const PlaceholderScreen(title: 'Favorilerim Ekranı'),
+            path: cart,
+            builder: (context, state) => const CartScreen(),
           ),
           GoRoute(
             path: profile,
