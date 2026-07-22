@@ -106,7 +106,7 @@
 
 **PM Günlük Özeti:** Projede backend servisleri ve güvenlik katmanları kararlılıkla ilerlerken; frontend tarafında cookie ve oturum yönetimleri, mobil tarafta ise token interceptor ve sepet entegrasyonları başarıyla tamamlandı. Ekip, modül entegrasyonlarını ve test kapsamını hız kesmeden sürdürmektedir.
 
-### Gün 7 - 22.07.2026 
+### Gün 7 - 21.07.2026 
 
 * **Tuba (PM/Design):**
   * *Bugün Yapılanlar:* Kategoriler ve Favoriler modülleri koordine edildi. Bu doğrultuda yeni backend görevleri (BE-5 ve BE-6 / BE8-9) planlanarak atandı.
