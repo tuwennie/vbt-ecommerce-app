@@ -105,3 +105,20 @@
   * *Engel (Blocker):* Yok.
 
 **PM Günlük Özeti:** Projede backend servisleri ve güvenlik katmanları kararlılıkla ilerlerken; frontend tarafında cookie ve oturum yönetimleri, mobil tarafta ise token interceptor ve sepet entegrasyonları başarıyla tamamlandı. Ekip, modül entegrasyonlarını ve test kapsamını hız kesmeden sürdürmektedir.
+
+### Gün 7 - 22.07.2026 
+
+* **Tuba (PM/Design):**
+  * *Bugün Yapılanlar:* Kategoriler ve Favoriler modülleri koordine edildi. Bu doğrultuda yeni backend görevleri (BE-5 ve BE-6 / BE8-9) planlanarak atandı.
+  * *Engel (Blocker):* Yok.
+* **Kübra (Backend):**
+  * *Bugün Yapılanlar:* Categories ve Admin Categories modülü kodlanarak tamamlandı.
+  * *Engel (Blocker):* Yok.
+* **Ikram (Frontend/QA):**
+  * *Bugün Yapılanlar:* Multi-step Checkout akışı kuruldu, adres yönetimi ve sipariş oluşturma tamamlandı. Ödeme simülasyonu eklendi, route koruması genişletilerek `/checkout` ve `/order-success` sayfaları koruma altına alındı (artık giriş yapılmadan erişilemiyor).
+  * *Engel (Blocker):* Yok.
+* **Zeliha (Mobil):**
+  * *Bugün Yapılanlar:* MOB-6 kapsamında CartScreen arayüz tasarımı projeye eklendi. `CartNotifier` içerisine adet güncelleme (`updateQuantity`) ve sepet temizleme iş mantıkları eklendi; sepetin boş, yükleniyor ve hata durumları ele alındı.
+  * *Engel (Blocker):* Zeliha'nın Docker ve `.env` (DATABASE_URL) arasında yaşadığı lokal port/bağlantı uyumsuzluğu sorunu `.env` güncellenerek giderildi.
+
+**PM Günlük Özeti:** Projede kategori ve admin yönetimleri arka planda tamamlanırken; frontend tarafında kritik checkout adımları ve güvenli route yapılandırmaları devreye alındı. Mobil tarafta ise sepet ekranı mimarisi ve hata durumları başarıyla kurgulanmış, yaşanan küçük bir lokal çevre değişkeni (env) engeli hızlıca çözülmüştür.
