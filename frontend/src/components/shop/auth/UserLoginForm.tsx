@@ -7,6 +7,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight, Info } from "lucide-react";
 import { getApiErrorMessage, type ApiErrorResponse } from "@/lib/api-error";
 import { login } from "@/lib/services/auth";
 import { persistAuthSession } from "@/lib/auth-token";
+import { toast } from "@/lib/toast";
 
 function LoginFormContent() {
   const router = useRouter();
@@ -28,9 +29,11 @@ function LoginFormContent() {
     try {
       const auth = await login({ email, password });
       persistAuthSession(auth);
+      toast.success("Giriş başarılı, hoş geldin!");
       router.push("/");
-    } catch (err) {
+    }catch (err) {
       setError(err as ApiErrorResponse);
+      toast.error(getApiErrorMessage(err as ApiErrorResponse));
       setIsSubmitting(false);
     }
   }

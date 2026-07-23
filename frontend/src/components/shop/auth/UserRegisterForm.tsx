@@ -11,6 +11,7 @@ import {
 } from "@/lib/api-error";
 import { register } from "@/lib/services/auth";
 import { persistAuthSession } from "@/lib/auth-token";
+import { toast } from "@/lib/toast";
 
 export function UserRegisterForm() {
   const router = useRouter();
@@ -61,9 +62,11 @@ export function UserRegisterForm() {
     try {
       const auth = await register({ email, password, fullName });
       persistAuthSession(auth);
-      router.push("/");
-    } catch (err) {
+      toast.success("Giriş başarılı, hoş geldin!");
+      router.push("/");}
+    catch (err) {
       setError(err as ApiErrorResponse);
+      toast.error(getApiErrorMessage(err as ApiErrorResponse));
       setIsSubmitting(false);
     }
   }

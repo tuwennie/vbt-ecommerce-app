@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Info } from "lucide-react";
 import { getApiErrorMessage, type ApiErrorResponse } from "@/lib/api-error";
 import { login } from "@/lib/services/auth";
+import { toast } from "@/lib/toast";
 import { persistAuthSession } from "@/lib/auth-token";
 
 const NOT_ADMIN_ERROR: ApiErrorResponse = {
@@ -36,15 +37,19 @@ export function LoginForm() {
 
       if (auth.user?.role !== "ADMIN") {
         setError(NOT_ADMIN_ERROR);
+        toast.error(NOT_ADMIN_ERROR.message);
         setIsSubmitting(false);
         return;
       }
-      persistAuthSession(auth, "admin");
 
+      persistAuthSession(auth, "admin");
+      toast.success("Giriş başarılı, hoş geldin!");
       const redirectTo = searchParams.get("redirectTo") || "/admin/dashboard";
-      router.push(redirectTo);
-    } catch (err) {
+      router.push(redirectTo);}
+      
+    catch (err) {
       setError(err as ApiErrorResponse);
+      toast.error(getApiErrorMessage(err as ApiErrorResponse));
       setIsSubmitting(false);
     }
   }

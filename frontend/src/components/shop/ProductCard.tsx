@@ -6,7 +6,7 @@ import { Heart, ShoppingCart, ImageOff, Check } from "lucide-react";
 import type { FeaturedProduct } from "@/lib/services/products-api";
 import { useAddCartItem } from "@/hooks/use-cart";
 import { getAccessTokenFromCookie } from "@/lib/auth-token";
-import { getApiErrorMessage } from "@/lib/api-error";
+import { toast } from "@/lib/toast";
 
 function formatPrice(value: number | string | undefined, currency: string | undefined) {
   if (value === undefined || value === null) return "—";
@@ -45,6 +45,7 @@ export function ProductCard({ product }: { product: FeaturedProduct }) {
       {
         onSuccess: () => {
           setJustAdded(true);
+          toast.success(`${product.name ?? "Ürün"} sepete eklendi.`);
           setTimeout(() => setJustAdded(false), 1500);
         },
       },
@@ -121,10 +122,6 @@ export function ProductCard({ product }: { product: FeaturedProduct }) {
             </>
           )}
         </button>
-
-        {addCartItem.isError && (
-          <p className="mt-1.5 text-xs text-error">{getApiErrorMessage(addCartItem.error)}</p>
-        )}
       </div>
     </div>
   );
