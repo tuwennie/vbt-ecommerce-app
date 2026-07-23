@@ -89,7 +89,7 @@
 
 **PM Günlük Özeti:** Projemizde bugün güvenlik ve veri kararlılığı odaklı bir gün geride bırakıldı. Backend tarafında Auth servisleri sözleşme ile tam uyumlu hale getirilirken, Frontend'de güvenli bir oturum yönetimi mimarisi kuruldu. Mobil taraf ise gerçek API verileriyle hata yönetimi ve dayanıklılık (resilience) testlerini başarıyla tamamladı. Ekip, canlı veritabanı entegrasyonu ile tam kapasite çalışmaya devam ediyor.
 
-### Gün 6 - 20.07.2026
+## Gün 6 - 20.07.2026
 
 * **Tuba (PM/Design):**
   * *Bugün Yapılanlar:* 2. haftanın sprint taskları açıldı, teslim edilme kriterleri ve görev dağılımları netleştirildi. Teknik borç ve risk envanteri (`TECHNICAL_DEBT.md`) oluşturularak gerekli bilgiler işlendi. API sözleşme denetimleri sağlandı ve haftalık proje toplantısı düzenlenerek ekiple genel gidişat ve eksik modüller koordine edildi.
@@ -106,7 +106,7 @@
 
 **PM Günlük Özeti:** Projede backend servisleri ve güvenlik katmanları kararlılıkla ilerlerken; frontend tarafında cookie ve oturum yönetimleri, mobil tarafta ise token interceptor ve sepet entegrasyonları başarıyla tamamlandı. Ekip, modül entegrasyonlarını ve test kapsamını hız kesmeden sürdürmektedir.
 
-### Gün 7 - 21.07.2026 
+## Gün 7 - 21.07.2026 
 
 * **Tuba (PM/Design):**
   * *Bugün Yapılanlar:* Kategoriler ve Favoriler modülleri koordine edildi. Bu doğrultuda yeni backend görevleri (BE-5 ve BE-6 / BE8-9) planlanarak atandı.
@@ -122,3 +122,20 @@
   * *Engel (Blocker):* Zeliha'nın Docker ve `.env` (DATABASE_URL) arasında yaşadığı lokal port/bağlantı uyumsuzluğu sorunu `.env` güncellenerek giderildi.
 
 **PM Günlük Özeti:** Projede kategori ve admin yönetimleri arka planda tamamlanırken; frontend tarafında kritik checkout adımları ve güvenli route yapılandırmaları devreye alındı. Mobil tarafta ise sepet ekranı mimarisi ve hata durumları başarıyla kurgulanmış, yaşanan küçük bir lokal çevre değişkeni (env) engeli hızlıca çözülmüştür.
+
+## Gün 8 - 22.07.2026
+
+* **Tuba (PM/Design):**
+  * *Bugün Yapılanlar:* Projenin vitrini olan kapsamlı `README.md` dosyası (teknoloji seçim gerekçeleri ve mimari detaylarla birlikte) oluşturuldu ve geliştiricilerin görev takipleri koordine edildi.
+  * *Engel (Blocker):* Yok.
+* **Kübra (Backend):**
+  * *Bugün Yapılanlar:* Sepet ve sipariş yönetimine yönelik `cart` ve `orders` modülleri üzerinde çalışılmaya başlandı.
+  * *Engel (Blocker):* Yok.
+* **Ikram (Frontend/QA):**
+  * *Bugün Yapılanlar:* Kapsamlı User Dashboard paneli (Profil, Adres Defterim, Siparişlerim, Güvenlik) kuruldu. Sipariş geçmişi (tarih/tutar/status kart listesi ve detay sayfası) tamamlandı, adres CRUD işlemleri checkout modülünden yeniden kullanılarak entegre edildi.
+  * *Engel (Blocker):* Yok.
+* **Zeliha (Mobil):**
+  * *Bugün Yapılanlar:* Son aşama olan profil, geçmiş siparişler ve mobil entegrasyon smoke testi taskı (`MOB-7`) için gerekli hazırlık ve planlama çalışmaları yürütüldü.
+  * *Engel (Blocker):* Yok.
+
+**PM Günlük Özeti:** Projede dokümantasyon ve mimari vitrin (`README.md`) tamamlanırken; backend tarafında sepet ve sipariş modülleri hız kazandı. Frontend tarafında kullanıcı dashboard paneli ve sipariş geçmişi akışları devreye alınmış, mobil tarafta ise final entegrasyon testleri için hazırlıklar başlatılmıştır.
