@@ -21,13 +21,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const exceptionResponse =
       exception instanceof HttpException ? exception.getResponse() : null;
 
-    const { message, errors } = this.extractMessage(exceptionResponse);
+    const { message, errors, customStatus } =
+      this.extractMessage(exceptionResponse);
 
     response.status(statusCode).json({
       success: false,
       message,
       statusCode,
-      status: this.statusToEnum(statusCode),
+      status: customStatus ?? this.statusToEnum(statusCode),
       ...(errors ? { errors } : {}),
     });
   }
@@ -35,6 +36,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private extractMessage(exceptionResponse: unknown): {
     message: string;
     errors?: { field: string; message: string }[];
+    customStatus?: string;
   } {
     if (
       typeof exceptionResponse === 'object' &&
@@ -44,13 +46,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const body = exceptionResponse as {
         message: unknown;
         errors?: { field: string; message: string }[];
+        status?: string;
       };
 
       if (body.errors) {
         return { message: String(body.message), errors: body.errors };
       }
 
-      return { message: String(body.message) };
+      return { message: String(body.message), customStatus: body.status };
     }
 
     return { message: 'Beklenmeyen bir hata oluştu.' };
