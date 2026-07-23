@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Lock, LogOut, Info } from "lucide-react";
 import { clearAccessTokenCookie, clearUserDisplayName } from "@/lib/auth-token";
 import { CART_QUERY_KEY } from "@/hooks/use-cart";
+import { toast } from "@/lib/toast";
 
 export function SecurityContent() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export function SecurityContent() {
     clearAccessTokenCookie();
     clearUserDisplayName();
     queryClient.removeQueries({ queryKey: CART_QUERY_KEY });
+    toast.success("Çıkış yapıldı.");
     router.push("/login");
   }
 

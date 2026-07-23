@@ -6,6 +6,7 @@ import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { X, Home, LogOut, LogIn, User as UserIcon } from "lucide-react";
 import { SHOP_CATEGORIES } from "@/lib/shop-categories";
+import { toast } from "@/lib/toast";
 import {
   clearAccessTokenCookie,
   clearUserDisplayName,
@@ -58,6 +59,7 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
     setIsLoggedIn(false);
     setCachedName(null);
     onClose();
+    toast.success("Çıkış yapıldı.");
     router.push("/login");
   }
 

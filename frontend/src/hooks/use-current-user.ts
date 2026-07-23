@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser, updateCurrentUser, type UpdateUserPayload } from "@/lib/services/users";
 import { getAccessTokenFromCookie } from "@/lib/auth-token";
-import type { ApiErrorResponse } from "@/lib/api-error";
+import { getApiErrorMessage, type ApiErrorResponse } from "@/lib/api-error";
 import type { User } from "@/lib/services/users";
+import { toast } from "@/lib/toast";
 
 const CURRENT_USER_QUERY_KEY = ["current-user"];
 
@@ -32,6 +33,10 @@ export function useUpdateCurrentUser() {
     mutationFn: updateCurrentUser,
     onSuccess: (user) => {
       queryClient.setQueryData(CURRENT_USER_QUERY_KEY, user);
+      toast.success("Profilin güncellendi.");
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err));
     },
   });
 }

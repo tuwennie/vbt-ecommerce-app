@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { X, LogOut } from "lucide-react";
 import { NAV_ITEMS } from "./nav-items";
 import { clearAccessTokenCookie } from "@/lib/auth-token";
+import { toast } from "@/lib/toast";
 
 interface SidebarProps {
   open: boolean;
@@ -18,6 +19,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
   function handleLogout() {
     clearAccessTokenCookie("admin");
     onClose();
+    toast.success("Çıkış yapıldı.");
     router.push("/admin");
   }
 
