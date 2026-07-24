@@ -5,6 +5,8 @@ import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/cart/presentation/screens/cart_screen.dart';
 import '../../features/products/presentation/screens/product_list_screen.dart';
 import '../../features/products/presentation/screens/product_detail_screen.dart';
+import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/categories/presentation/screens/category_list_screen.dart';
 import 'main_scaffold.dart';
 
 // Geçici boş sekmeler (İleride doldurulacak placeholder ekranlar)
@@ -67,11 +69,16 @@ class AppRouter {
         routes: [
           GoRoute(
             path: productList,
-            builder: (context, state) => const ProductListScreen(),
+            builder: (context, state) {
+               final extra = state.extra as Map<String, dynamic>?;
+              return ProductListScreen(
+                categoryId: extra?['categoryId'] as String?,
+              );
+            },
           ),
           GoRoute(
             path: categories,
-            builder: (context, state) => const PlaceholderScreen(title: 'Kategoriler Ekranı'),
+            builder: (context, state) => const CategoryListScreen(),
           ),
           GoRoute(
             path: cart,
@@ -79,7 +86,7 @@ class AppRouter {
           ),
           GoRoute(
             path: profile,
-            builder: (context, state) => const PlaceholderScreen(title: 'Profilim Ekranı'),
+            builder: (context, state) => const ProfileScreen(),
           ),
         ],
       ),

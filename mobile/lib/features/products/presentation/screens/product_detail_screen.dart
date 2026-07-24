@@ -17,7 +17,7 @@ class ProductDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Provider'daki ürün listesinden bu sayfaya ait olan ürünü buluyoruz
-    final productsState = ref.watch(productListProvider);
+    final productsState = ref.watch(productListProvider(null));
     
     return Scaffold(
       backgroundColor: AppColors.background,

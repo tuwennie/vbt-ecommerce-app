@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../data/models/product_model.dart';
@@ -10,29 +9,15 @@ final productRepositoryProvider = Provider<ProductRepository>((ref) {
   return ProductRepositoryImpl(DioClient());
 });
 
-// UI katmanının dinleyeceği asenkron durum yöneticisi (AsyncNotifier)
-class ProductListNotifier extends AsyncNotifier<List<ProductModel>> {
-  
-  // 🛡️ 'late final' kalıbını kaldırdık! 
-  // Repository'yi build metodu içinde güvenle alıyoruz.
-  @override
-  FutureOr<List<ProductModel>> build() async {
-    return _fetchLiveProducts();
-  }
+// Seçilen kategoriye göre ürünleri yükleyen provider
+final productListProvider = FutureProvider.family<List<ProductModel>, String?>((ref, categoryId) async {
+  final repository = ref.watch(productRepositoryProvider);
 
-  Future<List<ProductModel>> _fetchLiveProducts() async {
-    // Repository'yi her istek anında provider'dan güvenle çekiyoruz
-    final repository = ref.read(productRepositoryProvider);
+  await Future.delayed(const Duration(seconds: 1));
 
-    // Arayüzdeki skeleton animasyonunu test etmek için gecikme
-    await Future.delayed(const Duration(seconds: 1));
-    
-    // Canlı API çağrısını tetikliyoruz
-    return await repository.getProducts();
-  }
-}
+  return repository.getProducts(categoryId: categoryId);
+});
 
-// UI'ın izleyeceği global provider tanımı
-final productListProvider = AsyncNotifierProvider<ProductListNotifier, List<ProductModel>>(() {
-  return ProductListNotifier();
+final allProductsProvider = FutureProvider<List<ProductModel>>((ref) async {
+  return ref.watch(productListProvider(null)).value ?? [];
 });
