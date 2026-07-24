@@ -139,3 +139,20 @@
   * *Engel (Blocker):* Yok.
 
 **PM Günlük Özeti:** Projede dokümantasyon ve mimari vitrin (`README.md`) tamamlanırken; backend tarafında sepet ve sipariş modülleri hız kazandı. Frontend tarafında kullanıcı dashboard paneli ve sipariş geçmişi akışları devreye alınmış, mobil tarafta ise final entegrasyon testleri için hazırlıklar başlatılmıştır.
+
+## Gün 9 - 23.07.2026
+
+* **Tuba (PM/Design):**
+  * *Bugün Yapılanlar:* Projenin sunum ve demo videosu için genel hazırlıklar yapıldı, sunumun ana hatları ve planı oluşturuldu. Ayrıca Sprint-2 görev takipleri koordine edildi.
+  * *Engel (Blocker):* Yok.
+* **Kübra (Backend):**
+  * *Bugün Yapılanlar:* `cart` modülü kodlanarak tamamlandı ve test edildi; `orders` modülü üzerinde geliştirme çalışmaları devam ediyor.
+  * *Engel (Blocker):* Yok.
+* **Ikram (Frontend/QA):**
+  * *Bugün Yapılanlar:* `Sonner` kütüphanesi ile kapsamlı bir toast bildirim sistemi kurularak tüm API işlemlerine (sepet, adres, sipariş, auth) entegre edildi. `error.tsx` ve `global-error.tsx` bileşenleri ile Global Error Boundary eklenerek uygulamanın hiçbir senaryoda çökmemesi (beyaz ekrana düşmemesi) sağlandı.
+  * *Engel (Blocker):* Yok.
+* **Zeliha (Mobil):**
+  * *Bugün Yapılanlar:* Kategoriler ekranı projeye eklendi; sepet ekranı ise kullanıcının durumuna göre (boş sepet / dolu sepet senaryoları dikkate alınarak) dinamik olarak güncellendi.
+  * *Engel (Blocker):* Yok.
+
+**PM Günlük Özeti:** Projede yönetimsel tarafta final sunum ve demo planlamaları hız kazanırken; backend tarafında sepet modülü tamamlanmış ve siparişlere geçilmiştir. Frontend tarafında kullanıcı deneyimini güçlendirecek toast bildirimleri ve global hata yakalama (Error Boundary) mekanizmaları devreye alınmış, mobil tarafta ise kategori ve dinamik sepet ekranları başarıyla kurgulanmıştır.
