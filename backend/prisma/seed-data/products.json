@@ -5,7 +5,7 @@
     "price": "15000.00",
     "stock": 20,
     "categoryId": "cat_001",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_002",
@@ -13,7 +13,7 @@
     "price": "25000.00",
     "stock": 10,
     "categoryId": "cat_001",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_003",
@@ -21,7 +21,7 @@
     "price": "800.00",
     "stock": 50,
     "categoryId": "cat_001",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_004",
@@ -29,7 +29,7 @@
     "price": "2500.00",
     "stock": 30,
     "categoryId": "cat_001",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_005",
@@ -37,7 +37,7 @@
     "price": "7000.00",
     "stock": 15,
     "categoryId": "cat_001",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_006",
@@ -45,7 +45,7 @@
     "price": "250.00",
     "stock": 100,
     "categoryId": "cat_002",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1651761179569-4ba2aa054997?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_007",
@@ -53,7 +53,7 @@
     "price": "600.00",
     "stock": 80,
     "categoryId": "cat_002",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_008",
@@ -61,7 +61,7 @@
     "price": "1200.00",
     "stock": 40,
     "categoryId": "cat_002",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_009",
@@ -69,7 +69,7 @@
     "price": "950.00",
     "stock": 60,
     "categoryId": "cat_002",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_010",
@@ -77,7 +77,7 @@
     "price": "150.00",
     "stock": 200,
     "categoryId": "cat_002",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_011",
@@ -85,7 +85,7 @@
     "price": "450.00",
     "stock": 40,
     "categoryId": "cat_003",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://plus.unsplash.com/premium_photo-1681412205156-bb506a4ea970?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_012",
@@ -93,7 +93,7 @@
     "price": "3500.00",
     "stock": 10,
     "categoryId": "cat_003",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://plus.unsplash.com/premium_photo-1683880731792-39c07ceea617?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_013",
@@ -101,7 +101,7 @@
     "price": "4500.00",
     "stock": 5,
     "categoryId": "cat_003",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_014",
@@ -109,7 +109,7 @@
     "price": "2000.00",
     "stock": 25,
     "categoryId": "cat_003",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1620807773206-49c1f2957417?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_015",
@@ -117,7 +117,7 @@
     "price": "300.00",
     "stock": 60,
     "categoryId": "cat_003",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_016",
@@ -125,7 +125,7 @@
     "price": "100.00",
     "stock": 200,
     "categoryId": "cat_004",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1520013573795-38516d2661e4?q=80&w=1236&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_017",
@@ -133,7 +133,7 @@
     "price": "150.00",
     "stock": 150,
     "categoryId": "cat_004",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_018",
@@ -141,7 +141,7 @@
     "price": "400.00",
     "stock": 80,
     "categoryId": "cat_004",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_019",
@@ -149,7 +149,7 @@
     "price": "800.00",
     "stock": 45,
     "categoryId": "cat_004",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_020",
@@ -157,7 +157,7 @@
     "price": "1200.00",
     "stock": 30,
     "categoryId": "cat_004",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1647900893846-e6ab4048e824?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_021",
@@ -165,7 +165,7 @@
     "price": "600.00",
     "stock": 20,
     "categoryId": "cat_005",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_022",
@@ -173,7 +173,7 @@
     "price": "350.00",
     "stock": 70,
     "categoryId": "cat_005",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1591291621164-2c6367723315?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_023",
@@ -181,7 +181,7 @@
     "price": "400.00",
     "stock": 50,
     "categoryId": "cat_005",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_024",
@@ -189,7 +189,7 @@
     "price": "12000.00",
     "stock": 3,
     "categoryId": "cat_005",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1652364653960-1c23c208ef43?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_025",
@@ -197,7 +197,7 @@
     "price": "900.00",
     "stock": 40,
     "categoryId": "cat_005",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://plus.unsplash.com/premium_photo-1689371957831-40f044457743?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_026",
@@ -205,7 +205,7 @@
     "price": "200.00",
     "stock": 300,
     "categoryId": "cat_006",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_027",
@@ -213,7 +213,7 @@
     "price": "180.00",
     "stock": 250,
     "categoryId": "cat_006",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "prod_028",
@@ -221,7 +221,7 @@
     "price": "250.00",
     "stock": 120,
     "categoryId": "cat_006",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_029",
@@ -229,7 +229,7 @@
     "price": "220.00",
     "stock": 150,
     "categoryId": "cat_006",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=400&q=80"
   },
   {
     "id": "prod_030",
@@ -237,6 +237,6 @@
     "price": "120.00",
     "stock": 400,
     "categoryId": "cat_006",
-    "imageUrl": "https://placehold.co/400x400"
+    "imageUrl": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   }
 ]

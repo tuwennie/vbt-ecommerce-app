@@ -82,20 +82,23 @@ async function main() {
         price: prod.price,
         stock: prod.stock,
         categoryId: prod.categoryId,
-        images: {
-          create: [
-            {
-              imageUrl: prod.imageUrl,
-              isPrimary: true,
-              sortOrder: 0,
-            },
-          ],
-        },
+      },
+    });
+
+    await prisma.productImage.deleteMany({
+      where: { productId: prod.id },
+    });
+
+    await prisma.productImage.create({
+      data: {
+        productId: prod.id,
+        imageUrl: prod.imageUrl,
+        isPrimary: true,
+        sortOrder: 0,
       },
     });
   }
   console.log(`${products.length} ürün eklendi/güncellendi.`);
-
   const passwordHash = bcrypt.hashSync('password123!', 10);
   const users = readJson<SeedUser[]>('users.json');
 
