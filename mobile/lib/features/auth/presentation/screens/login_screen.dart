@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/components/custom_button.dart';
 import '../../../../core/components/custom_text_field.dart';
 import '../../../../core/navigation/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../providers/auth_provider.dart';
+import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../profile/presentation/providers/profile_provider.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -25,22 +29,54 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      
-      // TODO: Haftaya Kübra'nın API katmanı bağlandığında burası güncellenecek.
-      // Şimdilik akıcı geçiş (DoD) için mock bir gecikme ekliyoruz.
-      await Future.delayed(const Duration(seconds: 1));
-      
+ void _handleLogin() async {
+  if (_formKey.currentState!.validate()) {
+    setState(() => _isLoading = true);
+
+    try {
+      // 1. Gerçek API üzerinden Login isteği atıyoruz
+      await ref.read(authProvider.notifier).login(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      final authState = ref.read(authProvider);
+
+      if (mounted) {
+        // 2. Eğer Giriş Başarılı Olduysa:
+        if (authState.isAuthenticated) {
+          // Taze kaydedilen Token ile Profil ve Sepet verilerini tetikliyoruz
+          ref.read(profileProvider.notifier).fetchProfile();
+          ref.read(cartProvider.notifier).fetchCart();
+
+          // Ana Sayfaya Yönlendiriyoruz
+          context.go(AppRouter.productList);
+        } else if (authState.errorMessage != null) {
+          // Backend'den dönen hata mesajını gösteriyoruz
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(authState.errorMessage!),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Giriş yapılırken bir hata oluştu: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
       if (mounted) {
         setState(() => _isLoading = false);
-        // Başarılı giriş sonrası ana sayfaya (Ürün listesine) yönlendiriyoruz
-        context.go(AppRouter.productList);
       }
     }
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(

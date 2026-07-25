@@ -1,17 +1,27 @@
-/// Kaynak: backend/docs/openapi.yaml (v1.1.0)
-/// Base URL'i asla hardcode etme; `--dart-define=API_BASE_URL=...` ile geç.
-/// Örn: flutter run --dart-define=API_BASE_URL=http://10.0.2.2:3000/api/v1
+import 'package:flutter/foundation.dart';
+import 'dart:io' show Platform;
+
 class ApiEndpoints {
   ApiEndpoints._();
 
-  static const String defaultBaseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://localhost:3000/api/v1',
-    //'http://10.0.2.2:3000/api/v1',
-  );
-  // Not: Android emülatörde localhost yerine 10.0.2.2 kullanılır.
-  // iOS simülatörde http://localhost:3000/api/v1 çalışır.
+  static String get defaultBaseUrl {
 
+    const envUrl = String.fromEnvironment('API_BASE_URL');
+    if (envUrl.isNotEmpty) return envUrl;
+
+    // Web (Chrome) için
+    if (kIsWeb) {
+      return 'http://localhost:3000/api/v1';
+    }
+
+    // Android Emülatör için
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:3000/api/v1';
+    }
+
+    // iOS Simülatör / Masaüstü varsayılanı
+    return 'http://localhost:3000/api/v1';
+  }
 
   // Auth
   static const String register = '/auth/register';
@@ -21,7 +31,7 @@ class ApiEndpoints {
 
   // Users
   static const String me = '/users/me';
-
+  static const String profile = '/users/profile'; 
   // Categories
   static const String categories = '/categories';
 
@@ -34,6 +44,7 @@ class ApiEndpoints {
 
   // Orders
   static const String orders = '/orders';
+  static String orderDetail(String id) => '/orders/$id'; 
 
   // Favorites
   static const String favorites = '/favorites';

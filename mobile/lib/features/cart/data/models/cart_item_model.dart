@@ -1,3 +1,4 @@
+import '../../../products/data/models/product_model.dart';
 class CartItemModel {
   final String id;
   final String productId;

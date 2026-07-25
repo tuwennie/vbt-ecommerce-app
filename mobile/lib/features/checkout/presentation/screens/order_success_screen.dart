@@ -6,8 +6,8 @@ class OrderSuccessScreen extends StatelessWidget {
 
   const OrderSuccessScreen({
     super.key,
-    this.orderNo = '#SW-9284710',
-    this.deliveryAddress = 'Levent Mahallesi, Meltem Sokak No:12 Beşiktaş, İstanbul, 34330',
+    required this.orderNo,
+    required this.deliveryAddress,
   });
 
   @override

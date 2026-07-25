@@ -71,11 +71,8 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     state = state.copyWith(selectedAddress: address);
   }
 
-  Future<bool> submitOrder({String? note}) async {
-    if (!state.isFormValid) {
-      state = state.copyWith(errorMessage: 'Lütfen bir teslimat adresi seçin.');
-      return false;
-    }
+Future<OrderResponseModel?> submitOrder({String? note}) async {
+    if (!state.isFormValid) return null;
 
     state = state.copyWith(isLoading: true);
     try {
@@ -84,17 +81,16 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
         note: note,
       );
       
-      final success = await _orderRepository.createOrder(dto);
-      if (success) {
-        // DoD Gereksinimi: Sipariş başarılı olunca sepet state'i sıfırlanır
-        _ref.read(cartProvider.notifier).fetchCart(); 
+      final orderResponse = await _orderRepository.createOrder(dto);
+      if (orderResponse != null) {
+        _ref.read(cartProvider.notifier).fetchCart(); // Sepeti sıfırla
         state = state.copyWith(isLoading: false, isOrderSuccess: true);
-        return true;
+        return orderResponse;
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: 'Sipariş oluşturulamadı.');
     }
-    return false;
+    return null;
   }
 }
 

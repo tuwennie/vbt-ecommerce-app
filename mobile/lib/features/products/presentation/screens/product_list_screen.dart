@@ -3,16 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/navigation/app_router.dart';
-import '../../../../core/widgets/error_state_widgets.dart';
+import '../../../../core/widgets/error_state_widget.dart';
 import '../providers/product_provider.dart';
 
 class ProductListScreen extends ConsumerWidget {
-  const ProductListScreen({super.key});
+  const ProductListScreen({super.key, required this.categoryId});
+  final String? categoryId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Riverpod ile ürün durumunu dinliyoruz
-    final productsState = ref.watch(productListProvider);
+    final productsState = ref.watch(productListProvider(categoryId));
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -45,7 +46,7 @@ class ProductListScreen extends ConsumerWidget {
             errorCode: errorCode,
             onRetry: () {
               // Riverpod state'ini yenileyip isteği baştan tetikliyoruz
-              ref.refresh(productListProvider);
+              ref.refresh(productListProvider(categoryId));
             },
             onGoHome: () {
               // Ana sayfaya / Keşfet sekmesine yönlendirme
@@ -70,7 +71,7 @@ class ProductListScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => ref.refresh(productListProvider),
+                    onPressed: () => ref.refresh(productListProvider(categoryId)),
                     child: const Text("Yenile"),
                   ),
                 ],
@@ -81,7 +82,7 @@ class ProductListScreen extends ConsumerWidget {
           // Pull-to-Refresh 
           return RefreshIndicator(
             onRefresh: () async {
-              return ref.refresh(productListProvider);
+              await ref.refresh(productListProvider(categoryId));
             },
             child: GridView.builder(
               padding: const EdgeInsets.all(16),

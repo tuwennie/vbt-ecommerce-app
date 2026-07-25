@@ -1,139 +1,145 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/error_state_widget.dart';
+import '../providers/profile_provider.dart';
+import '../../../orders/presentation/providers/order_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
-    final user = authState.user;
+    final profileState = ref.watch(profileProvider);
+    final orderState = ref.watch(orderProvider);
+
+    if (profileState.isLoading && profileState.user == null) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (profileState.errorMessage != null && profileState.user == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: ErrorStateWidget(
+          message: profileState.errorMessage!,
+          errorCode: 'ERR_PROFILE_FETCH',
+          onRetry: () => ref.read(profileProvider.notifier).fetchProfile(),
+        ),
+      );
+    }
+
+    final user = profileState.user;
+    final orderCount = orderState.orders.length;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.5,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black87),
-          onPressed: () {},
-        ),
         title: const Text(
           'ShopSwift',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.black),
+          onPressed: () {},
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, color: Colors.black87),
+            icon: const Icon(Icons.search, color: Colors.black),
             onPressed: () {},
           ),
         ],
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         child: Column(
           children: [
-            // 1. KULLANICI BİLGİLERİ KARTI
+            // 1. Profil Bilgileri Kartı
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.black.withOpacity(0.05)),
               ),
               child: Column(
                 children: [
-                  // Profil Resmi + Kalem İkonu
                   Stack(
-                    alignment: Alignment.bottomRight,
                     children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFB0B0B0),
-                          shape: BoxShape.circle,
+                      CircleAvatar(
+                        radius: 46,
+                        backgroundColor: Colors.grey[400],
+                        child: Text(
+                          user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'A',
+                          style: const TextStyle(fontSize: 32, color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Positioned(
-                        right: 2,
-                        bottom: 2,
+                        bottom: 0,
+                        right: 0,
                         child: Container(
                           padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF0D6EFD),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF1D61E7),
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
                           ),
-                          child: const Icon(
-                            Icons.edit,
-                            size: 14,
-                            color: Colors.white,
-                          ),
+                          child: const Icon(Icons.edit, size: 14, color: Colors.white),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  // Ad Soyad
+                  const SizedBox(height: 12),
                   Text(
-                    user?.fullName ?? 'Ahmet Yılmaz',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                    user?.name ?? 'Ahmet Yılmaz',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
                   ),
                   const SizedBox(height: 4),
-                  // E-posta
                   Text(
                     user?.email ?? 'ahmet.yilmaz@mail.com',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 16),
 
-            const SizedBox(height: 20),
-
-            // 2. MENÜ SEÇENEKLERİ KARTI
+            // 2. Menü Seçenekleri Kartı
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.black.withOpacity(0.05)),
               ),
               child: Column(
                 children: [
-                  _ProfileMenuItem(
+                  _buildMenuItem(
                     icon: Icons.history,
                     title: 'Sipariş Geçmişim',
-                    badgeText: '12',
-                    onTap: () {},
+                    badgeText: orderCount > 0 ? '$orderCount' : '12',
+                    onTap: () {
+                      // TODO: Sipariş detay/liste sayfasına yönlendirme
+                    },
                   ),
-                  const Divider(height: 1, indent: 64, endIndent: 16, color: Color(0xFFF0F0F0)),
-                  _ProfileMenuItem(
+                  const Divider(height: 1, indent: 16, endIndent: 16),
+                  _buildMenuItem(
                     icon: Icons.location_on_outlined,
                     title: 'Adreslerim',
                     onTap: () {},
                   ),
-                  const Divider(height: 1, indent: 64, endIndent: 16, color: Color(0xFFF0F0F0)),
-                  _ProfileMenuItem(
-                    icon: Icons.payment,
+                  const Divider(height: 1, indent: 16, endIndent: 16),
+                  _buildMenuItem(
+                    icon: Icons.payment_outlined,
                     title: 'Ödeme Yöntemlerim',
                     onTap: () {},
                   ),
-                  const Divider(height: 1, indent: 64, endIndent: 16, color: Color(0xFFF0F0F0)),
-                  _ProfileMenuItem(
+                  const Divider(height: 1, indent: 16, endIndent: 16),
+                  _buildMenuItem(
                     icon: Icons.settings_outlined,
                     title: 'Ayarlar',
                     onTap: () {},
@@ -141,64 +147,47 @@ class ProfileScreen extends ConsumerWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 16),
 
-            const SizedBox(height: 20),
-
-            // 3. ÇIKIŞ YAP KARTI
+            // 3. Çıkış Yap Kartı
             InkWell(
               onTap: () {
-                ref.read(authProvider.notifier).logout();
+                // TODO: Logout işlemi
               },
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(16),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF0F0),
-                  borderRadius: BorderRadius.circular(16.0),
+                  color: const Color(0xFFFFF5F5),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFE0E0),
-                        borderRadius: BorderRadius.circular(12),
+                        color: const Color(0xFFFFE2E2),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(
-                        Icons.logout,
-                        color: Color(0xFFDC3545),
-                        size: 22,
-                      ),
+                      child: const Icon(Icons.logout, color: Color(0xFFDC2626), size: 20),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 14),
                     const Text(
                       'Çıkış Yap',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFDC3545),
-                      ),
+                      style: TextStyle(color: Color(0xFFDC2626), fontWeight: FontWeight.bold, fontSize: 15),
                     ),
                     const Spacer(),
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Color(0xFFDC3545),
-                      size: 18,
-                    ),
+                    const Icon(Icons.chevron_right, color: Color(0xFFDC2626)),
                   ],
                 ),
               ),
             ),
+            const SizedBox(height: 24),
 
-            const SizedBox(height: 32),
-
-            // 4. VERSİYON YAZISI
-            const Text(
+            // 4. Versiyon Bilgisi
+            Text(
               'ShopSwift v2.4.0',
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.black38,
-              ),
+              style: TextStyle(color: Colors.grey[400], fontSize: 12, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 20),
           ],
@@ -206,66 +195,39 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
   }
-}
 
-// Menü Elemanı Özel Widget'ı
-class _ProfileMenuItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String? badgeText;
-  final VoidCallback onTap;
-
-  const _ProfileMenuItem({
-    required this.icon,
-    required this.title,
-    this.badgeText,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String title,
+    String? badgeText,
+    required VoidCallback onTap,
+  }) {
     return ListTile(
       onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       leading: Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: const Color(0xFFF1F3F5),
-          borderRadius: BorderRadius.circular(12),
+          color: const Color(0xFFF3F4F6),
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(
-          icon,
-          color: Colors.black87,
-          size: 22,
-        ),
+        child: Icon(icon, color: Colors.black87, size: 20),
       ),
       title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          color: Colors.black87,
-        ),
+        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black87),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (badgeText != null) ...[
             Text(
-              badgeText!,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+              badgeText,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
             ),
             const SizedBox(width: 12),
           ],
-          const Icon(
-            Icons.chevron_right,
-            color: Colors.black45,
-            size: 22,
-          ),
+          const Icon(Icons.chevron_right, color: Colors.grey),
         ],
       ),
     );

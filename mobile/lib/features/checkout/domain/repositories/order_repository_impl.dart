@@ -23,8 +23,11 @@ class OrderRepositoryImpl implements OrderRepository {
   }
 
   @override
-  Future<bool> createOrder(CreateOrderDto dto) async {
+  Future<OrderResponseModel?> createOrder(CreateOrderDto dto) async {
     final response = await _dioClient.post('/orders', data: dto.toJson());
-    return response.statusCode == 200 || response.statusCode == 201;
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return OrderResponseModel.fromJson(response.data);
+    }
+    return null;
   }
 }

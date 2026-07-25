@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/navigation/app_router.dart';
+import '../../features/cart/presentation/providers/cart_provider.dart';
 
-class MainScaffold extends StatelessWidget {
+class MainScaffold extends ConsumerWidget {
   final Widget child;
 
   const MainScaffold({super.key, required this.child});
@@ -33,65 +35,66 @@ class MainScaffold extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final selectedIndex = _calculateSelectedIndex(context);
+    
+    // Sepetteki toplam ürün sayısını canlı okuma
+    final cartState = ref.watch(cartProvider);
+    final itemCount = cartState.cart?.items.fold<int>(
+          0,
+          (sum, item) => sum + item.quantity,
+        ) ?? 0;
 
     return Scaffold(
       body: child,
-      // Alt boşluğu sıfırlayıp bar'ı sayfanın alt tarafında süzülen bir kart gibi konumlandırıyoruz
       bottomNavigationBar: Container(
-        color: Colors.transparent,
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 8),
-        child: Container(
-          height: 68,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(36), // Tam oval kapsül görünümü
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 24,
-                offset: const Offset(0, 8),
-              ),
-            ],
-            border: Border.all(
-              color: const Color(0xFFF3F4F6),
-              width: 1.5,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            top: BorderSide(
+              color: Colors.grey.shade200,
+              width: 1,
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(
-                context,
-                index: 0,
-                selectedIndex: selectedIndex,
-                icon: Icons.home_rounded,
-                unselectedIcon: Icons.home_outlined,
-              ),
-              _buildNavItem(
-                context,
-                index: 1,
-                selectedIndex: selectedIndex,
-                icon: Icons.menu_rounded, // Tasarımdaki 3 çizgili ikon
-                unselectedIcon: Icons.menu_rounded,
-              ),
-              _buildNavItem(
-                context,
-                index: 2,
-                selectedIndex: selectedIndex,
-                icon: Icons.shopping_cart_rounded,
-                unselectedIcon: Icons.shopping_cart_outlined,
-              ),
-              _buildNavItem(
-                context,
-                index: 3,
-                selectedIndex: selectedIndex,
-                icon: Icons.person_rounded,
-                unselectedIcon: Icons.person_outline_rounded,
-              ),
-            ],
-          ),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(
+              context,
+              index: 0,
+              selectedIndex: selectedIndex,
+              label: 'Home',
+              icon: Icons.home_outlined,
+              selectedIcon: Icons.home_rounded,
+            ),
+            _buildNavItem(
+              context,
+              index: 1,
+              selectedIndex: selectedIndex,
+              label: 'Categories',
+              icon: Icons.menu_rounded, // Hamburger menü ikonu korundu
+              selectedIcon: Icons.menu_rounded,
+            ),
+            _buildNavItem(
+              context,
+              index: 2,
+              selectedIndex: selectedIndex,
+              label: 'Cart',
+              icon: Icons.shopping_cart_outlined,
+              selectedIcon: Icons.shopping_cart_rounded,
+              badgeCount: itemCount,
+            ),
+            _buildNavItem(
+              context,
+              index: 3,
+              selectedIndex: selectedIndex,
+              label: 'Profile',
+              icon: Icons.person_outline_rounded,
+              selectedIcon: Icons.person_rounded,
+            ),
+          ],
         ),
       ),
     );
@@ -101,37 +104,67 @@ class MainScaffold extends StatelessWidget {
     BuildContext context, {
     required int index,
     required int selectedIndex,
+    required String label,
     required IconData icon,
-    required IconData unselectedIcon,
+    required IconData selectedIcon,
+    int badgeCount = 0,
   }) {
     final isSelected = index == selectedIndex;
+    final activeColor = const Color(0xFF1D61E7); // Tasarımdaki canlı mavi
+    final inactiveColor = const Color(0xFF4B5563);
 
-    return GestureDetector(
+    return InkWell(
       onTap: () => _onItemTapped(index, context),
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutCubic,
-        width: 52,
-        height: 52,
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF3B82F6) : Colors.transparent, // Seçilince Parlak Mavi Yuvarlak
-          shape: BoxShape.circle,
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: const Color(0xFF3B82F6).withOpacity(0.35),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Icon(
+                isSelected ? selectedIcon : icon,
+                color: isSelected ? activeColor : inactiveColor,
+                size: 26,
+              ),
+              if (badgeCount > 0)
+                Positioned(
+                  right: -8,
+                  top: -4,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFDC2626), // Kırmızı rozet
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '$badgeCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ]
-              : [],
-        ),
-        child: Icon(
-          isSelected ? icon : unselectedIcon,
-          color: isSelected ? Colors.white : const Color(0xFF4B5563),
-          size: 26,
-        ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              color: isSelected ? activeColor : inactiveColor,
+            ),
+          ),
+        ],
       ),
     );
   }

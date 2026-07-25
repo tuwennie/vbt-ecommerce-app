@@ -84,12 +84,19 @@ class CheckoutSummaryScreen extends ConsumerWidget {
                 // DoD: Adres seçilmediyse buton pasif kalır
                 onPressed: checkoutState.isFormValid && !checkoutState.isLoading
                     ? () async {
-                        final success = await ref.read(checkoutProvider.notifier).submitOrder();
-                        if (success && context.mounted) {
-                          // Başarılı sipariş sonrası Success Ekranına Yönlendirme
+                        final orderResponse = await ref.read(checkoutProvider.notifier).submitOrder();
+                        
+                        if (orderResponse != null && context.mounted) {
                           Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (_) => const OrderSuccessScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => OrderSuccessScreen(
+                                orderNo: orderResponse.orderNo,
+                                deliveryAddress: orderResponse.deliveryAddress.isNotEmpty 
+                                    ? orderResponse.deliveryAddress 
+                                    : checkoutState.selectedAddress!.fullAddress,
+                              ),
+                            ),
                             (route) => route.isFirst,
                           );
                         }
