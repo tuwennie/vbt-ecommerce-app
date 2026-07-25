@@ -57,7 +57,7 @@ class CartScreen extends ConsumerWidget {
   }
 
   // ==========================================
-  // 1. BOﬁ SEPET G÷R‹N‹M‹ (1. Gˆrsel Birebir)
+  // 1. BO≈û SEPET G√ñR√úN√úM√ú (1. G√∂rsel Birebir)
   // ==========================================
   Widget _buildEmptyCartView(BuildContext context, WidgetRef ref) {
     final productsAsync = ref.watch(allProductsProvider);
@@ -65,7 +65,7 @@ class CartScreen extends ConsumerWidget {
     return Column(
       children: [
         const SizedBox(height: 10),
-        // Yuvarlak ›ll¸strasyon / Gˆrsel Alan˝
+        // Yuvarlak ƒ∞ll√ºstrasyon / G√∂rsel Alanƒ±
         CircleAvatar(
           radius: 110,
           backgroundColor: Colors.grey[200],
@@ -73,23 +73,23 @@ class CartScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 24),
 
-        // Ba˛l˝k ve AÁ˝klama
+        // Ba≈ülƒ±k ve A√ßƒ±klama
         const Text(
-          'Sepetiniz Bo˛',
+          'Sepetiniz Bo≈ü',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
         ),
         const SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Text(
-            'Gˆr¸n¸˛e gˆre hen¸z bir ¸r¸n eklemediniz. En yeni ¸r¸nlerimize gˆz atmaya ne dersiniz?',
+            'G√∂r√ºn√º≈üe g√∂re hen√ºz bir √ºr√ºn eklemediniz. En yeni √ºr√ºnlerimize g√∂z atmaya ne dersiniz?',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: Colors.grey[600], height: 1.4),
           ),
         ),
         const SizedBox(height: 24),
 
-        // Al˝˛veri˛e Ba˛la Butonu (Ye˛il)
+        // Alƒ±≈üveri≈üe Ba≈üla Butonu (Ye≈üil)
         SizedBox(
           width: double.infinity,
           height: 52,
@@ -97,7 +97,7 @@ class CartScreen extends ConsumerWidget {
             onPressed: () => context.go(AppRouter.productList),
             icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white),
             label: const Text(
-              'Al˝˛veri˛e Ba˛la',
+              'Alƒ±≈üveri≈üe Ba≈üla',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(
@@ -109,7 +109,7 @@ class CartScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
 
-        // ÷nceki Sipari˛lerim Butonu
+        // √ñnceki Sipari≈ülerim Butonu
         SizedBox(
           width: double.infinity,
           height: 52,
@@ -121,25 +121,25 @@ class CartScreen extends ConsumerWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             child: const Text(
-              '÷nceki Sipari˛lerim',
+              '√ñnceki Sipari≈ülerim',
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF1D61E7)),
             ),
           ),
         ),
         const SizedBox(height: 32),
 
-        // Sizin ›Áin SeÁtiklerimiz Ba˛l˝˝
+        // Sizin ƒ∞√ßin Se√ßtiklerimiz Ba≈ülƒ±ƒüƒ±
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Sizin ›Áin SeÁtiklerimiz',
+              'Sizin ƒ∞√ßin Se√ßtiklerimiz',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
             ),
             TextButton(
               onPressed: () => context.go(AppRouter.productList),
               child: const Text(
-                'T¸m¸n¸ Gˆr',
+                'T√ºm√ºn√º G√∂r',
                 style: TextStyle(color: Color(0xFF1D61E7), fontWeight: FontWeight.w600),
               ),
             ),
@@ -147,7 +147,7 @@ class CartScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
 
-        // Yatay ÷neri ‹r¸n Listesi
+        // Yatay √ñneri √úr√ºn Listesi
         SizedBox(
           height: 240,
           child: productsAsync.when(
@@ -155,7 +155,7 @@ class CartScreen extends ConsumerWidget {
               final recommendedProducts = products.take(4).toList();
 
               if (recommendedProducts.isEmpty) {
-                return const Center(child: Text('÷nerilen ¸r¸n bulunamad˝.'));
+                return const Center(child: Text('√ñnerilen √ºr√ºn bulunamadƒ±.'));
               }
 
               return ListView.separated(
@@ -165,7 +165,7 @@ class CartScreen extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final product = recommendedProducts[index];
 
-                  // Gˆrsel SeÁim Mant˝˝ (÷nce birincil/isPrimary, yoksa ilk imaj)
+                  // G√∂rsel Se√ßim Mantƒ±ƒüƒ± (√ñnce birincil/isPrimary, yoksa ilk imaj)
                   String? displayImageUrl;
                   if (product.images.isNotEmpty) {
                     final primaryImage = product.images.firstWhere(
@@ -176,20 +176,20 @@ class CartScreen extends ConsumerWidget {
                   }
 
                   // Para Birimi Simgesi
-                  final currencySymbol = product.currency == 'TRY' ? '?' : product.currency;
+                  final currencySymbol = product.currency == 'TRY' ? '‚Ç∫' : product.currency;
 
                   return Container(
                     width: 170,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.black.withOpacity(0.08)),
+                      border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
                     ),
                     padding: const EdgeInsets.all(10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // ‹r¸n Gˆrseli
+                        // √úr√ºn G√∂rseli
                         Expanded(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
@@ -211,7 +211,7 @@ class CartScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 8),
 
-                        // Kategori Ad˝ (CategoryModel ¸zerinden)
+                        // Kategori Adƒ± (CategoryModel √ºzerinden)
                         Text(
                           product.category.name,
                           style: TextStyle(fontSize: 11, color: Colors.grey[500]),
@@ -220,7 +220,7 @@ class CartScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 2),
 
-                        // ‹r¸n Ad˝
+                        // √úr√ºn Adƒ±
                         Text(
                           product.name,
                           maxLines: 1,
@@ -245,71 +245,219 @@ class CartScreen extends ConsumerWidget {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stackTrace) => const Center(child: Text('‹r¸nler y¸klenemedi.')),
+            error: (error, stack) => const Center(child: Text('√ñnerilen √ºr√ºnler y√ºklenemedi.')),
           ),
         ),
+        const SizedBox(height: 20),
       ],
     );
   }
 
-  Widget _buildFilledCartView(
-    BuildContext context,
-    WidgetRef ref,
-    dynamic cartState,
-  ) {
+  // ==========================================
+  // 2. DOLU SEPET G√ñR√úN√úM√ú (2. G√∂rsel Birebir)
+  // ==========================================
+  Widget _buildFilledCartView(BuildContext context, WidgetRef ref, dynamic cartState) {
+    final cart = cartState.cart!;
+    final total = cart.totalPrice;
+
     return Column(
       children: [
-        const SizedBox(height: 8),
-        const Text(
-          'Sepetinizdeki ‹r¸nler',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
-        ),
-        const SizedBox(height: 12),
-        ListView.builder(
+        // √úr√ºn Kartlarƒ± Listesi
+        ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: cartState.cart?.items.length ?? 0,
+          itemCount: cart.items.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            final item = cartState.cart!.items[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(Icons.shopping_bag, color: Colors.grey),
+            final item = cart.items[index];
+            return Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+              ),
+              child: Row(
+                children: [
+                  // √úr√ºn Resmi
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      color: Colors.grey[100],
+                      child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                          ? Image.network(item.imageUrl!, fit: BoxFit.cover)
+                          : const Icon(Icons.headset, size: 40, color: Colors.grey),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.productName,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${item.quantity} adet',
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                        ],
-                      ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  // Detaylar ve Adet Deƒüi≈ütirici
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item.productName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => ref.read(cartProvider.notifier).removeFromCart(item.productId),
+                              child: const Row(
+                                children: [
+                                  Icon(Icons.delete_outline, size: 16, color: Colors.grey),
+                                  SizedBox(width: 2),
+                                  Text('Sil', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          item.description != null && item.description!.isNotEmpty
+                              ? item.description!
+                              : 'Adet: ${item.quantity} ‚Ä¢ Fiyat: ‚Ç∫${item.price.toStringAsFixed(2)}',
+                          style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '‚Ç∫${item.price.toStringAsFixed(2)}',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+
+                            // Artƒ±r / Azalt Kontrol√º
+                            Container(
+                              height: 32,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(minWidth: 28),
+                                    icon: const Icon(Icons.remove, size: 16),
+                                    onPressed: () {
+                                      if (item.quantity > 1) {
+                                        ref.read(cartProvider.notifier).updateQuantity(item.productId, item.quantity - 1);
+                                      } else {
+                                        ref.read(cartProvider.notifier).removeFromCart(item.productId);
+                                      }
+                                    },
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Text(
+                                      '${item.quantity}',
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(minWidth: 28),
+                                    icon: const Icon(Icons.add, size: 16),
+                                    onPressed: () {
+                                      ref.read(cartProvider.notifier).updateQuantity(item.productId, item.quantity + 1);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           },
         ),
+        const SizedBox(height: 16),
+
+        // Sipari≈ü √ñzeti Kartƒ±
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Sipari≈ü √ñzeti', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Ara Toplam', style: TextStyle(color: Colors.black54)),
+                  Text('‚Ç∫${total.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.w600)),
+                ],
+              ),
+              const SizedBox(height: 8),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Kargo √úcreti', style: TextStyle(color: Colors.black54)),
+                  Text('√úcretsiz', style: TextStyle(color: Color(0xFF16A34A), fontWeight: FontWeight.bold)),
+                ],
+              ),
+              const Divider(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Toplam', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(
+                    '‚Ç∫${total.toStringAsFixed(2)}',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // √ñdemeye Ge√ß Butonu (Ye≈üil)
+        SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: ElevatedButton(
+            onPressed: () {
+              context.push(AppRouter.checkoutSummary);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF16A34A),
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('√ñdemeye Ge√ß', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                SizedBox(width: 6),
+                Icon(Icons.chevron_right, color: Colors.white),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
       ],
     );
   }

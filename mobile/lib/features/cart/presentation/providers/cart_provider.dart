@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../data/models/cart_item_model.dart';
 import '../../data/models/cart_model.dart';
 import '../../domain/repositories/cart_repository_impl.dart';
 import '../../domain/repositories/cart_repository.dart';
@@ -36,19 +37,66 @@ class CartNotifier extends StateNotifier<CartState> {
     state = state.copyWith(isLoading: true);
     try {
       final cart = await _cartRepository.getCart();
-      state = state.copyWith(isLoading: false, cart: cart);
+      if (cart.items.isNotEmpty || cart.totalPrice > 0) {
+        state = state.copyWith(isLoading: false, cart: cart);
+      } else {
+        state = state.copyWith(isLoading: false, cart: state.cart ?? CartModel(items: [], totalPrice: 0));
+      }
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: 'Sepet yüklenemedi.');
     }
   }
 
   // Sepete Ürün Ekle
-  Future<void> addToCart(String productId, {int quantity = 1}) async {
+  Future<void> addToCart(
+    String productId, {
+    int quantity = 1,
+    String? productName,
+    double? price,
+    String? imageUrl,
+  }) async {
+    final currentCart = state.cart ?? CartModel(items: [], totalPrice: 0);
+    final existingIndex = currentCart.items.indexWhere((item) => item.productId == productId);
+    final updatedItems = List<CartItemModel>.from(currentCart.items);
+
+    if (existingIndex >= 0) {
+      final currentItem = updatedItems[existingIndex];
+      updatedItems[existingIndex] = CartItemModel(
+        id: currentItem.id,
+        productId: currentItem.productId,
+        productName: currentItem.productName,
+        price: currentItem.price,
+        quantity: currentItem.quantity + quantity,
+        imageUrl: currentItem.imageUrl,
+      );
+    } else {
+      updatedItems.add(
+        CartItemModel(
+          id: productId,
+          productId: productId,
+          productName: productName ?? 'Ürün',
+          description: null,
+          price: price ?? 0,
+          quantity: quantity,
+          imageUrl: imageUrl,
+        ),
+      );
+    }
+
+    final optimisticCart = CartModel(
+      items: updatedItems,
+      totalPrice: updatedItems.fold<double>(0, (sum, item) => sum + item.totalPrice),
+    );
+
+    state = state.copyWith(cart: optimisticCart, errorMessage: null);
+
     try {
       final updatedCart = await _cartRepository.addToCart(productId: productId, quantity: quantity);
-      state = state.copyWith(cart: updatedCart);
-    } catch (e) {
-      state = state.copyWith(errorMessage: 'Ürün sepete eklenemedi.');
+      if (updatedCart.items.isNotEmpty || updatedCart.totalPrice > 0) {
+        state = state.copyWith(cart: updatedCart, errorMessage: null);
+      }
+    } catch (_) {
+      state = state.copyWith(errorMessage: 'Ürün sepete eklenemedi, ancak yerel sepet güncellendi.');
     }
   }
 
@@ -58,21 +106,56 @@ class CartNotifier extends StateNotifier<CartState> {
       await removeFromCart(productId);
       return;
     }
+      
+    final currentCart = state.cart ?? CartModel(items: [], totalPrice: 0);
+    final updatedItems = currentCart.items.map((item) {
+      if (item.productId == productId) {
+        return CartItemModel(
+          id: item.id,
+          productId: item.productId,
+          productName: item.productName,
+          price: item.price,
+          description: item.description,
+          quantity: newQuantity,
+          imageUrl: item.imageUrl,
+        );
+      }
+      return item;
+    }).toList();
+
+    final optimisticCart = CartModel(
+      items: updatedItems,
+      totalPrice: updatedItems.fold<double>(0, (sum, item) => sum + item.totalPrice),
+    );
+
+    state = state.copyWith(cart: optimisticCart, errorMessage: null);
+
     try {
-      // Repository'de isteği atıp güncel sepeti alıyoruz
-      final updatedCart = await _cartRepository.addToCart(productId: productId, quantity: newQuantity);
-      state = state.copyWith(cart: updatedCart);
-    } catch (e) {
+      final updatedCart = await _cartRepository.updateQuantity(
+        productId: productId,
+        quantity: newQuantity,
+      );
+      state = state.copyWith(cart: updatedCart, errorMessage: null);
+    } catch (_) {
       state = state.copyWith(errorMessage: 'Adet güncellenemedi.');
     }
   }
 
   // Sepetten Ürün Çıkar
   Future<void> removeFromCart(String productId) async {
+    final currentCart = state.cart ?? CartModel(items: [], totalPrice: 0);
+    final updatedItems = currentCart.items.where((item) => item.productId != productId).toList();
+    final optimisticCart = CartModel(
+      items: updatedItems,
+      totalPrice: updatedItems.fold<double>(0, (sum, item) => sum + item.totalPrice),
+    );
+
+    state = state.copyWith(cart: optimisticCart, errorMessage: null);
+
     try {
       final updatedCart = await _cartRepository.removeFromCart(productId: productId);
-      state = state.copyWith(cart: updatedCart);
-    } catch (e) {
+      state = state.copyWith(cart: updatedCart, errorMessage: null);
+    } catch (_) {
       state = state.copyWith(errorMessage: 'Ürün sepetten silinemedi.');
     }
   }
