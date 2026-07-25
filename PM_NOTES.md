@@ -21,7 +21,7 @@
 
 **PM Günlük Özeti:** Projenin ilk gününde tüm mimari altyapılar ve CI/CD pipeline'ı sorunsuz şekilde kuruldu. Tasarım token'larının teslim edilmesiyle Frontend'in bekleme durumu (blocker) ortadan kalktı ve ilk Issue'lar başarıyla ana branch'e merge edildi. Backend sözleşmesinin (OpenAPI) tamamlanması ve tasarımların hazır olmasıyla takım mükemmel bir senkron yakaladı. Çok verimli bir ilk gün oldu.
 
-## Gün 2 - 14 Temmuz 2026
+## Gün 2 - 14.07.2026
 
 *   **Tuba (PM/Design)**
     *   *Bugün Yapılanlar:* Web kullanıcı (B2C) paneli tasarımları Figma üzerinde tamamlandı. Kübra ile API sözleşmesindeki kritik eksiklikler giderilerek son halinin yayınlanması (PR #19) süreci yönetildi. Projenin genel gidişatı takip edildi ve İkram için QA Task 2 planlanarak ataması yapıldı.
@@ -38,7 +38,7 @@
 
 **PM Günlük Özeti:** Bugün, projenin teknik temelini oluşturan API sözleşmesini (OpenAPI) başarıyla yayına alarak çok kritik bir aşamayı geçtik. Backend tarafında veri tabanı kurulumu tamamlanırken, frontend tarafında hem Admin panelinin iskeleti kuruldu hem de test altyapısı (Playwright & Postman) güncellendi. Ekip, belirlenen takvime uygun şekilde ilerliyor; teknik engeller temizlendi ve geliştirme süreçleri standartlara oturtuldu. Yarın odak noktamız, B2C tarafındaki kullanıcı ekranlarının (FE-2) tamamlanması ve backend tarafında veri tabanı modellemesinin (Prisma) başlatılması olacaktır.
 
-## Gün 3 - 16 Temmuz 2026
+## Gün 3 - 16.07.2026
 
 *   **Tuba (PM/Design)**
     *   *Bugün Yapılanlar:* Backend şemasına tam uyumlu "Golden Dataset" hazırlandı; veriler categories, products ve users olarak üç ayrı modüler JSON dosyasına ayrıldı. Seed işlemleri için Kübra ile koordineli şekilde süreç başlatıldı. API sözleşme denetimi ve dokümantasyon takibi sürece yayılmış bir görev olarak aktif tutuluyor. Ekibin iş akışını hızlandırmak adına teknik ve yönetimsel tasklar (MOB-3,4,5 ve BE-6 gibi) oluşturularak ekip üyelerine atandı.
@@ -55,7 +55,7 @@
 
 **PM Günlük Özeti:** Projemizin tüm katmanlarında (Mobil, Frontend, Backend) altyapı kurulumları ve temel entegrasyonlar başarıyla tamamlandı. Gerçek veri entegrasyonuna geçiş için gereken veri seti hazırlıkları ve ekip görev dağılımları tamamlandı.
 
-## Gün 4 - 17 Temmuz 2026
+## Gün 4 - 17.07.2026
 
 *   **Tuba (PM/Design)**
     *   *Bugün Yapılanlar:* Frontend ve QA alanlarında İkram'ın sorumluluk alanını genişleten dört yeni task oluşturuldu ve atandı. Kübra tarafından hazırlanan "Golden Dataset" (ürünler, kategoriler, kullanıcılar) yapıları Zeliha'ya iletilerek, mobil uygulamanın backend anahtarlarıyla tam uyumlu hale getirilmesi sağlandı. Ekip içi koordinasyon ve teknik süreç takibi yapıldı.
@@ -156,3 +156,20 @@
   * *Engel (Blocker):* Yok.
 
 **PM Günlük Özeti:** Projede yönetimsel tarafta final sunum ve demo planlamaları hız kazanırken; backend tarafında sepet modülü tamamlanmış ve siparişlere geçilmiştir. Frontend tarafında kullanıcı deneyimini güçlendirecek toast bildirimleri ve global hata yakalama (Error Boundary) mekanizmaları devreye alınmış, mobil tarafta ise kategori ve dinamik sepet ekranları başarıyla kurgulanmıştır.
+
+## Gün 10 - 24.07.2026 
+
+* **Tuba (PM/Design):**
+  * *Bugün Yapılanlar:* Canva üzerinde projenin final sunumuna başlandı ve süreç takibi sağlandı. Ayrıca demo videosu için placeholder görseller güncellenerek gerçek ürün görselleri seçildi; güncellenmiş yeni ürün JSON formatı Kübra'ya iletildi.
+  * *Engel (Blocker):* Yok.
+* **Kübra (Backend):**
+  * *Bugün Yapılanlar:* `cart` ve `orders` endpoint'leri kodlanarak başarıyla test edildi.
+  * *Engel (Blocker):* Yok.
+* **Ikram (Frontend/QA):**
+  * *Bugün Yapılanlar:* QA test senaryoları ve entegrasyonlar için backend tarafındaki son geliştirmelerin tamamlanması bekleniyor.
+  * *Engel (Blocker):* Yok (Backend entegrasyonu bekleniyor).
+* **Zeliha (Mobil):**
+  * *Bugün Yapılanlar:* Kategori ekranı, ürünlerin `categoryId` değerine göre filtrelenmiş şekilde yüklenecek şekilde optimize edildi. Profil ekranı projeye eklendi ve kullanıcı token yönetimiyle ilgili karşılaşılan hatalar giderildi.
+  * *Engel (Blocker):* Yok.
+
+**PM Günlük Özeti:** Projede yönetimsel tarafta Canva sunumu ve demo veri hazırlıkları (ürün JSON entegrasyonu) hız kazanırken; backend tarafında sepet ve sipariş endpoint'leri tamamlanmıştır. Mobil tarafta kategori filtreleme, profil ekranı ve token akışları kararlı hale getirilmiş, frontend/QA tarafında ise son entegrasyon adımları için hazırlıklar son aşamaya gelmiştir.
