@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/components/custom_button.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../cart/presentation/providers/cart_provider.dart';
 import '../providers/product_provider.dart';
 
 class ProductDetailScreen extends ConsumerWidget {
@@ -116,10 +117,18 @@ class ProductDetailScreen extends ConsumerWidget {
                   top: false,
                   child: CustomButton(
                     text: 'Sepete Ekle',
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${product.name} sepete eklendi!')),
+                    onPressed: () async {
+                      await ref.read(cartProvider.notifier).addToCart(
+                        product.id,
+                        productName: product.name,
+                        price: product.price,
+                        imageUrl: product.images.isNotEmpty ? product.images.first.imageUrl : null,
                       );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${product.name} sepete eklendi!')),
+                        );
+                      }
                     },
                   ),
                 ),

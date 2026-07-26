@@ -7,6 +7,8 @@ import '../../features/products/presentation/screens/product_list_screen.dart';
 import '../../features/products/presentation/screens/product_detail_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/categories/presentation/screens/category_list_screen.dart';
+import '../../features/orders/presentation/screens/order_history_screen.dart';
+import '../../features/checkout/presentation/screens/checkout_summary_screen.dart';
 import 'main_scaffold.dart';
 
 // Geçici boş sekmeler (İleride doldurulacak placeholder ekranlar)
@@ -26,6 +28,10 @@ class AppRouter {
   static const String cart = '/cart';
   static const String categories = '/categories';
   static const String profile = '/profile';
+  static const String orderHistory = '/order-history';
+  static const String checkoutSummary = '/checkout-summary';
+
+
 
   // Global navigasyon anahtarı
   static final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -45,6 +51,16 @@ class AppRouter {
         path: register,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: orderHistory,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const OrderHistoryScreen(),
+      ),
+      GoRoute(
+        path: checkoutSummary,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const CheckoutSummaryScreen(),
       ),
       
       // Ürün Detay

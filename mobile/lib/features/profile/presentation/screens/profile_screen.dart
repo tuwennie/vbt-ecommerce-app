@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/navigation/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_state_widget.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/profile_provider.dart';
 import '../../../orders/presentation/providers/order_provider.dart';
 
@@ -122,9 +125,7 @@ class ProfileScreen extends ConsumerWidget {
                     icon: Icons.history,
                     title: 'Sipariş Geçmişim',
                     badgeText: orderCount > 0 ? '$orderCount' : '12',
-                    onTap: () {
-                      // TODO: Sipariş detay/liste sayfasına yönlendirme
-                    },
+                    onTap: () => context.go(AppRouter.orderHistory),
                   ),
                   const Divider(height: 1, indent: 16, endIndent: 16),
                   _buildMenuItem(
@@ -151,8 +152,19 @@ class ProfileScreen extends ConsumerWidget {
 
             // 3. Çıkış Yap Kartı
             InkWell(
-              onTap: () {
-                // TODO: Logout işlemi
+              onTap: () async {
+                try {
+                  await ref.read(authProvider.notifier).logout();
+                  if (context.mounted) {
+                    context.go(AppRouter.login);
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Çıkış yapılırken bir hata oluştu: $e')),
+                    );
+                  }
+                }
               },
               borderRadius: BorderRadius.circular(16),
               child: Container(

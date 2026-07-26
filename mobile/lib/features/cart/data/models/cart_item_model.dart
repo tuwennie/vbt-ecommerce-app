@@ -3,6 +3,8 @@ class CartItemModel {
   final String id;
   final String productId;
   final String productName;
+  final String? description;
+
   final double price;
   final int quantity;
   final String? imageUrl;
@@ -11,6 +13,7 @@ class CartItemModel {
     required this.id,
     required this.productId,
     required this.productName,
+    this.description,
     required this.price,
     required this.quantity,
     this.imageUrl,
@@ -22,6 +25,7 @@ class CartItemModel {
       id: json['id']?.toString() ?? '',
       productId: json['productId']?.toString() ?? product['id']?.toString() ?? '',
       productName: product['name'] ?? json['productName'] ?? '',
+      description: product['description'] ?? json['description'] ?? json['productDescription'],
       price: (json['price'] ?? product['price'] ?? 0).toDouble(),
       quantity: json['quantity'] ?? 1,
       imageUrl: product['imageUrl'] ?? json['imageUrl'],
