@@ -11,15 +11,18 @@ class CartModel {
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
     final rawItems = json['items'] as List? ?? [];
-    final itemsList = rawItems.map((e) => CartItemModel.fromJson(e)).toList();
-    
-    // Toplam fiyatı backend verisinden alıyoruz, yoksa yerelde hesaplıyoruz
+    final itemsList = rawItems
+        .whereType<Map<String, dynamic>>()
+        .map((e) => CartItemModel.fromJson(e))
+        .toList();
+
     final calculatedTotal = itemsList.fold<double>(0, (sum, item) => sum + item.totalPrice);
-    final backendTotal = (json['totalPrice'] ?? json['total'])?.toDouble();
+    final rawTotal = json['total'] ?? json['totalPrice'] ?? json['subtotal'] ?? json['totalAmount'];
+    final double? backendTotal = double.tryParse(rawTotal?.toString() ?? '');
 
     return CartModel(
       items: itemsList,
-      totalPrice: backendTotal ?? calculatedTotal,
+      totalPrice: (backendTotal != null && backendTotal > 0) ? backendTotal : calculatedTotal,
     );
   }
 }

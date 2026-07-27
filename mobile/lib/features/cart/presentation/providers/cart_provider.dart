@@ -28,17 +28,103 @@ class CartState {
 class CartNotifier extends StateNotifier<CartState> {
   final CartRepository _cartRepository;
 
+  final DioClient _dioClient = DioClient();
+
   CartNotifier(this._cartRepository) : super(CartState()) {
     fetchCart();
+  }
+
+  Future<List<dynamic>> _fetchProductsList() async {
+    try {
+      final response = await _dioClient.get('/products');
+      final rawData = response.data;
+      if (rawData is Map<String, dynamic>) {
+        final items = rawData['data'] ?? rawData['items'] ?? rawData['products'];
+        if (items is List) return items;
+      } else if (rawData is List) {
+        return rawData;
+      }
+    } catch (_) {}
+    return [];
+  }
+
+  CartItemModel _sanitizeItem(
+    CartItemModel newItem,
+    List<CartItemModel> existingItems,
+    List<dynamic> dbProducts,
+  ) {
+    double itemPrice = newItem.price;
+    String? itemImage = newItem.imageUrl;
+
+    // 1. Ürün listesinden veritabanındaki gerçek ürünü eşleştir
+    final matchedProduct = dbProducts.where((p) {
+      if (p is Map<String, dynamic>) {
+        return p['id']?.toString() == newItem.productId;
+      }
+      return false;
+    }).firstOrNull;
+
+    if (matchedProduct != null && matchedProduct is Map<String, dynamic>) {
+      if (itemPrice <= 0 && matchedProduct['price'] != null) {
+        itemPrice = double.tryParse(matchedProduct['price'].toString()) ?? itemPrice;
+      }
+
+      final images = matchedProduct['images'] as List?;
+      if (images != null && images.isNotEmpty) {
+        final primaryImg = images.firstWhere(
+          (img) => img is Map && img['isPrimary'] == true,
+          orElse: () => images.first,
+        );
+        if (primaryImg is Map<String, dynamic> && primaryImg['imageUrl'] != null) {
+          itemImage = primaryImg['imageUrl'].toString();
+        }
+      }
+    }
+
+    // 2. Eski yerel sepet öğesinden yedekle
+    final oldMatch = existingItems.where(
+      (o) => o.productId == newItem.productId || o.id == newItem.id,
+    ).firstOrNull;
+
+    if (oldMatch != null) {
+      if (itemPrice <= 0 && oldMatch.price > 0) {
+        itemPrice = oldMatch.price;
+      }
+      if ((itemImage == null || itemImage.isEmpty) && oldMatch.imageUrl != null && oldMatch.imageUrl!.isNotEmpty) {
+        itemImage = oldMatch.imageUrl;
+      }
+    }
+
+    return CartItemModel(
+      id: newItem.id,
+      productId: newItem.productId,
+      productName: newItem.productName,
+      description: newItem.description,
+      price: itemPrice,
+      quantity: newItem.quantity,
+      imageUrl: itemImage,
+    );
   }
 
   // API'den sepet verisini yükle
   Future<void> fetchCart() async {
     state = state.copyWith(isLoading: true);
     try {
-      final cart = await _cartRepository.getCart();
-      if (cart.items.isNotEmpty || cart.totalPrice > 0) {
-        state = state.copyWith(isLoading: false, cart: cart);
+      final fetchedCart = await _cartRepository.getCart();
+      final oldItems = state.cart?.items ?? [];
+      final dbProducts = await _fetchProductsList();
+
+      final sanitizedItems = fetchedCart.items.map((item) {
+        return _sanitizeItem(item, oldItems, dbProducts);
+      }).toList();
+
+      final sanitizedCart = CartModel(
+        items: sanitizedItems,
+        totalPrice: sanitizedItems.fold<double>(0, (sum, item) => sum + item.totalPrice),
+      );
+
+      if (sanitizedCart.items.isNotEmpty || sanitizedCart.totalPrice > 0) {
+        state = state.copyWith(isLoading: false, cart: sanitizedCart);
       } else {
         state = state.copyWith(isLoading: false, cart: state.cart ?? CartModel(items: [], totalPrice: 0));
       }
@@ -58,16 +144,30 @@ class CartNotifier extends StateNotifier<CartState> {
     final currentCart = state.cart ?? CartModel(items: [], totalPrice: 0);
     final existingIndex = currentCart.items.indexWhere((item) => item.productId == productId);
     final updatedItems = List<CartItemModel>.from(currentCart.items);
+    final dbProducts = await _fetchProductsList();
+
+    String? validImage = imageUrl;
+    if (validImage == null || validImage.isEmpty) {
+      final matched = dbProducts.where((p) => p is Map && p['id']?.toString() == productId).firstOrNull;
+      if (matched is Map<String, dynamic> && matched['images'] is List && (matched['images'] as List).isNotEmpty) {
+        validImage = matched['images'][0]['imageUrl']?.toString();
+      }
+    }
 
     if (existingIndex >= 0) {
       final currentItem = updatedItems[existingIndex];
+      final itemPrice = (currentItem.price > 0) ? currentItem.price : (price ?? 0.0);
+      final itemImg = (validImage != null && validImage.isNotEmpty)
+          ? validImage
+          : currentItem.imageUrl;
+
       updatedItems[existingIndex] = CartItemModel(
         id: currentItem.id,
         productId: currentItem.productId,
         productName: currentItem.productName,
-        price: currentItem.price,
+        price: itemPrice,
         quantity: currentItem.quantity + quantity,
-        imageUrl: currentItem.imageUrl,
+        imageUrl: itemImg,
       );
     } else {
       updatedItems.add(
@@ -76,9 +176,9 @@ class CartNotifier extends StateNotifier<CartState> {
           productId: productId,
           productName: productName ?? 'Ürün',
           description: null,
-          price: price ?? 0,
+          price: price ?? 0.0,
           quantity: quantity,
-          imageUrl: imageUrl,
+          imageUrl: validImage,
         ),
       );
     }
@@ -93,23 +193,32 @@ class CartNotifier extends StateNotifier<CartState> {
     try {
       final updatedCart = await _cartRepository.addToCart(productId: productId, quantity: quantity);
       if (updatedCart.items.isNotEmpty || updatedCart.totalPrice > 0) {
-        state = state.copyWith(cart: updatedCart, errorMessage: null);
+        final sanitizedItems = updatedCart.items.map((item) {
+          return _sanitizeItem(item, optimisticCart.items, dbProducts);
+        }).toList();
+
+        final sanitizedCart = CartModel(
+          items: sanitizedItems,
+          totalPrice: sanitizedItems.fold<double>(0, (sum, item) => sum + item.totalPrice),
+        );
+
+        state = state.copyWith(cart: sanitizedCart, errorMessage: null);
       }
     } catch (_) {
       state = state.copyWith(errorMessage: 'Ürün sepete eklenemedi, ancak yerel sepet güncellendi.');
     }
   }
 
-  // Adet Güncelleme (Eklendi ➕)
+  // Adet Güncelleme
   Future<void> updateQuantity(String productId, int newQuantity) async {
     if (newQuantity <= 0) {
       await removeFromCart(productId);
       return;
     }
-      
+
     final currentCart = state.cart ?? CartModel(items: [], totalPrice: 0);
     final updatedItems = currentCart.items.map((item) {
-      if (item.productId == productId) {
+      if (item.productId == productId || item.id == productId) {
         return CartItemModel(
           id: item.id,
           productId: item.productId,
@@ -131,11 +240,22 @@ class CartNotifier extends StateNotifier<CartState> {
     state = state.copyWith(cart: optimisticCart, errorMessage: null);
 
     try {
+      final dbProducts = await _fetchProductsList();
       final updatedCart = await _cartRepository.updateQuantity(
         productId: productId,
         quantity: newQuantity,
       );
-      state = state.copyWith(cart: updatedCart, errorMessage: null);
+
+      final sanitizedItems = updatedCart.items.map((item) {
+        return _sanitizeItem(item, optimisticCart.items, dbProducts);
+      }).toList();
+
+      final sanitizedCart = CartModel(
+        items: sanitizedItems,
+        totalPrice: sanitizedItems.fold<double>(0, (sum, item) => sum + item.totalPrice),
+      );
+
+      state = state.copyWith(cart: sanitizedCart, errorMessage: null);
     } catch (_) {
       state = state.copyWith(errorMessage: 'Adet güncellenemedi.');
     }
@@ -144,7 +264,7 @@ class CartNotifier extends StateNotifier<CartState> {
   // Sepetten Ürün Çıkar
   Future<void> removeFromCart(String productId) async {
     final currentCart = state.cart ?? CartModel(items: [], totalPrice: 0);
-    final updatedItems = currentCart.items.where((item) => item.productId != productId).toList();
+    final updatedItems = currentCart.items.where((item) => item.productId != productId && item.id != productId).toList();
     final optimisticCart = CartModel(
       items: updatedItems,
       totalPrice: updatedItems.fold<double>(0, (sum, item) => sum + item.totalPrice),
@@ -153,8 +273,19 @@ class CartNotifier extends StateNotifier<CartState> {
     state = state.copyWith(cart: optimisticCart, errorMessage: null);
 
     try {
+      final dbProducts = await _fetchProductsList();
       final updatedCart = await _cartRepository.removeFromCart(productId: productId);
-      state = state.copyWith(cart: updatedCart, errorMessage: null);
+
+      final sanitizedItems = updatedCart.items.map((item) {
+        return _sanitizeItem(item, optimisticCart.items, dbProducts);
+      }).toList();
+
+      final sanitizedCart = CartModel(
+        items: sanitizedItems,
+        totalPrice: sanitizedItems.fold<double>(0, (sum, item) => sum + item.totalPrice),
+      );
+
+      state = state.copyWith(cart: sanitizedCart, errorMessage: null);
     } catch (_) {
       state = state.copyWith(errorMessage: 'Ürün sepetten silinemedi.');
     }

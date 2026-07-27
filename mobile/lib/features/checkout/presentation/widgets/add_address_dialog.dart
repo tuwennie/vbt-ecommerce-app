@@ -20,6 +20,8 @@ class _AddAddressDialogState extends ConsumerState<AddAddressDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
       title: const Text('Yeni Adres Ekle'),
       content: Form(
         key: _formKey,
@@ -68,11 +70,12 @@ class _AddAddressDialogState extends ConsumerState<AddAddressDialog> {
                 district: _districtController.text,
               );
 
+              final navigator = Navigator.of(context);
               // Backend'e yeni adresi kaydet ve listeyi yenile
               await ref.read(orderRepositoryProvider).addAddress(newAddress);
               await ref.read(checkoutProvider.notifier).fetchAddresses();
               
-              if (mounted) Navigator.pop(context);
+              if (mounted) navigator.pop();
             }
           },
           child: const Text('Kaydet'),

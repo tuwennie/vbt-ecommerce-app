@@ -12,8 +12,18 @@ class MainScaffold extends ConsumerWidget {
   int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.path;
     if (location.startsWith(AppRouter.categories)) return 1;
-    if (location.startsWith(AppRouter.cart)) return 2;
-    if (location.startsWith(AppRouter.profile)) return 3;
+    if (location.startsWith(AppRouter.cart) || location.startsWith(AppRouter.checkout)) return 2;
+    if (location.startsWith(AppRouter.profile) ||
+        location.startsWith(AppRouter.changeEmail) ||
+        location.startsWith(AppRouter.changePassword) ||
+        location.startsWith(AppRouter.orderHistory) ||
+        location.startsWith(AppRouter.orderConfirmation) ||
+        location.startsWith(AppRouter.favorites) ||
+        location.startsWith(AppRouter.addresses) ||
+        location.startsWith(AppRouter.addAddress) ||
+        location.startsWith(AppRouter.savedCards)) {
+      return 3;
+    }
     return 0; // Default: Home / ProductList
   }
 
@@ -110,8 +120,8 @@ class MainScaffold extends ConsumerWidget {
     int badgeCount = 0,
   }) {
     final isSelected = index == selectedIndex;
-    final activeColor = const Color(0xFF1D61E7); // Tasarımdaki canlı mavi
-    final inactiveColor = const Color(0xFF4B5563);
+    const activeColor = Color(0xFF1D61E7); // Tasarımdaki canlı mavi
+    const inactiveColor = Color(0xFF4B5563);
 
     return InkWell(
       onTap: () => _onItemTapped(index, context),

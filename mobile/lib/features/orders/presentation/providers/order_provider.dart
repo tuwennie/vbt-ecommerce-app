@@ -40,15 +40,37 @@ class OrderNotifier extends StateNotifier<OrderState> {
     try {
       final response = await _dioClient.get(ApiEndpoints.orders);
 
-      final rawData = response.data is Map<String, dynamic>
-          ? (response.data['orders'] ?? response.data['data'] ?? [])
-          : (response.data as List? ?? []);
+      dynamic rawData = response.data;
+      if (rawData is Map<String, dynamic>) {
+        if (rawData.containsKey('data')) {
+          final dataField = rawData['data'];
+          if (dataField is List) {
+            rawData = dataField;
+          } else if (dataField is Map<String, dynamic>) {
+            rawData = dataField['orders'] ?? dataField['items'] ?? dataField['data'] ?? [];
+          } else {
+            rawData = [];
+          }
+        } else if (rawData.containsKey('orders')) {
+          rawData = rawData['orders'];
+        } else if (rawData.containsKey('items')) {
+          rawData = rawData['items'];
+        }
+      }
 
-      final ordersList = (rawData as List)
-          .map((e) => OrderResponseModel.fromJson(e as Map<String, dynamic>)) // 👈 OrderResponseModel.fromJson
+      final List listData = rawData is List ? rawData : [];
+
+      final ordersList = listData
+          .whereType<Map<String, dynamic>>()
+          .map((e) => OrderResponseModel.fromJson(e))
           .toList();
 
-      state = state.copyWith(isLoading: false, orders: ordersList);
+      state = state.copyWith(isLoading: false, orders: ordersList, errorMessage: null);
+    } on CustomApiException catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: e.message,
+      );
     } on DioException catch (e) {
       final serverMessage = e.response?.data is Map<String, dynamic>
           ? e.response?.data['message']
@@ -65,7 +87,7 @@ class OrderNotifier extends StateNotifier<OrderState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Beklenmeyen bir hata oluştu.',
+        errorMessage: 'Beklenmeyen bir hata oluştu: $e',
       );
     }
   }
