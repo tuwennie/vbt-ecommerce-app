@@ -1,55 +1,38 @@
-class OrderItemModel {
-  final String productId;
-  final String productName;
-  final double price;
-  final int quantity;
-  final String? imageUrl;
-
-  OrderItemModel({
-    required this.productId,
-    required this.productName,
-    required this.price,
-    required this.quantity,
-    this.imageUrl,
-  });
-
-  factory OrderItemModel.fromJson(Map<String, dynamic> json) {
-    final product = json['product'] ?? {};
-    return OrderItemModel(
-      productId: json['productId']?.toString() ?? product['id']?.toString() ?? '',
-      productName: product['name'] ?? json['productName'] ?? 'Ürün',
-      price: (json['price'] ?? product['price'] ?? 0).toDouble(),
-      quantity: json['quantity'] ?? 1,
-      imageUrl: product['imageUrl'] ?? json['imageUrl'],
-    );
-  }
-}
-
-class OrderModel {
+class OrderResponseModel {
   final String id;
+  final String orderNo;
+  final String deliveryAddress;
   final double totalAmount;
+  final List<dynamic> items;
   final String status;
-  final DateTime createdAt;
-  final List<OrderItemModel> items;
+  final DateTime createdAt; 
 
-  OrderModel({
+  OrderResponseModel({
     required this.id,
-    required this.totalAmount,
-    required this.status,
-    required this.createdAt,
-    required this.items,
-  });
+    required this.orderNo,
+    required this.deliveryAddress,
+    this.totalAmount = 0.0,
+    this.items = const [],
+    this.status = 'Tamamlandı', // Varsayılan değer
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
 
-  factory OrderModel.fromJson(Map<String, dynamic> json) {
-    final rawItems = json['items'] as List? ?? [];
-    return OrderModel(
-      id: json['id']?.toString() ?? '',
-      totalAmount: (json['totalAmount'] ?? json['total'] ?? 0).toDouble(),
-      status: json['status'] ?? 'PENDING',
-      createdAt: json['createdAt'] != null 
-          ? DateTime.parse(json['createdAt']) 
+  factory OrderResponseModel.fromJson(Map<String, dynamic> json) {
+    final data = json.containsKey('data') ? json['data'] : json;
+    final address = data['address'] ?? {};
+
+    return OrderResponseModel(
+      id: data['id']?.toString() ?? '',
+      orderNo: data['orderNo'] ?? data['orderCode'] ?? '#SW-${data['id']}',
+      deliveryAddress: address['fullAddress'] != null
+          ? '${address['fullAddress']} ${address['district']}/${address['city']}'
+          : data['deliveryAddress'] ?? '',
+      totalAmount: double.tryParse(data['totalAmount']?.toString() ?? '0') ?? 0.0,
+      items: (data['items'] as List?) ?? [],
+      status: data['status']?.toString() ?? 'Hazırlanıyor', // API'den gelen status
+      createdAt: data['createdAt'] != null
+          ? DateTime.tryParse(data['createdAt'].toString()) ?? DateTime.now()
           : DateTime.now(),
-      items: rawItems.map((e) => OrderItemModel.fromJson(e)).toList(),
     );
   }
 }

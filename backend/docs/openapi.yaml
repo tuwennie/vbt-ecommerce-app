@@ -290,6 +290,56 @@ paths:
         '401': { $ref: '#/components/responses/Unauthorized' }
         '500': { $ref: '#/components/responses/InternalServerError' }
 
+  /users/me/password:
+    patch:
+      operationId: changePassword
+      tags: [users]
+      summary: Kullanıcının kendi şifresini değiştirmesi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword: { type: string }
+                newPassword: { type: string, minLength: 8, maxLength: 72 }
+      responses:
+        '204':
+          description: "Şifre değiştirildi; tüm oturumlar (refresh token'lar) geçersiz kılınır"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /users/me/email:
+    patch:
+      operationId: changeEmail
+      tags: [users]
+      summary: Kullanıcının kendi email adresini değiştirmesi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [newEmail, currentPassword]
+              properties:
+                newEmail: { type: string, format: email }
+                currentPassword: { type: string }
+      responses:
+        '200':
+          description: Email güncellendi
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
   # ==================== ADDRESSES ====================
   /addresses:
     get:

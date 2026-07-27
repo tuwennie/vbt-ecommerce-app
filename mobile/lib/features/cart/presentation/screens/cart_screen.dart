@@ -440,7 +440,7 @@ class CartScreen extends ConsumerWidget {
           height: 52,
           child: ElevatedButton(
             onPressed: () {
-              context.push(AppRouter.checkoutSummary);
+              context.push(AppRouter.checkout);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF16A34A),

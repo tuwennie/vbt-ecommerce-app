@@ -8,7 +8,8 @@ import '../../features/products/presentation/screens/product_detail_screen.dart'
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/categories/presentation/screens/category_list_screen.dart';
 import '../../features/orders/presentation/screens/order_history_screen.dart';
-import '../../features/checkout/presentation/screens/checkout_summary_screen.dart';
+import '../../features/checkout/presentation/screens/checkout_screen.dart';
+import '../../features/checkout/presentation/screens/order_confirmation_screen.dart';
 import 'main_scaffold.dart';
 
 // Geçici boş sekmeler (İleride doldurulacak placeholder ekranlar)
@@ -29,9 +30,8 @@ class AppRouter {
   static const String categories = '/categories';
   static const String profile = '/profile';
   static const String orderHistory = '/order-history';
-  static const String checkoutSummary = '/checkout-summary';
-
-
+  static const String checkout = '/checkout';
+  static const String orderConfirmation = '/order-confirmation';
 
   // Global navigasyon anahtarı
   static final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -58,9 +58,12 @@ class AppRouter {
         builder: (context, state) => const OrderHistoryScreen(),
       ),
       GoRoute(
-        path: checkoutSummary,
-        parentNavigatorKey: rootNavigatorKey,
-        builder: (context, state) => const CheckoutSummaryScreen(),
+        path: checkout,
+        builder: (context, state) => const CheckoutScreen(),
+      ),
+      GoRoute(
+        path: orderConfirmation,
+        builder: (context, state) => const OrderConfirmationScreen(),
       ),
       
       // Ürün Detay
@@ -86,7 +89,7 @@ class AppRouter {
           GoRoute(
             path: productList,
             builder: (context, state) {
-               final extra = state.extra as Map<String, dynamic>?;
+              final extra = state.extra as Map<String, dynamic>?;
               return ProductListScreen(
                 categoryId: extra?['categoryId'] as String?,
               );

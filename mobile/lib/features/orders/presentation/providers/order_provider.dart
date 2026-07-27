@@ -1,18 +1,23 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/api_endpoints.dart';
-import '../../data/models/order_model.dart';
+import '../../data/models/order_model.dart'; // OrderResponseModel'in bulunduğu dosya
 
 class OrderState {
   final bool isLoading;
-  final List<OrderModel> orders;
+  final List<OrderResponseModel> orders; // 👈 OrderModel yerine OrderResponseModel kullanıldı
   final String? errorMessage;
 
-  OrderState({this.isLoading = false, this.orders = const [], this.errorMessage});
+  OrderState({
+    this.isLoading = false,
+    this.orders = const [],
+    this.errorMessage,
+  });
 
   OrderState copyWith({
     bool? isLoading,
-    List<OrderModel>? orders,
+    List<OrderResponseModel>? orders, // 👈 OrderResponseModel
     String? errorMessage,
   }) {
     return OrderState(
@@ -34,14 +39,33 @@ class OrderNotifier extends StateNotifier<OrderState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final response = await _dioClient.get(ApiEndpoints.orders);
-      final List rawData = response.data['orders'] ?? response.data ?? [];
-      final ordersList = rawData.map((e) => OrderModel.fromJson(e)).toList();
+
+      final rawData = response.data is Map<String, dynamic>
+          ? (response.data['orders'] ?? response.data['data'] ?? [])
+          : (response.data as List? ?? []);
+
+      final ordersList = (rawData as List)
+          .map((e) => OrderResponseModel.fromJson(e as Map<String, dynamic>)) // 👈 OrderResponseModel.fromJson
+          .toList();
 
       state = state.copyWith(isLoading: false, orders: ordersList);
+    } on DioException catch (e) {
+      final serverMessage = e.response?.data is Map<String, dynamic>
+          ? e.response?.data['message']
+          : null;
+
+      final message = serverMessage is List
+          ? serverMessage.join(', ')
+          : serverMessage?.toString() ?? 'Geçmiş siparişler yüklenemedi.';
+
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: message,
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Geçmiş siparişler yüklenemedi.',
+        errorMessage: 'Beklenmeyen bir hata oluştu.',
       );
     }
   }

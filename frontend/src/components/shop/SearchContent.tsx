@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useProducts } from "@/hooks/use-products";
-import { getCategoryLabel } from "@/lib/shop-categories";
+import { useCategories } from "@/hooks/use-categories";
 import type { SortOption } from "@/lib/services/products-api";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductGridSkeleton } from "@/components/shop/ProductGridSkeleton";
@@ -13,16 +13,21 @@ import { getApiErrorMessage } from "@/lib/api-error";
 
 export function SearchContent() {
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
+  const categoryId = searchParams.get("category");
   const search = searchParams.get("search");
   const sort = (searchParams.get("sort") as SortOption | null) ?? "-createdAt";
   const page = Number(searchParams.get("page") ?? "1");
   const simulateError = searchParams.get("simulateError") === "true";
 
-  const title = search ? `"${search}" için sonuçlar` : getCategoryLabel(category);
+  const { data: categories } = useCategories();
+  const activeCategory = categories?.find((c) => c.id === categoryId);
+
+  const title = search
+    ? `"${search}" için sonuçlar`
+    : (activeCategory?.name ?? (categoryId ? "Kategori" : "Tüm Ürünler"));
 
   const { data, isLoading, isError, error, refetch } = useProducts({
-    categoryId: category,
+    categoryId,
     search,
     sort,
     page,
@@ -58,6 +63,7 @@ export function SearchContent() {
                 ))}
               </div>
             )}
+
             <div className="mt-8">
               <Pagination currentPage={data.page} totalPages={data.totalPages} />
             </div>
