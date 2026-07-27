@@ -16,6 +16,7 @@ type SeedCategory = {
   name: string;
   slug: string;
   isActive: boolean;
+  imageUrl: string;
 };
 
 type SeedProduct = {
@@ -55,12 +56,14 @@ async function main() {
         name: cat.name,
         slug: cat.slug,
         isActive: cat.isActive,
+        imageUrl: cat.imageUrl,
       },
       create: {
         id: cat.id,
         name: cat.name,
         slug: cat.slug,
         isActive: cat.isActive,
+        imageUrl: cat.imageUrl,
       },
     });
   }

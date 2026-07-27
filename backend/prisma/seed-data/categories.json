@@ -3,21 +3,42 @@
     "id": "cat_001",
     "name": "Elektronik",
     "slug": "elektronik",
-    "isActive": true
+    "isActive": true,
+    "imageUrl": "https://plus.unsplash.com/premium_photo-1679079456083-9f288e224e96?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
-  { "id": "cat_002", "name": "Moda", "slug": "moda", "isActive": true },
+  {
+    "id": "cat_002",
+    "name": "Moda",
+    "slug": "moda",
+    "isActive": true,
+    "imageUrl": "https://images.unsplash.com/photo-1743764180148-b712e5293800?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  },
   {
     "id": "cat_003",
     "name": "Ev & Ofis",
     "slug": "ev-ve-ofis",
-    "isActive": true
+    "isActive": true,
+    "imageUrl": "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "cat_004",
     "name": "Sağlık & Bakım",
     "slug": "saglik-ve-bakim",
-    "isActive": true
+    "isActive": true,
+    "imageUrl": "https://plus.unsplash.com/premium_photo-1661578344207-c25ecf918f1e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
-  { "id": "cat_005", "name": "Spor", "slug": "spor", "isActive": true },
-  { "id": "cat_006", "name": "Kitap", "slug": "kitap", "isActive": true }
+  {
+    "id": "cat_005",
+    "name": "Spor",
+    "slug": "spor",
+    "isActive": true,
+    "imageUrl": "https://plus.unsplash.com/premium_photo-1664303119944-4cf5302bb701?q=80&w=840&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  },
+  {
+    "id": "cat_006",
+    "name": "Kitap",
+    "slug": "kitap",
+    "isActive": true,
+    "imageUrl": "https://plus.unsplash.com/premium_photo-1669652639337-c513cc42ead6?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  }
 ]

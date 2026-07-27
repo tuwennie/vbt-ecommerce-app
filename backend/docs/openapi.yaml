@@ -1125,6 +1125,12 @@ components:
           type: boolean
           default: true
           description: 'Kalıcı silme yoktur; kategori bu alanla aktif/pasif yapılır.'
+        imageUrl:
+          type: string
+          format: uri
+          pattern: '^https://'
+          description: 'Kategori görseli; her zaman absolute ve https:// ile başlamalıdır.'
+          example: 'https://images.unsplash.com/photo-...'
 
     Category:
       allOf:
