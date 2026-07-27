@@ -5,8 +5,8 @@ import Link from "next/link";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { X, Home, LogOut, LogIn, User as UserIcon } from "lucide-react";
-import { SHOP_CATEGORIES } from "@/lib/shop-categories";
-import { toast } from "@/lib/toast";
+import { useCategories } from "@/hooks/use-categories";
+import { getCategoryIcon } from "@/lib/shop-categories";
 import {
   clearAccessTokenCookie,
   clearUserDisplayName,
@@ -15,6 +15,7 @@ import {
 } from "@/lib/auth-token";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { CART_QUERY_KEY } from "@/hooks/use-cart";
+import { toast } from "@/lib/toast";
 
 interface ShopSidebarProps {
   open: boolean;
@@ -36,7 +37,10 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const activeCategory = pathname === "/search" ? searchParams.get("category") : null;
+  // Sidebar'daki linkler artık gerçek kategori ID'sini taşıyor.
+  const activeCategoryId = pathname === "/search" ? searchParams.get("category") : null;
+
+  const { data: categories } = useCategories();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cachedName, setCachedName] = useState<string | null>(null);
@@ -53,8 +57,6 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
   function handleLogout() {
     clearAccessTokenCookie();
     clearUserDisplayName();
-    // DoD: kullanıcı çıkış yapınca sepet temizlenmeli — bir sonraki
-    // ziyaretçi/kullanıcı önceki kişinin sepetini görmemeli.
     queryClient.removeQueries({ queryKey: CART_QUERY_KEY });
     setIsLoggedIn(false);
     setCachedName(null);
@@ -125,13 +127,14 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
             Categories
           </p>
 
-          {SHOP_CATEGORIES.map((category) => {
-            const href = `/search?category=${category.slug}`;
-            const Icon = category.icon;
-            const isActive = activeCategory === category.slug;
+          {(categories ?? []).map((category) => {
+            if (!category.id) return null;
+            const href = `/search?category=${category.id}`;
+            const Icon = getCategoryIcon(category.slug);
+            const isActive = activeCategoryId === category.id;
             return (
               <Link
-                key={category.slug}
+                key={category.id}
                 href={href}
                 onClick={onClose}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
@@ -141,7 +144,7 @@ export function ShopSidebar({ open, onClose }: ShopSidebarProps) {
                 }`}
               >
                 <Icon className="h-4 w-4 shrink-0" />
-                {category.label}
+                {category.name}
               </Link>
             );
           })}

@@ -5,28 +5,20 @@ import {
   Sparkles,
   Dumbbell,
   BookOpen,
+  Tag,
   type LucideIcon,
 } from "lucide-react";
 
-export interface ShopCategory {
-  slug: string;
-  label: string;
-  icon: LucideIcon;
-}
+const ICONS_BY_SLUG: Record<string, LucideIcon> = {
+  elektronik: Laptop2,
+  moda: Shirt,
+  "ev-ofis": Armchair,
+  guzellik: Sparkles,
+  spor: Dumbbell,
+  kitap: BookOpen,
+};
 
-// NOT: Bu liste şu an elle (mock) tanımlı — backend'in gerçek kategori
-// seed'i hazır olunca GET /categories'ten dinamik çekilecek şekilde
-// güncellenecek (bkz. src/lib/services/categories.ts, zaten hazır).
-export const SHOP_CATEGORIES: ShopCategory[] = [
-  { slug: "elektronik", label: "Elektronik", icon: Laptop2 },
-  { slug: "moda", label: "Moda", icon: Shirt },
-  { slug: "ev-ofis", label: "Ev & Ofis", icon: Armchair },
-  { slug: "guzellik", label: "Güzellik", icon: Sparkles },
-  { slug: "spor", label: "Spor", icon: Dumbbell },
-  { slug: "kitap", label: "Kitap", icon: BookOpen },
-];
-
-export function getCategoryLabel(slug: string | null): string {
-  if (!slug) return "Tüm Ürünler";
-  return SHOP_CATEGORIES.find((c) => c.slug === slug)?.label ?? slug;
+export function getCategoryIcon(slug: string | undefined): LucideIcon {
+  if (!slug) return Tag;
+  return ICONS_BY_SLUG[slug] ?? Tag;
 }

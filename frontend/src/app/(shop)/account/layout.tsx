@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, MapPin, Package, Shield } from "lucide-react";
+import { User, MapPin, Package, Shield, Heart } from "lucide-react";
 import type { ReactNode } from "react";
 
 const TABS = [
   { href: "/account", label: "Profil", icon: User },
   { href: "/account/addresses", label: "Adres Defterim", icon: MapPin },
   { href: "/account/orders", label: "Siparişlerim", icon: Package },
+  { href: "/account/favorites", label: "Favorilerim", icon: Heart },
   { href: "/account/security", label: "Güvenlik", icon: Shield },
 ];
 
