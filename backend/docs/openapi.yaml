@@ -86,7 +86,7 @@ paths:
       summary: Yeni kullanıcı kaydı
       security: []
       parameters:
-        - $ref: "#/components/parameters/ClientTypeHeader"
+        - $ref: '#/components/parameters/ClientTypeHeader'
       requestBody:
         required: true
         content:
@@ -96,11 +96,24 @@ paths:
               additionalProperties: false
               required: [email, password, fullName]
               properties:
-                email: { type: string, format: email, example: "ayse@example.com" }
-                password: { type: string, minLength: 8, maxLength: 72, example: "Sifre123!" }
-                fullName: { type: string, minLength: 2, maxLength: 100, example: "Ayşe Yılmaz" }
+                email:
+                  { type: string, format: email, example: 'ayse@example.com' }
+                password:
+                  {
+                    type: string,
+                    minLength: 8,
+                    maxLength: 72,
+                    example: 'Sifre123!',
+                  }
+                fullName:
+                  {
+                    type: string,
+                    minLength: 2,
+                    maxLength: 100,
+                    example: 'Ayşe Yılmaz',
+                  }
       responses:
-        "201":
+        '201':
           description: Kullanıcı oluşturuldu
           headers:
             Set-Cookie:
@@ -110,11 +123,11 @@ paths:
               schema: { type: string }
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/AuthEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "409": { $ref: "#/components/responses/Conflict" }
-        "429": { $ref: "#/components/responses/TooManyRequests" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/AuthEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /auth/login:
     post:
@@ -123,7 +136,7 @@ paths:
       summary: Giriş yap
       security: []
       parameters:
-        - $ref: "#/components/parameters/ClientTypeHeader"
+        - $ref: '#/components/parameters/ClientTypeHeader'
       requestBody:
         required: true
         content:
@@ -133,10 +146,11 @@ paths:
               additionalProperties: false
               required: [email, password]
               properties:
-                email: { type: string, format: email, example: "ayse@example.com" }
-                password: { type: string, minLength: 1, example: "Sifre123!" }
+                email:
+                  { type: string, format: email, example: 'ayse@example.com' }
+                password: { type: string, minLength: 1, example: 'Sifre123!' }
       responses:
-        "200":
+        '200':
           description: Giriş başarılı
           headers:
             Set-Cookie:
@@ -146,11 +160,11 @@ paths:
               schema: { type: string }
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/AuthEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "429": { $ref: "#/components/responses/TooManyRequests" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/AuthEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /auth/refresh:
     post:
@@ -165,7 +179,7 @@ paths:
         gönderilen cookie'den okunur; gövdede refreshToken alanı gerekmez.
       security: []
       parameters:
-        - $ref: "#/components/parameters/ClientTypeHeader"
+        - $ref: '#/components/parameters/ClientTypeHeader'
       requestBody:
         required: true
         content:
@@ -181,7 +195,7 @@ paths:
                     alanı göndermez (cookie kullanılır); gönderilse de dikkate
                     alınmaz.
       responses:
-        "200":
+        '200':
           description: Yeni token çifti
           headers:
             Set-Cookie:
@@ -192,11 +206,11 @@ paths:
               schema: { type: string }
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/AuthEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "429": { $ref: "#/components/responses/TooManyRequests" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/AuthEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /auth/logout:
     post:
@@ -208,7 +222,7 @@ paths:
         `WEB` istemciler için refreshToken cookie'den okunur ve sunucu tarafında
         geçersiz kılınır; cookie ayrıca yanıt üzerinden temizlenir.
       parameters:
-        - $ref: "#/components/parameters/ClientTypeHeader"
+        - $ref: '#/components/parameters/ClientTypeHeader'
       requestBody:
         required: true
         content:
@@ -219,9 +233,9 @@ paths:
               properties:
                 refreshToken:
                   type: string
-                  description: "`MOBILE` istemciler için zorunludur. `WEB` istemciler bu alanı göndermez."
+                  description: '`MOBILE` istemciler için zorunludur. `WEB` istemciler bu alanı göndermez.'
       responses:
-        "204":
+        '204':
           description: Çıkış yapıldı
           headers:
             Set-Cookie:
@@ -229,9 +243,9 @@ paths:
                 Yalnızca `X-Client-Type: WEB` isteklerinde döner; refreshToken
                 cookie'sini temizler: `refreshToken=; Max-Age=0; Path=/api/v1/auth`
               schema: { type: string }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   # ==================== USERS ====================
   /users/me:
@@ -240,13 +254,13 @@ paths:
       tags: [users]
       summary: Giriş yapan kullanıcının profili
       responses:
-        "200":
+        '200':
           description: Kullanıcı profili
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/UserEnvelope" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/UserEnvelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
     patch:
       operationId: updateCurrentUser
       tags: [users]
@@ -260,16 +274,21 @@ paths:
               additionalProperties: false
               properties:
                 fullName: { type: string, minLength: 2, maxLength: 100 }
-                phone: { type: string, pattern: "^\\+?[0-9]{10,15}$", example: "+905551234567" }
+                phone:
+                  {
+                    type: string,
+                    pattern: "^\\+?[0-9]{10,15}$",
+                    example: '+905551234567',
+                  }
       responses:
-        "200":
+        '200':
           description: Güncellenmiş profil
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/UserEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/UserEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   # ==================== ADDRESSES ====================
   /addresses:
@@ -278,13 +297,13 @@ paths:
       tags: [addresses]
       summary: Giriş yapan kullanıcının kayıtlı teslimat adresleri
       responses:
-        "200":
+        '200':
           description: Adres listesi (yalnızca kendi adresleri)
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/AddressListEnvelope" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/AddressListEnvelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
     post:
       operationId: createAddress
       tags: [addresses]
@@ -293,16 +312,16 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/AddressInput" }
+            schema: { $ref: '#/components/schemas/AddressInput' }
       responses:
-        "201":
+        '201':
           description: Oluşturulan adres
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/AddressEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/AddressEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /addresses/{addressId}:
     put:
@@ -310,35 +329,35 @@ paths:
       tags: [addresses]
       summary: Adres güncelle (yalnızca kendi adresi)
       parameters:
-        - $ref: "#/components/parameters/AddressIdPath"
+        - $ref: '#/components/parameters/AddressIdPath'
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/AddressInput" }
+            schema: { $ref: '#/components/schemas/AddressInput' }
       responses:
-        "200":
+        '200':
           description: Güncellenmiş adres
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/AddressEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/AddressEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
     delete:
       operationId: deleteAddress
       tags: [addresses]
       summary: Adres sil (yalnızca kendi adresi; geçmiş siparişleri etkilemez)
       parameters:
-        - $ref: "#/components/parameters/AddressIdPath"
+        - $ref: '#/components/parameters/AddressIdPath'
       responses:
-        "204": { description: Silindi }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+        '204': { description: Silindi }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   # ==================== CATEGORIES ====================
   /categories:
@@ -350,16 +369,16 @@ paths:
       parameters:
         - name: includeInactive
           in: query
-          description: "Yalnızca ADMIN için anlamlı; normal kullanıcıya her zaman yalnızca aktif kategoriler döner."
+          description: 'Yalnızca ADMIN için anlamlı; normal kullanıcıya her zaman yalnızca aktif kategoriler döner.'
           schema: { type: boolean, default: false }
       responses:
-        "200":
+        '200':
           description: Kategoriler
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CategoryListEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/CategoryListEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   # ==================== PRODUCTS ====================
   /products:
@@ -369,8 +388,8 @@ paths:
       summary: Ürünleri listele (sayfalama + arama + filtre + sıralama)
       security: []
       parameters:
-        - $ref: "#/components/parameters/PageQuery"
-        - $ref: "#/components/parameters/SizeQuery"
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/SizeQuery'
         - name: search
           in: query
           description: Ürün adında büyük/küçük harf duyarsız arama
@@ -403,16 +422,16 @@ paths:
               - price
         - name: includeInactive
           in: query
-          description: "Yalnızca ADMIN için anlamlı (admin panelin pasif/tükenmiş ürünleri de görebilmesi için); normal kullanıcıya pasif ürünler hiçbir zaman dönmez."
+          description: 'Yalnızca ADMIN için anlamlı (admin panelin pasif/tükenmiş ürünleri de görebilmesi için); normal kullanıcıya pasif ürünler hiçbir zaman dönmez.'
           schema: { type: boolean, default: false }
       responses:
-        "200":
-          description: "Ürün listesi (pasif ürünler normal kullanıcıya dönmez; stoku 0 olan aktif ürün listeye dahildir)"
+        '200':
+          description: 'Ürün listesi (pasif ürünler normal kullanıcıya dönmez; stoku 0 olan aktif ürün listeye dahildir)'
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/ProductListEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/ProductListEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /products/{productId}:
     get:
@@ -421,15 +440,15 @@ paths:
       summary: Ürün detayı
       security: []
       parameters:
-        - $ref: "#/components/parameters/ProductIdPath"
+        - $ref: '#/components/parameters/ProductIdPath'
       responses:
-        "200":
+        '200':
           description: Ürün detayı
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/ProductEnvelope" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/ProductEnvelope' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   # ==================== CART ====================
   /cart:
@@ -438,13 +457,13 @@ paths:
       tags: [cart]
       summary: Giriş yapan kullanıcının sepeti
       responses:
-        "200":
+        '200':
           description: Sepet (toplam backend tarafından hesaplanır)
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CartEnvelope" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/CartEnvelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /cart/items:
     post:
@@ -463,21 +482,21 @@ paths:
                 productId: { type: string }
                 quantity: { type: integer, minimum: 1, maximum: 100 }
       responses:
-        "200":
+        '200':
           description: Güncellenmiş sepet
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CartEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "422":
-          description: "Ürün pasif veya istenen miktar mevcut stoku aşıyor"
+              schema: { $ref: '#/components/schemas/CartEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422':
+          description: 'Ürün pasif veya istenen miktar mevcut stoku aşıyor'
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/ErrorResponse"
+                  - $ref: '#/components/schemas/ErrorResponse'
                   - type: object
                     properties:
                       status:
@@ -485,10 +504,10 @@ paths:
                         enum: [PRODUCT_INACTIVE, INSUFFICIENT_STOCK]
               example:
                 success: false
-                message: "Requested quantity exceeds available stock"
+                message: 'Requested quantity exceeds available stock'
                 statusCode: 422
-                status: "INSUFFICIENT_STOCK"
-        "500": { $ref: "#/components/responses/InternalServerError" }
+                status: 'INSUFFICIENT_STOCK'
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /cart/items/{itemId}:
     put:
@@ -496,7 +515,7 @@ paths:
       tags: [cart]
       summary: Sepetteki ürün miktarını güncelle
       parameters:
-        - $ref: "#/components/parameters/CartItemIdPath"
+        - $ref: '#/components/parameters/CartItemIdPath'
       requestBody:
         required: true
         content:
@@ -508,27 +527,27 @@ paths:
               properties:
                 quantity: { type: integer, minimum: 1, maximum: 100 }
       responses:
-        "200":
+        '200':
           description: Güncellenmiş sepet
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CartEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "422": { $ref: "#/components/responses/UnprocessableEntity" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/CartEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
     delete:
       operationId: removeCartItem
       tags: [cart]
       summary: Sepetten ürün çıkar
       parameters:
-        - $ref: "#/components/parameters/CartItemIdPath"
+        - $ref: '#/components/parameters/CartItemIdPath'
       responses:
-        "204": { description: Silindi }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+        '204': { description: Silindi }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   # ==================== ORDERS ====================
   /orders:
@@ -537,16 +556,16 @@ paths:
       tags: [orders]
       summary: Giriş yapan kullanıcının sipariş geçmişi
       parameters:
-        - $ref: "#/components/parameters/PageQuery"
-        - $ref: "#/components/parameters/SizeQuery"
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/SizeQuery'
       responses:
-        "200":
+        '200':
           description: Sipariş listesi
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/OrderListEnvelope" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/OrderListEnvelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
     post:
       operationId: createOrder
       tags: [orders]
@@ -580,17 +599,17 @@ paths:
                   enum: [CREDIT_CARD]
                   description: "v1'de yalnızca simüle edilmiş kart ödemesi vardır; gerçek kart bilgisi saklanmaz."
       responses:
-        "201":
+        '201':
           description: Sipariş oluşturuldu
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/OrderEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "422": { $ref: "#/components/responses/UnprocessableEntity" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/OrderEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /orders/{orderId}:
     get:
@@ -598,17 +617,17 @@ paths:
       tags: [orders]
       summary: Sipariş detayı (yalnızca kendi siparişi)
       parameters:
-        - $ref: "#/components/parameters/OrderIdPath"
+        - $ref: '#/components/parameters/OrderIdPath'
       responses:
-        "200":
+        '200':
           description: Sipariş detayı
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/OrderEnvelope" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/OrderEnvelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   # ==================== FAVORITES ====================
   /favorites:
@@ -617,13 +636,13 @@ paths:
       tags: [favorites]
       summary: Giriş yapan kullanıcının favori ürünleri
       responses:
-        "200":
+        '200':
           description: Favori listesi
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/FavoriteListEnvelope" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/FavoriteListEnvelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
     post:
       operationId: addFavorite
       tags: [favorites]
@@ -639,16 +658,16 @@ paths:
               properties:
                 productId: { type: string }
       responses:
-        "201":
+        '201':
           description: Favoriye eklendi
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/FavoriteEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "409": { $ref: "#/components/responses/Conflict" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/FavoriteEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /favorites/{productId}:
     delete:
@@ -656,12 +675,12 @@ paths:
       tags: [favorites]
       summary: Ürünü favorilerden çıkar
       parameters:
-        - $ref: "#/components/parameters/ProductIdPath"
+        - $ref: '#/components/parameters/ProductIdPath'
       responses:
-        "204": { description: Silindi }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+        '204': { description: Silindi }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   # ==================== ADMIN ====================
   /admin/categories:
@@ -674,18 +693,18 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/CategoryInput" }
+            schema: { $ref: '#/components/schemas/CategoryInput' }
       responses:
-        "201":
+        '201':
           description: Oluşturulan kategori
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CategoryEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "409": { $ref: "#/components/responses/Conflict" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/CategoryEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /admin/categories/{categoryId}:
     put:
@@ -694,24 +713,24 @@ paths:
       summary: Kategori güncelle (yalnızca ADMIN, isActive dahil)
       x-roles: [ADMIN]
       parameters:
-        - $ref: "#/components/parameters/CategoryIdPath"
+        - $ref: '#/components/parameters/CategoryIdPath'
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/CategoryInput" }
+            schema: { $ref: '#/components/schemas/CategoryInput' }
       responses:
-        "200":
+        '200':
           description: Güncellenmiş kategori
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CategoryEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "409": { $ref: "#/components/responses/Conflict" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/CategoryEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /admin/products:
     post:
@@ -723,17 +742,17 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/ProductInput" }
+            schema: { $ref: '#/components/schemas/ProductInput' }
       responses:
-        "201":
+        '201':
           description: Oluşturulan ürün
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/ProductEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/ProductEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
   /admin/products/{productId}:
     put:
@@ -742,23 +761,23 @@ paths:
       summary: Ürün bilgilerini, fiyatını, stoğunu ve durumunu güncelle (yalnızca ADMIN, isActive dahil)
       x-roles: [ADMIN]
       parameters:
-        - $ref: "#/components/parameters/ProductIdPath"
+        - $ref: '#/components/parameters/ProductIdPath'
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/ProductInput" }
+            schema: { $ref: '#/components/schemas/ProductInput' }
       responses:
-        "200":
+        '200':
           description: Güncellenmiş ürün
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/ProductEnvelope" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+              schema: { $ref: '#/components/schemas/ProductEnvelope' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
 
 components:
   securitySchemes:
@@ -826,65 +845,65 @@ components:
       description: İstek gövdesi doğrulama hatası içeriyor
       content:
         application/json:
-          schema: { $ref: "#/components/schemas/ValidationErrorResponse" }
+          schema: { $ref: '#/components/schemas/ValidationErrorResponse' }
           example:
             success: false
-            message: "Validation failed"
+            message: 'Validation failed'
             statusCode: 400
-            status: "BAD_REQUEST"
+            status: 'BAD_REQUEST'
             errors:
-              - field: "email"
-                message: "Email is required"
+              - field: 'email'
+                message: 'Email is required'
     Unauthorized:
       description: Token yok, geçersiz veya süresi dolmuş
       content:
         application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
           example:
             success: false
-            message: "Invalid or expired token"
+            message: 'Invalid or expired token'
             statusCode: 401
-            status: "UNAUTHORIZED"
+            status: 'UNAUTHORIZED'
     Forbidden:
       description: Kullanıcının bu işlem için yetkisi yok
       content:
         application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
           example:
             success: false
-            message: "You do not have permission to perform this action"
+            message: 'You do not have permission to perform this action'
             statusCode: 403
-            status: "FORBIDDEN"
+            status: 'FORBIDDEN'
     NotFound:
       description: Kaynak bulunamadı
       content:
         application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
           example:
             success: false
-            message: "Resource not found"
+            message: 'Resource not found'
             statusCode: 404
-            status: "NOT_FOUND"
+            status: 'NOT_FOUND'
     Conflict:
       description: Kaynak zaten mevcut / çakışma
       content:
         application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
           example:
             success: false
-            message: "Resource already exists"
+            message: 'Resource already exists'
             statusCode: 409
-            status: "CONFLICT"
+            status: 'CONFLICT'
     UnprocessableEntity:
       description: İş kuralı ihlali (stok yetersiz, ürün pasif, ödeme simülasyonu başarısız vb.)
       content:
         application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
           example:
             success: false
-            message: "Business rule violation"
+            message: 'Business rule violation'
             statusCode: 422
-            status: "UNPROCESSABLE_ENTITY"
+            status: 'UNPROCESSABLE_ENTITY'
     TooManyRequests:
       description: İstek sınırı aşıldı
       headers:
@@ -893,22 +912,22 @@ components:
           schema: { type: integer }
       content:
         application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
           example:
             success: false
-            message: "Too many requests, please try again later"
+            message: 'Too many requests, please try again later'
             statusCode: 429
-            status: "TOO_MANY_REQUESTS"
+            status: 'TOO_MANY_REQUESTS'
     InternalServerError:
       description: Beklenmeyen sunucu hatası
       content:
         application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
           example:
             success: false
-            message: "An unexpected error occurred"
+            message: 'An unexpected error occurred'
             statusCode: 500
-            status: "INTERNAL_SERVER_ERROR"
+            status: 'INTERNAL_SERVER_ERROR'
 
   schemas:
     # ---------- Error shapes ----------
@@ -926,10 +945,10 @@ components:
           enum: [false]
         message:
           type: string
-          description: "Kullanıcıya gösterilebilecek, insan tarafından okunabilir hata mesajı"
+          description: 'Kullanıcıya gösterilebilecek, insan tarafından okunabilir hata mesajı'
         statusCode:
           type: integer
-          description: "HTTP durum koduyla birebir aynı değer"
+          description: 'HTTP durum koduyla birebir aynı değer'
         status:
           type: string
           description: "statusCode'a karşılık gelen sabit; frontend'in message string'ini parse etmeden dallanabilmesi içindir"
@@ -946,7 +965,7 @@ components:
 
     ValidationErrorResponse:
       allOf:
-        - $ref: "#/components/schemas/ErrorResponse"
+        - $ref: '#/components/schemas/ErrorResponse'
         - type: object
           required: [errors]
           properties:
@@ -956,8 +975,8 @@ components:
                 type: object
                 required: [field, message]
                 properties:
-                  field: { type: string, example: "email" }
-                  message: { type: string, example: "Email is required" }
+                  field: { type: string, example: 'email' }
+                  message: { type: string, example: 'Email is required' }
 
     # ---------- Success envelope ----------
     SuccessEnvelope:
@@ -990,7 +1009,7 @@ components:
           readOnly: true
           description: accessToken'ın saniye cinsinden geçerlilik süresi
           example: 900
-        user: { $ref: "#/components/schemas/User" }
+        user: { $ref: '#/components/schemas/User' }
 
     User:
       type: object
@@ -1001,9 +1020,15 @@ components:
         phone: { type: string }
         role:
           allOf:
-            - $ref: "#/components/schemas/Role"
+            - $ref: '#/components/schemas/Role'
           readOnly: true
-        createdAt: { type: string, format: date-time, readOnly: true, example: "2026-07-14T10:35:15Z" }
+        createdAt:
+          {
+            type: string,
+            format: date-time,
+            readOnly: true,
+            example: '2026-07-14T10:35:15Z',
+          }
 
     AddressInput:
       type: object
@@ -1014,17 +1039,22 @@ components:
           type: string
           maxLength: 30
           description: "Kullanıcının adrese verdiği etiket, örn. 'Ev', 'İş'"
-          example: "Ev"
+          example: 'Ev'
         recipientName: { type: string, minLength: 2, maxLength: 100 }
-        phone: { type: string, pattern: "^\\+?[0-9]{10,15}$", example: "+905551234567" }
+        phone:
+          {
+            type: string,
+            pattern: "^\\+?[0-9]{10,15}$",
+            example: '+905551234567',
+          }
         city: { type: string, minLength: 2, maxLength: 60 }
         district: { type: string, minLength: 2, maxLength: 60 }
         addressLine: { type: string, minLength: 10, maxLength: 250 }
-        postalCode: { type: string, pattern: "^[0-9]{5}$", example: "34000" }
+        postalCode: { type: string, pattern: '^[0-9]{5}$', example: '34000' }
 
     Address:
       allOf:
-        - $ref: "#/components/schemas/AddressInput"
+        - $ref: '#/components/schemas/AddressInput'
         - type: object
           properties:
             id: { type: string, readOnly: true }
@@ -1037,18 +1067,24 @@ components:
         name: { type: string, minLength: 2, maxLength: 100 }
         slug:
           type: string
-          pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
           maxLength: 120
-          description: "Boş bırakılırsa name alanından otomatik türetilir; benzersiz olmalıdır."
-          example: "elektronik-ev-aletleri"
+          description: 'Boş bırakılırsa name alanından otomatik türetilir; benzersiz olmalıdır.'
+          example: 'elektronik-ev-aletleri'
         isActive:
           type: boolean
           default: true
-          description: "Kalıcı silme yoktur; kategori bu alanla aktif/pasif yapılır."
+          description: 'Kalıcı silme yoktur; kategori bu alanla aktif/pasif yapılır.'
+        imageUrl:
+          type: string
+          format: uri
+          pattern: '^https://'
+          description: 'Kategori görseli; her zaman absolute ve https:// ile başlamalıdır.'
+          example: 'https://images.unsplash.com/photo-...'
 
     Category:
       allOf:
-        - $ref: "#/components/schemas/CategoryInput"
+        - $ref: '#/components/schemas/CategoryInput'
         - type: object
           properties:
             id: { type: string, readOnly: true }
@@ -1061,15 +1097,15 @@ components:
         imageUrl:
           type: string
           format: uri
-          pattern: "^https://"
-          description: "Her zaman absolute (tam) URL, https:// ile başlamalıdır. Göreli path veya http:// kabul edilmez."
-          example: "https://cdn.example.com/products/urun-1.jpg"
+          pattern: '^https://'
+          description: 'Her zaman absolute (tam) URL, https:// ile başlamalıdır. Göreli path veya http:// kabul edilmez.'
+          example: 'https://cdn.example.com/products/urun-1.jpg'
         isPrimary: { type: boolean, default: false }
         sortOrder: { type: integer, default: 0, minimum: 0 }
 
     ProductImage:
       allOf:
-        - $ref: "#/components/schemas/ProductImageInput"
+        - $ref: '#/components/schemas/ProductImageInput'
         - type: object
           properties:
             id: { type: string, readOnly: true }
@@ -1077,7 +1113,7 @@ components:
     ProductInput:
       type: object
       additionalProperties: false
-      description: "Tek fiyat, tek stok; varyant modeli (beden/renk/kapasite) yok."
+      description: 'Tek fiyat, tek stok; varyant modeli (beden/renk/kapasite) yok.'
       required: [name, price, stock, categoryId]
       properties:
         name: { type: string, minLength: 2, maxLength: 150 }
@@ -1086,18 +1122,18 @@ components:
           type: number
           exclusiveMinimum: 0
           multipleOf: 0.01
-          description: "KDV dahil, TRY"
+          description: 'KDV dahil, TRY'
           example: 149.90
         stock: { type: integer, minimum: 0 }
         categoryId: { type: string }
         isActive:
           type: boolean
           default: true
-          description: "Kalıcı silme yoktur; ürün bu alanla aktif/pasif yapılır."
+          description: 'Kalıcı silme yoktur; ürün bu alanla aktif/pasif yapılır.'
         images:
           type: array
           maxItems: 10
-          items: { $ref: "#/components/schemas/ProductImageInput" }
+          items: { $ref: '#/components/schemas/ProductImageInput' }
 
     Product:
       type: object
@@ -1105,14 +1141,14 @@ components:
         id: { type: string, readOnly: true }
         name: { type: string }
         description: { type: string, nullable: true }
-        price: { type: number, multipleOf: 0.01, description: "KDV dahil, TRY" }
-        currency: { type: string, default: "TRY" }
+        price: { type: number, multipleOf: 0.01, description: 'KDV dahil, TRY' }
+        currency: { type: string, default: 'TRY' }
         stock: { type: integer }
         isActive: { type: boolean }
-        category: { $ref: "#/components/schemas/Category" }
+        category: { $ref: '#/components/schemas/Category' }
         images:
           type: array
-          items: { $ref: "#/components/schemas/ProductImage" }
+          items: { $ref: '#/components/schemas/ProductImage' }
 
     Pagination:
       type: object
@@ -1129,16 +1165,16 @@ components:
       properties:
         items:
           type: array
-          items: { $ref: "#/components/schemas/Product" }
-        pagination: { $ref: "#/components/schemas/Pagination" }
+          items: { $ref: '#/components/schemas/Product' }
+        pagination: { $ref: '#/components/schemas/Pagination' }
 
     PaginatedOrders:
       type: object
       properties:
         items:
           type: array
-          items: { $ref: "#/components/schemas/Order" }
-        pagination: { $ref: "#/components/schemas/Pagination" }
+          items: { $ref: '#/components/schemas/Order' }
+        pagination: { $ref: '#/components/schemas/Pagination' }
 
     CartItem:
       type: object
@@ -1160,12 +1196,18 @@ components:
         id: { type: string, readOnly: true }
         items:
           type: array
-          items: { $ref: "#/components/schemas/CartItem" }
-        total: { type: number, multipleOf: 0.01, readOnly: true, description: "Backend tarafından hesaplanır" }
+          items: { $ref: '#/components/schemas/CartItem' }
+        total:
+          {
+            type: number,
+            multipleOf: 0.01,
+            readOnly: true,
+            description: 'Backend tarafından hesaplanır',
+          }
 
     OrderItem:
       type: object
-      description: "Sipariş anındaki ürün bilgisinin anlık görüntüsü (snapshot)"
+      description: 'Sipariş anındaki ürün bilgisinin anlık görüntüsü (snapshot)'
       properties:
         productId: { type: string }
         productName: { type: string }
@@ -1175,7 +1217,7 @@ components:
 
     OrderAddressSnapshot:
       type: object
-      description: "Sipariş anında adresin anlık görüntüsü; adres sonradan silinse/değişse bile sipariş etkilenmez"
+      description: 'Sipariş anında adresin anlık görüntüsü; adres sonradan silinse/değişse bile sipariş etkilenmez'
       properties:
         recipientName: { type: string }
         phone: { type: string }
@@ -1190,107 +1232,125 @@ components:
         id: { type: string, readOnly: true }
         items:
           type: array
-          items: { $ref: "#/components/schemas/OrderItem" }
+          items: { $ref: '#/components/schemas/OrderItem' }
         status:
           type: string
           enum: [PENDING, PAID, SHIPPED, DELIVERED]
           description: "Kullanıcı siparişi iptal edemez; iptal durumu v1'de yoktur."
-        total: { type: number, multipleOf: 0.01, description: "Ürünlerin toplam fiyatına eşittir; kargo ücreti ve ek vergi yoktur" }
-        currency: { type: string, default: "TRY" }
-        shippingAddress: { $ref: "#/components/schemas/OrderAddressSnapshot" }
-        createdAt: { type: string, format: date-time, readOnly: true, example: "2026-07-14T10:35:15Z" }
+        total:
+          {
+            type: number,
+            multipleOf: 0.01,
+            description: 'Ürünlerin toplam fiyatına eşittir; kargo ücreti ve ek vergi yoktur',
+          }
+        currency: { type: string, default: 'TRY' }
+        shippingAddress: { $ref: '#/components/schemas/OrderAddressSnapshot' }
+        createdAt:
+          {
+            type: string,
+            format: date-time,
+            readOnly: true,
+            example: '2026-07-14T10:35:15Z',
+          }
 
     Favorite:
       type: object
       properties:
         id: { type: string, readOnly: true }
-        product: { $ref: "#/components/schemas/Product" }
-        createdAt: { type: string, format: date-time, readOnly: true, example: "2026-07-14T10:35:15Z" }
+        product: { $ref: '#/components/schemas/Product' }
+        createdAt:
+          {
+            type: string,
+            format: date-time,
+            readOnly: true,
+            example: '2026-07-14T10:35:15Z',
+          }
 
     # ---------- Envelope wrappers (one per response payload) ----------
     AuthEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
-          properties: { data: { $ref: "#/components/schemas/AuthResponse" } }
+          properties: { data: { $ref: '#/components/schemas/AuthResponse' } }
 
     UserEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
-          properties: { data: { $ref: "#/components/schemas/User" } }
+          properties: { data: { $ref: '#/components/schemas/User' } }
 
     AddressEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
-          properties: { data: { $ref: "#/components/schemas/Address" } }
+          properties: { data: { $ref: '#/components/schemas/Address' } }
 
     AddressListEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
           properties:
             data:
               type: array
-              items: { $ref: "#/components/schemas/Address" }
+              items: { $ref: '#/components/schemas/Address' }
 
     CategoryEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
-          properties: { data: { $ref: "#/components/schemas/Category" } }
+          properties: { data: { $ref: '#/components/schemas/Category' } }
 
     CategoryListEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
           properties:
             data:
               type: array
-              items: { $ref: "#/components/schemas/Category" }
+              items: { $ref: '#/components/schemas/Category' }
 
     ProductEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
-          properties: { data: { $ref: "#/components/schemas/Product" } }
+          properties: { data: { $ref: '#/components/schemas/Product' } }
 
     ProductListEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
-          properties: { data: { $ref: "#/components/schemas/PaginatedProducts" } }
+          properties:
+            { data: { $ref: '#/components/schemas/PaginatedProducts' } }
 
     CartEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
-          properties: { data: { $ref: "#/components/schemas/Cart" } }
+          properties: { data: { $ref: '#/components/schemas/Cart' } }
 
     OrderEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
-          properties: { data: { $ref: "#/components/schemas/Order" } }
+          properties: { data: { $ref: '#/components/schemas/Order' } }
 
     OrderListEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
-          properties: { data: { $ref: "#/components/schemas/PaginatedOrders" } }
+          properties: { data: { $ref: '#/components/schemas/PaginatedOrders' } }
 
     FavoriteEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
-          properties: { data: { $ref: "#/components/schemas/Favorite" } }
+          properties: { data: { $ref: '#/components/schemas/Favorite' } }
 
     FavoriteListEnvelope:
       allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
+        - $ref: '#/components/schemas/SuccessEnvelope'
         - type: object
           properties:
             data:
               type: array
-              items: { $ref: "#/components/schemas/Favorite" }
+              items: { $ref: '#/components/schemas/Favorite' }

@@ -25,4 +25,11 @@ export class CategoryInputDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean = true;
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^https:\/\//, {
+    message: 'imageUrl https:// ile başlamalıdır.',
+  })
+  imageUrl?: string;
 }

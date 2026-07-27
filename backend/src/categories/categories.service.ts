@@ -29,6 +29,7 @@ export class CategoriesService {
           name: dto.name,
           slug,
           isActive: dto.isActive ?? true,
+          imageUrl: dto.imageUrl,
         },
       });
 
@@ -56,6 +57,7 @@ export class CategoriesService {
           name: dto.name,
           slug,
           isActive: dto.isActive ?? true,
+          imageUrl: dto.imageUrl,
         },
       });
 
@@ -117,12 +119,14 @@ export class CategoriesService {
     name: string;
     slug: string;
     isActive: boolean;
+    imageUrl: string | null;
   }) {
     return {
       id: category.id,
       name: category.name,
       slug: category.slug,
       isActive: category.isActive,
+      imageUrl: category.imageUrl,
     };
   }
 }
