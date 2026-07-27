@@ -28,6 +28,7 @@ function isPlaceholderImage(url: string) {
 export function ProductCard({ product }: { product: FeaturedProduct }) {
   const router = useRouter();
   const [justAdded, setJustAdded] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   const addCartItem = useAddCartItem();
 
   const { data: favorites } = useFavorites();
@@ -37,7 +38,8 @@ export function ProductCard({ product }: { product: FeaturedProduct }) {
   const isFavoriteBusy = addFavorite.isPending || removeFavorite.isPending;
 
   const rawImageUrl = product.images?.[0]?.imageUrl;
-  const imageUrl = rawImageUrl && !isPlaceholderImage(rawImageUrl) ? rawImageUrl : null;
+  const imageUrl =
+    rawImageUrl && !isPlaceholderImage(rawImageUrl) && !imageFailed ? rawImageUrl : null;
 
   function handleToggleFavorite() {
     if (!getAccessTokenFromCookie()) {
@@ -77,13 +79,14 @@ export function ProductCard({ product }: { product: FeaturedProduct }) {
 
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-surface">
-      <div className="relative aspect-square bg-neutral">
+      <div className="relative h-68 w-full bg-neutral sm:h-90">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={imageUrl}
             alt={product.name ?? ""}
-            className="h-full w-full object-cover"
+            onError={() => setImageFailed(true)}
+            className="block h-full w-full object-cover"
           />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-text-muted">
