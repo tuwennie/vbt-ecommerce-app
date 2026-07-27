@@ -53,7 +53,10 @@ export function ProductCard({ product }: { product: FeaturedProduct }) {
     }
   }
 
+  const isOutOfStock = (product.stock ?? 0) <= 0;
+
   function handleAddToCart() {
+    if (isOutOfStock) return;
     if (!getAccessTokenFromCookie()) {
       router.push(`/login?redirectTo=${encodeURIComponent(window.location.pathname)}`);
       return;
@@ -125,13 +128,15 @@ export function ProductCard({ product }: { product: FeaturedProduct }) {
         <button
           type="button"
           onClick={handleAddToCart}
-          disabled={addCartItem.isPending}
+          disabled={addCartItem.isPending || isOutOfStock}
           data-testid="add-to-cart-button"
           className={`mt-3 flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${
-            justAdded ? "bg-secondary" : "bg-tertiary hover:bg-tertiary/90"
+            justAdded ? "bg-secondary" : isOutOfStock ? "bg-text-muted" : "bg-tertiary hover:bg-tertiary/90"
           }`}
         >
-          {justAdded ? (
+          {isOutOfStock ? (
+            "Stokta Yok"
+          ) : justAdded ? (
             <>
               <Check className="h-4 w-4" />
               Sepete Eklendi
