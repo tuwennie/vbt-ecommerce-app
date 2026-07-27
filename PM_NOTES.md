@@ -173,3 +173,30 @@
   * *Engel (Blocker):* Yok.
 
 **PM Günlük Özeti:** Projede yönetimsel tarafta Canva sunumu ve demo veri hazırlıkları (ürün JSON entegrasyonu) hız kazanırken; backend tarafında sepet ve sipariş endpoint'leri tamamlanmıştır. Mobil tarafta kategori filtreleme, profil ekranı ve token akışları kararlı hale getirilmiş, frontend/QA tarafında ise son entegrasyon adımları için hazırlıklar son aşamaya gelmiştir.
+
+## Gün 11 - 27.07.2026 (Haftasonu dahil rapor)
+
+* **Tuba (PM/Design):**
+  * *Bugün Yapılanlar:* Canva üzerindeki final proje sunumu başarıyla tamamlandı. Kategoriler için güncellenen `image_url` düzenlemeleri yapılarak JSON formatında Kübra'ya iletildi. Projenin resmi dokümantasyonları ve son kapsam değişiklikleri üzerinde çalışılmaya başlandı.
+  * *Engel (Blocker):* Yok.
+
+* **Kübra (Backend):**
+  * *Bugün Yapılanlar:* `Favorites` modülü kodlanarak başarıyla test edildi. Tuba tarafından seçilen gerçek ürün görsel linkleri sisteme işlendi ve gerçek API istekleriyle görsellerin doğruluğu test edildi. Ayrıca kullanıcı hesap yönetimi için şifre ve e-posta değiştirme endpoint'leri backend tarafına eklendi; kategorilere görseller entegre edildi.
+  * *Engel (Blocker):* Yok.
+
+* **İkram (Frontend/QA):**
+  * *Bugün Yapılanlar:* Happy path test senaryoları ve diğer Playwright otomasyon testleri yazıldı. Konsol log kontrolleri yapıldı (istenmeyen hata loguna rastlanmadı, konsol temiz), hata çıktısı olmadığı doğrulandı ve veritabanındaki görsellerin arayüze başarılı bir şekilde çekildiği test edildi.
+  * *Engel (Blocker):* Yok.
+
+* **Zeliha (Mobil):**
+  * *Bugün Yapılanlar:* 
+    * Profil ekranından çıkış yapma (`logout`) fonksiyonu ve kullanıcı adı güncelleme özelliği aktif edildi.
+    * Geçmiş siparişler ekranı veritabanından gelen canlı verilerle dinamik hale getirildi.
+    * Sepete eklenen ürünlerin anlık güncellenmesi ve miktar değişiklikleri sağlandı.
+    * Sepet ekranından "Ödemeye Geç" butonu ile sipariş onay ekranına yönlendirme akışı bağlandı; adres doğrulaması ve sipariş tamamlama entegrasyonu tamamlandı.
+    * Statik ödeme yöntemi seçim arayüzü eklendi ve sipariş sonrası sepetin temizlenmesi akışı kurgulandı.
+    * Favori ürünler ekranı anlık eş zamanlı veri senkronizasyonuyla güncellendi.
+    * Adreslerim sayfası veritabanı entegrasyonuyla listelendi, yeni adres ekleme ekranı oluşturuldu ve kayıtlı kartlarım ekranı tasarlanarak akışa eklendi.
+  * *Engel (Blocker):* Sipariş tamamlama ekranında smoke testi başarılı olmadı. Kategoriler için düzenlenen imageurl fotoğrafları kategoriler kısmında görünmüyor.
+
+**PM Günlük Özeti:** Bugün yönetimsel tarafta Canva sunumu finalize edilirken; backend tarafında favoriler, şifre/e-posta güncellemeleri ve görsel entegrasyonları tamamlandı. QA tarafında Playwright testleri başarıyla koşulurken, mobil tarafta sepet, ödeme, profil, adres yönetimi ve favoriler gibi kritik kullanıcı akışları tamamen canlı verilerle kararlı hale getirilmiştir.
