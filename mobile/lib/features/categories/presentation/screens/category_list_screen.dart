@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/navigation/app_router.dart';
+import '../../../products/presentation/providers/product_provider.dart';
+import '../../../products/presentation/widgets/product_search_bar.dart';
 import '../providers/category_provider.dart';
 
 class CategoryListScreen extends ConsumerStatefulWidget {
@@ -16,9 +18,25 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
   String _searchQuery = '';
 
   @override
+  void deactivate() {
+    _searchController.clear();
+    _searchQuery = '';
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _navigateToProductSearch(String query) {
+    if (query.trim().isEmpty) return;
+    ref.read(productSearchQueryProvider.notifier).state = query.trim();
+    context.go(
+      AppRouter.productList,
+      extra: {'search': query.trim()},
+    );
   }
 
   // Kategori ismine göre dinamik ikon seçimi
@@ -66,7 +84,11 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              if (_searchController.text.isNotEmpty) {
+                _navigateToProductSearch(_searchController.text);
+              }
+            },
           ),
         ],
       ),
@@ -77,23 +99,20 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Column(
             children: [
-              // 1. Arama Çubuğu
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (val) => setState(() => _searchQuery = val),
-                  decoration: const InputDecoration(
-                    hintText: 'Kategori ara...',
-                    hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
-                    prefixIcon: Icon(Icons.tune_rounded, color: Color(0xFF6B7280), size: 20),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 14),
-                  ),
-                ),
+              // 1. Tasarıma Sadık Ürün / Kategori Arama Çubuğu
+              ProductSearchBar(
+                controller: _searchController,
+                hintText: 'Kategori arayınız...',
+                onChanged: (val) {
+                  setState(() => _searchQuery = val);
+                },
+                onSubmitted: (val) {
+                  _navigateToProductSearch(val);
+                },
+                onClear: () {
+                  _searchController.clear();
+                  setState(() => _searchQuery = '');
+                },
               ),
               const SizedBox(height: 16),
 
@@ -105,9 +124,20 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                   }).toList();
 
                   if (filteredCategories.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40.0),
-                      child: Text('Kategori bulunamadı.', style: TextStyle(color: Colors.grey)),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40.0),
+                      child: Column(
+                        children: [
+                          const Text('Kategori bulunamadı.', style: TextStyle(color: Colors.grey)),
+                          const SizedBox(height: 12),
+                          if (_searchQuery.isNotEmpty)
+                            ElevatedButton.icon(
+                              onPressed: () => _navigateToProductSearch(_searchQuery),
+                              icon: const Icon(Icons.search, size: 18),
+                              label: Text('"$_searchQuery" için ürünlerde ara'),
+                            ),
+                        ],
+                      ),
                     );
                   }
 
@@ -128,7 +158,8 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                         icon: _getCategoryIcon(category.name),
                         imageUrl: _getCategoryBgImage(category.name),
                         onTap: () {
-                          // Seçilen kategori ID'si ile ürünler sayfasına geçiş
+                          // Kategori seçildiğinde arama metnini temizleyip o kategorideki ürünleri listele
+                          ref.read(productSearchQueryProvider.notifier).state = '';
                           context.go(
                             AppRouter.productList,
                             extra: {'categoryId': category.id},
@@ -160,7 +191,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF2563EB).withOpacity(0.25),
+                      color: const Color(0xFF2563EB).withValues(alpha: 0.25),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -171,7 +202,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -197,7 +228,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                           Text(
                             'Tüm kategorilerde 250 TL ve üzeri alışverişlerde kargo bizden!',
                             style: TextStyle(
-                              color: const Color(0xE6FFFFFF),
+                              color: Color(0xE6FFFFFF),
                               fontSize: 12,
                               height: 1.3,
                             ),
@@ -243,7 +274,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withOpacity(0.75),
+                      Colors.black.withValues(alpha: 0.75),
                     ],
                     stops: const [0.3, 1.0],
                   ),

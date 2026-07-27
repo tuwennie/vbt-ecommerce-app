@@ -9,13 +9,36 @@ final productRepositoryProvider = Provider<ProductRepository>((ref) {
   return ProductRepositoryImpl(DioClient());
 });
 
-// Seçilen kategoriye göre ürünleri yükleyen provider
+// Arama metnini tutan state provider
+final productSearchQueryProvider = StateProvider<String>((ref) => '');
+
+// Seçilen kategori ve arama sorgusuna göre ürünleri yükleyen provider
 final productListProvider = FutureProvider.family<List<ProductModel>, String?>((ref, categoryId) async {
   final repository = ref.watch(productRepositoryProvider);
+  final searchQuery = ref.watch(productSearchQueryProvider).trim();
 
-  await Future.delayed(const Duration(seconds: 1));
+  try {
+    final products = await repository.getProducts(
+      categoryId: categoryId,
+      search: searchQuery.isNotEmpty ? searchQuery : null,
+    );
 
-  return repository.getProducts(categoryId: categoryId);
+    if (searchQuery.isNotEmpty) {
+      final queryLower = searchQuery.toLowerCase();
+      final filtered = products.where((p) {
+        final nameMatch = p.name.toLowerCase().contains(queryLower);
+        final descMatch = p.description.toLowerCase().contains(queryLower);
+        final catMatch = p.category.name.toLowerCase().contains(queryLower);
+        return nameMatch || descMatch || catMatch;
+      }).toList();
+      return filtered;
+    }
+
+    return products;
+  } catch (e) {
+    // Hata durumunda yeniden fırlatıyoruz
+    rethrow;
+  }
 });
 
 final allProductsProvider = FutureProvider<List<ProductModel>>((ref) async {

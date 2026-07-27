@@ -270,6 +270,12 @@ class CartScreen extends ConsumerWidget {
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             final item = cart.items[index];
+            final effectivePrice = item.price > 0
+                ? item.price
+                : (item.totalPrice > 0
+                    ? item.totalPrice / (item.quantity > 0 ? item.quantity : 1)
+                    : 0.0);
+
             return Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -325,7 +331,7 @@ class CartScreen extends ConsumerWidget {
                         Text(
                           item.description != null && item.description!.isNotEmpty
                               ? item.description!
-                              : 'Adet: ${item.quantity} • Fiyat: ₺${item.price.toStringAsFixed(2)}',
+                              : 'Adet: ${item.quantity} • Birim Fiyat: ₺${effectivePrice.toStringAsFixed(2)}',
                           style: TextStyle(color: Colors.grey[500], fontSize: 12),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -335,7 +341,7 @@ class CartScreen extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '₺${item.price.toStringAsFixed(2)}',
+                              '₺${effectivePrice.toStringAsFixed(2)}',
                               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                             ),
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/navigation/app_router.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../orders/presentation/providers/order_provider.dart';
+import '../../data/models/address_model.dart';
 import '../providers/checkout_provider.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
@@ -14,20 +17,14 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   int _selectedPaymentIndex = 0; // 0: Kredi Kartı, 1: Dijital Cüzdan
 
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _cityController = TextEditingController();
-  final _zipController = TextEditingController();
-
   @override
-  void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _addressController.dispose();
-    _cityController.dispose();
-    _zipController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(checkoutProvider.notifier).fetchAddresses();
+      }
+    });
   }
 
   @override
@@ -64,23 +61,97 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Shipping Address Kartı
+            // Teslimat Adresi Kartı
             _buildCardWrapper(
-              title: 'Sipariş Adresi',
-              icon: Icons.location_on_outlined,
-              child: Column(
-                children: [
-                  _buildTextField(_firstNameController, 'Adınız'),
-                  const SizedBox(height: 10),
-                  _buildTextField(_lastNameController, 'Soyadınız'),
-                  const SizedBox(height: 10),
-                  _buildTextField(_addressController, 'Adresiniz'),
-                  const SizedBox(height: 10),
-                  _buildTextField(_cityController, 'Şehir'),
-                  const SizedBox(height: 10),
-                  _buildTextField(_zipController, 'Posta Kodunuz'),
-                ],
+              title: 'Teslimat Adresi',
+              actionWidget: TextButton(
+                onPressed: () async {
+                  await context.push(AppRouter.addresses);
+                  if (mounted) {
+                    ref.read(checkoutProvider.notifier).fetchAddresses();
+                  }
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text(
+                  'Ekle / Düzenle',
+                  style: TextStyle(
+                    color: Color(0xFFE06D14),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
               ),
+              child: checkoutState.userAddresses.isEmpty
+                  ? InkWell(
+                      onTap: () async {
+                        await context.push(AppRouter.addresses);
+                        if (mounted) {
+                          ref.read(checkoutProvider.notifier).fetchAddresses();
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF9FAFB),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Kayıtlı adres bulunamadı. Adres eklemek için tıklayın.',
+                                style: TextStyle(color: Colors.grey, fontSize: 13),
+                              ),
+                            ),
+                            Icon(Icons.chevron_right, color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                    )
+                  : DropdownButtonFormField<AddressModel>(
+                      dropdownColor: Colors.white,
+                      initialValue: checkoutState.selectedAddress ??
+                          (checkoutState.userAddresses.isNotEmpty ? checkoutState.userAddresses.first : null),
+                      icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF6B7280)),
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: const Color(0xFFF9FAFB),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(color: Color(0xFF16A34A)),
+                        ),
+                      ),
+                      items: checkoutState.userAddresses.map((addr) {
+                        final titleStr = (addr.title != null && addr.title!.isNotEmpty) ? addr.title! : 'Adres';
+                        final detailStr = addr.fullAddress.isNotEmpty ? addr.fullAddress : '${addr.district}/${addr.city}';
+                        return DropdownMenuItem<AddressModel>(
+                          value: addr,
+                          child: Text(
+                            '$titleStr ($detailStr)',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 14, color: Color(0xFF374151)),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          ref.read(checkoutProvider.notifier).setSelectedAddress(val);
+                        }
+                      },
+                    ),
             ),
             const SizedBox(height: 16),
 
@@ -220,34 +291,43 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 onPressed: checkoutState.isLoading
                     ? null
                     : () async {
-                      // Alanların boş olup olmadığını kontrol edelim
-                      if (_addressController.text.trim().isEmpty ||
-                          _cityController.text.trim().isEmpty ||
-                          _zipController.text.trim().isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Lütfen tüm adres bilgilerini doldurun.'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
+                        final selectedAddr = checkoutState.selectedAddress ??
+                            (checkoutState.userAddresses.isNotEmpty ? checkoutState.userAddresses.first : null);
+
+                        if (selectedAddr == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Lütfen bir teslimat adresi seçin veya yeni adres ekleyin.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        final messenger = ScaffoldMessenger.of(context);
+                        final router = GoRouter.of(context);
+
                         final success = await ref.read(checkoutProvider.notifier).createOrder(
-                          address: _addressController.text,
-                          city: _cityController.text,
-                          zipCode: _zipController.text,
+                          address: selectedAddr.fullAddress,
+                          city: selectedAddr.city,
+                          zipCode: selectedAddr.postalCode ?? '34000',
                         );
                         if (!mounted) return;
 
                         if (success) {
-                          context.go('/order-confirmation');
-                        } else if (checkoutState.errorMessage != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(checkoutState.errorMessage!),
-                              backgroundColor: Colors.redAccent,
-                            ),
-                          );
+                          ref.read(orderProvider.notifier).fetchOrders();
+                          ref.read(cartProvider.notifier).clearCart();
+                          router.go(AppRouter.orderConfirmation);
+                        } else {
+                          final currentError = ref.read(checkoutProvider).errorMessage;
+                          if (currentError != null) {
+                            messenger.showSnackBar(
+                              SnackBar(
+                                content: Text(currentError),
+                                backgroundColor: Colors.redAccent,
+                              ),
+                            );
+                          }
                         }
                       },
                 icon: checkoutState.isLoading
@@ -279,7 +359,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     );
   }
 
-  Widget _buildCardWrapper({required String title, IconData? icon, required Widget child}) {
+  Widget _buildCardWrapper({required String title, IconData? icon, Widget? actionWidget, required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -291,9 +371,15 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (icon != null) ...[Icon(icon, size: 20), const SizedBox(width: 8)],
-              Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Row(
+                children: [
+                  if (icon != null) ...[Icon(icon, size: 20), const SizedBox(width: 8)],
+                  Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              if (actionWidget != null) actionWidget,
             ],
           ),
           const SizedBox(height: 12),
@@ -303,19 +389,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: const Color(0xFFF9FAFB),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade300)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade200)),
-      ),
-    );
-  }
+
 
   Widget _buildPaymentOption({required int index, required IconData icon, required String title, required String subtitle}) {
     final isSelected = _selectedPaymentIndex == index;

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/components/custom_button.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../profile/presentation/providers/favorites_provider.dart';
 import '../providers/product_provider.dart';
 
 class ProductDetailScreen extends ConsumerWidget {
@@ -19,25 +20,46 @@ class ProductDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Provider'daki ürün listesinden bu sayfaya ait olan ürünü buluyoruz
     final productsState = ref.watch(productListProvider(null));
-    
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Ürün Detayı', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        backgroundColor: AppColors.surface,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: productsState.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Hata: $err')),
-        data: (products) {
-          // İlgili ürünü ID eşleşmesiyle çekiyoruz
-          final product = products.firstWhere((p) => p.id == productId);
+    final favorites = ref.watch(favoritesProvider);
+    final isFavorite = favorites.any((p) => p.id == productId);
 
-          return Column(
+    return productsState.when(
+      loading: () => Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(title: Text(title)),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (err, stack) => Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(title: Text(title)),
+        body: Center(child: Text('Hata: $err')),
+      ),
+      data: (products) {
+        // İlgili ürünü ID eşleşmesiyle çekiyoruz
+        final product = products.firstWhere((p) => p.id == productId);
+
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            title: const Text('Ürün Detayı', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            backgroundColor: AppColors.surface,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+              onPressed: () => Navigator.pop(context),
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? AppColors.error : AppColors.textSecondary,
+                ),
+                onPressed: () {
+                  ref.read(favoritesProvider.notifier).toggleFavorite(product);
+                },
+              ),
+            ],
+          ),
+          body: Column(
             children: [
               Expanded(
                 child: SingleChildScrollView(
@@ -134,9 +156,9 @@ class ProductDetailScreen extends ConsumerWidget {
                 ),
               ),
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

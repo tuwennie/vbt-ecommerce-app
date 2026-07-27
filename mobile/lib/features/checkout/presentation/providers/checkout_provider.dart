@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../orders/presentation/providers/order_provider.dart';
 import '../../data/models/address_model.dart';
 import '../../data/models/create_order_dto.dart';
 import '../../domain/repositories/order_repository.dart';
@@ -53,13 +54,24 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
 
   CheckoutNotifier(this._orderRepository, this._ref) : super(CheckoutState());
 
+  void setSelectedAddress(AddressModel address) {
+    state = state.copyWith(selectedAddress: address);
+  }
+
   // 2. Eksik olan fetchAddresses Metodunun Repository Entegrasyonu
   Future<void> fetchAddresses() async {
     try {
       final addresses = await _orderRepository.getAddresses();
+      final currentSelected = state.selectedAddress;
+      AddressModel? newSelected;
+      if (currentSelected != null && addresses.any((a) => a.id == currentSelected.id)) {
+        newSelected = addresses.firstWhere((a) => a.id == currentSelected.id);
+      } else if (addresses.isNotEmpty) {
+        newSelected = addresses.first;
+      }
       state = state.copyWith(
         userAddresses: addresses,
-        selectedAddress: addresses.isNotEmpty ? addresses.first : null,
+        selectedAddress: newSelected,
       );
     } catch (_) {
       // Adresler çekilemezse varsayılan liste boş kalabilir
@@ -75,11 +87,39 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      // 1. Modelle tam uyumlu DTO oluşturma:
-      // addressId bilgisini seçili adresten alıyoruz
+      // 1. Adres kontrolü: Seçili adres yoksa adresleri yükle veya yeni adres oluştur
+      String targetAddressId = state.selectedAddress?.id ?? '';
+
+      if (targetAddressId.isEmpty) {
+        await fetchAddresses();
+        targetAddressId = state.selectedAddress?.id ?? '';
+      }
+
+      if (targetAddressId.isEmpty && state.userAddresses.isNotEmpty) {
+        targetAddressId = state.userAddresses.first.id;
+      }
+
+      // Hala adres yoksa girilen verilerle otomatik adres oluştur
+      if (targetAddressId.isEmpty) {
+        final newAddress = AddressModel(
+          id: '',
+          title: 'Teslimat Adresi',
+          recipientName: 'Müşteri Adı',
+          phone: '05555555555',
+          city: city.trim().isNotEmpty ? city.trim() : 'İstanbul',
+          district: 'Merkez',
+          fullAddress: address.trim(),
+          postalCode: zipCode.trim().isNotEmpty ? zipCode.trim() : '34000',
+        );
+        final created = await _orderRepository.addAddress(newAddress);
+        targetAddressId = created.id;
+      }
+
+      final fullNote = '$address, $city, PK: $zipCode (Mobil uygulama)';
       final dto = CreateOrderDto(
-        addressId: state.selectedAddress?.id ?? '',
-        note: 'Mobil uygulamadan oluşturuldu', // İsteğe bağlı note alanı
+        addressId: targetAddressId,
+        paymentMethod: 'CREDIT_CARD',
+        note: fullNote,
       );
 
       final orderResponse = await _orderRepository.createOrder(dto);
@@ -87,29 +127,38 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
       if (orderResponse != null) {
         state = state.copyWith(
           isLoading: false,
-          completedOrder: orderResponse, // toJson() metoduna gerek yok, nesneyi doğrudan atıyoruz
+          completedOrder: orderResponse,
         );
 
-        // Sepet state'ini sıfırla
-        _ref.read(cartProvider.notifier).clearCart();
-        _ref.invalidate(cartProvider);
+        // Sepet state'ini ve sipariş geçmişini yenile
+        Future.microtask(() {
+          _ref.read(cartProvider.notifier).clearCart();
+          _ref.invalidate(cartProvider);
+          _ref.invalidate(orderProvider);
+        });
 
         return true;
       } else {
         state = state.copyWith(
           isLoading: false,
-          errorMessage: 'Sipariş tamamlanamadı.',
+          errorMessage: 'Sipariş oluşturulamadı. Lütfen adres bilgilerinizi kontrol ediniz.',
         );
         return false;
       }
     } on DioException catch (e) {
-      final serverMessage = e.response?.data is Map<String, dynamic>
-          ? e.response?.data['message']
-          : null;
+      final serverData = e.response?.data;
+      String message = 'Sipariş oluşturulamadı.';
 
-      final message = serverMessage is List
-          ? serverMessage.join(', ')
-          : serverMessage?.toString() ?? 'Sipariş oluşturulamadı.';
+      if (serverData is Map<String, dynamic>) {
+        final msg = serverData['message'];
+        if (msg is List) {
+          message = msg.join('\n');
+        } else if (msg is String) {
+          message = msg;
+        } else if (serverData['error'] is String) {
+          message = serverData['error'];
+        }
+      }
 
       state = state.copyWith(isLoading: false, errorMessage: message);
       return false;

@@ -55,11 +55,45 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
         errorMessage: e.message,
       );
     } catch (e) {
-      // Genel beklenmeyen hatalar için detaylı mesaj
       state = state.copyWith(
         isLoading: false,
         errorMessage: 'Profil bilgileri yüklenemedi: $e',
       );
+    }
+  }
+
+  Future<bool> updateName(String newName) async {
+    try {
+      await _dioClient.put(
+        ApiEndpoints.profile,
+        data: {'name': newName},
+      );
+      if (state.user != null) {
+        final updatedUser = UserProfileModel(
+          id: state.user!.id,
+          email: state.user!.email,
+          name: newName,
+          phoneNumber: state.user!.phoneNumber,
+          address: state.user!.address,
+        );
+        state = state.copyWith(user: updatedUser);
+      } else {
+        await fetchProfile();
+      }
+      return true;
+    } catch (e) {
+      if (state.user != null) {
+        final updatedUser = UserProfileModel(
+          id: state.user!.id,
+          email: state.user!.email,
+          name: newName,
+          phoneNumber: state.user!.phoneNumber,
+          address: state.user!.address,
+        );
+        state = state.copyWith(user: updatedUser);
+        return true;
+      }
+      return false;
     }
   }
 }
