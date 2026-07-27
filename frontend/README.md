@@ -134,6 +134,4 @@ Testleri çalıştırmadan önce hem backend hem frontend'in ayakta olduğundan 
 - **Şifre değiştirme:** Backend'de bu işlem için henüz bir uç (endpoint) bulunmuyor — arayüzde bilerek devre dışı bırakılmış bir form olarak duruyor.
 - **Sepet kalemi stok kontrolü:** Sepetteki bir kalemin miktarını artırırken, güncel stok sınırı frontend'de değil backend'de kontrol edilir (hata durumunda toast ile bildirilir).
 
----
 
-Daha fazla bilgi için proje geliştirme sürecinin tamamını anlatan `vbt-eticaret-proje-kitabi.pdf` dokümanına bakılabilir.
