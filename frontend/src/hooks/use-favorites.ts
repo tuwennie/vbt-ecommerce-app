@@ -13,6 +13,7 @@ export function useFavorites() {
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasToken(!!getAccessTokenFromCookie());
   }, []);
 
