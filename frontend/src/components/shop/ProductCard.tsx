@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Heart, ShoppingCart, ImageOff, Check } from "lucide-react";
 import type { FeaturedProduct } from "@/lib/services/products-api";
 import { useAddCartItem } from "@/hooks/use-cart";
+import { useFavorites, useAddFavorite, useRemoveFavorite } from "@/hooks/use-favorites";
 import { getAccessTokenFromCookie } from "@/lib/auth-token";
 import { toast } from "@/lib/toast";
 
@@ -26,12 +27,31 @@ function isPlaceholderImage(url: string) {
 
 export function ProductCard({ product }: { product: FeaturedProduct }) {
   const router = useRouter();
-  const [isFavorite, setIsFavorite] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const addCartItem = useAddCartItem();
 
+  const { data: favorites } = useFavorites();
+  const addFavorite = useAddFavorite();
+  const removeFavorite = useRemoveFavorite();
+  const isFavorite = favorites?.some((f) => f.product?.id === product.id) ?? false;
+  const isFavoriteBusy = addFavorite.isPending || removeFavorite.isPending;
+
   const rawImageUrl = product.images?.[0]?.imageUrl;
   const imageUrl = rawImageUrl && !isPlaceholderImage(rawImageUrl) ? rawImageUrl : null;
+
+  function handleToggleFavorite() {
+    if (!getAccessTokenFromCookie()) {
+      router.push(`/login?redirectTo=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+    if (!product.id || isFavoriteBusy) return;
+
+    if (isFavorite) {
+      removeFavorite.mutate(product.id);
+    } else {
+      addFavorite.mutate(product.id);
+    }
+  }
 
   function handleAddToCart() {
     if (!getAccessTokenFromCookie()) {
@@ -71,10 +91,11 @@ export function ProductCard({ product }: { product: FeaturedProduct }) {
 
         <button
           type="button"
-          onClick={() => setIsFavorite((v) => !v)}
+          onClick={handleToggleFavorite}
+          disabled={isFavoriteBusy}
           aria-label={isFavorite ? "Favorilerden çıkar" : "Favorilere ekle"}
           aria-pressed={isFavorite}
-          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm hover:bg-white"
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
         >
           <Heart
             className={`h-4 w-4 ${isFavorite ? "fill-error text-error" : "text-text-muted"}`}
