@@ -189,14 +189,27 @@
   * *Engel (Blocker):* Yok.
 
 * **Zeliha (Mobil):**
-  * *Bugün Yapılanlar:* 
-    * Profil ekranından çıkış yapma (`logout`) fonksiyonu ve kullanıcı adı güncelleme özelliği aktif edildi.
-    * Geçmiş siparişler ekranı veritabanından gelen canlı verilerle dinamik hale getirildi.
-    * Sepete eklenen ürünlerin anlık güncellenmesi ve miktar değişiklikleri sağlandı.
-    * Sepet ekranından "Ödemeye Geç" butonu ile sipariş onay ekranına yönlendirme akışı bağlandı; adres doğrulaması ve sipariş tamamlama entegrasyonu tamamlandı.
-    * Statik ödeme yöntemi seçim arayüzü eklendi ve sipariş sonrası sepetin temizlenmesi akışı kurgulandı.
-    * Favori ürünler ekranı anlık eş zamanlı veri senkronizasyonuyla güncellendi.
-    * Adreslerim sayfası veritabanı entegrasyonuyla listelendi, yeni adres ekleme ekranı oluşturuldu ve kayıtlı kartlarım ekranı tasarlanarak akışa eklendi.
+  * *Bugün Yapılanlar:* Profil ekranından çıkış yapma (`logout`) fonksiyonu ve kullanıcı adı güncelleme özelliği aktif edildi. Geçmiş siparişler ekranı veritabanından gelen canlı verilerle dinamik hale getirildi. Sepete eklenen ürünlerin anlık güncellenmesi ve miktar değişiklikleri sağlandı. Sepet ekranından "Ödemeye Geç" butonu ile sipariş onay ekranına yönlendirme akışı bağlandı; adres doğrulaması ve sipariş tamamlama entegrasyonu tamamlandı. Statik ödeme yöntemi seçim arayüzü eklendi ve sipariş sonrası sepetin temizlenmesi akışı kurgulandı. Favori ürünler ekranı anlık eş zamanlı veri senkronizasyonuyla güncellendi. Adreslerim sayfası veritabanı entegrasyonuyla listelendi, yeni adres ekleme ekranı oluşturuldu ve kayıtlı kartlarım ekranı tasarlanarak akışa eklendi.
   * *Engel (Blocker):* Sipariş tamamlama ekranında smoke testi başarılı olmadı. Kategoriler için düzenlenen imageurl fotoğrafları kategoriler kısmında görünmüyor.
 
 **PM Günlük Özeti:** Bugün yönetimsel tarafta Canva sunumu finalize edilirken; backend tarafında favoriler, şifre/e-posta güncellemeleri ve görsel entegrasyonları tamamlandı. QA tarafında Playwright testleri başarıyla koşulurken, mobil tarafta sepet, ödeme, profil, adres yönetimi ve favoriler gibi kritik kullanıcı akışları tamamen canlı verilerle kararlı hale getirilmiştir.
+
+## Gün 12 - 29.07.2026 / Final Demo Videosu, Uçtan Uca Entegrasyon Testleri ve Kararlılık Kontrolleri Stand-up'ı
+
+* **Tuba (PM/Design):**
+  * *Bugün Yapılanlar:* Projenin final sunum videosu çekilerek başarıyla hazırlandı. Ekip içi koordinasyon sağlanarak tüm modüllerin son durumları gözden geçirildi ve demo için hazırlıklar tamamlandı.
+  * *Engel (Blocker):* Yok.
+
+* **Kübra (Backend):**
+  * *Bugün Yapılanlar:* Sistem genelinde olası hata (bug) alınan noktalar ve API yanıtları titizlikle kontrol edildi; backend servislerinin kararlılığı doğrulandı.
+  * *Engel (Blocker):* Yok.
+
+* **İkram (Frontend/QA):**
+  * *Bugün Yapılanlar:* Web paneli üzerindeki son arayüz ve akış kontrolleri gerçekleştirildi; sistemin canlı demo için hazır olup olmadığına dair son QA onay kararı verildi.
+  * *Engel (Blocker):* Yok.
+
+* **Zeliha (Mobil):**
+  * *Bugün Yapılanlar:* Sepet ve sipariş ekranlarındaki ürün görsel hataları giderildi. Kategori kartlarının görselleri veritabanından gelen canlı verilerle güncellendi ve kategori/ürün arama (`searchbar`) işlevselliği aktif hale getirildi. `Splash screen` entegre edilerek oturumu açık kullanıcıların doğrudan ana sayfaya yönlendirilmesi sağlandı. Boş sepet ekranına önerilen ürün kartları ve hızlı "Sepete Ekle" butonları yerleştirildi; kullanıcı deneyimini artırmak için SnackBar bildirimleri optimize edildi. Favorilerim ekranı tasarım uyumuna kavuşturularak SharedPreferences yapısından canlı duruma (state/API) bağlandı. `Auth -> Ana Sayfa -> Sepet -> Checkout -> Profil` uçtan uca tüm kritik kullanıcı senaryoları simüle edilerek test edildi.
+  * *Engel (Blocker):* Yok.
+
+**PM Günlük Özeti:** Staj maratonunun son gününde yönetimsel tarafta sunum videosu ve demo hazırlıkları başarıyla tamamlanmıştır. Backend ve QA ekipleri son hata denetimleri ve web kontrollerini gerçekleştirirken; mobil tarafta arayüz hataları giderilmiş, arama, splash screen, favoriler ve uçtan uca akışlar kararlı hale getirilerek proje canlı sunuma hazır konuma getirilmiştir.
