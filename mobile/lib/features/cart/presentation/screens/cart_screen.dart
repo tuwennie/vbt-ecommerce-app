@@ -31,12 +31,6 @@ class CartScreen extends ConsumerWidget {
             }
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
@@ -149,7 +143,7 @@ class CartScreen extends ConsumerWidget {
 
         // Yatay Öneri Ürün Listesi
         SizedBox(
-          height: 240,
+          height: 255,
           child: productsAsync.when(
             data: (products) {
               final recommendedProducts = products.take(4).toList();
@@ -229,14 +223,47 @@ class CartScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 4),
 
-                        // Fiyat ve Para Birimi
-                        Text(
-                          '$currencySymbol${product.price.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            color: Color(0xFF1D61E7),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
+                        // Fiyat ve Yeşil Sepet Butonu
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '$currencySymbol${product.price.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  color: Color(0xFF1D61E7),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                await ref.read(cartProvider.notifier).addToCart(
+                                  product.id,
+                                  quantity: 1,
+                                  productName: product.name,
+                                  price: product.price,
+                                  imageUrl: displayImageUrl,
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF43A047),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.shopping_cart_outlined,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -259,6 +286,9 @@ class CartScreen extends ConsumerWidget {
   Widget _buildFilledCartView(BuildContext context, WidgetRef ref, dynamic cartState) {
     final cart = cartState.cart!;
     final total = cart.totalPrice;
+    final double shippingFee = total >= 250 ? 0.0 : 39.99;
+    final double grandTotal = total + shippingFee;
+    final allProducts = ref.watch(productListProvider(null)).value ?? [];
 
     return Column(
       children: [
@@ -276,6 +306,14 @@ class CartScreen extends ConsumerWidget {
                     ? item.totalPrice / (item.quantity > 0 ? item.quantity : 1)
                     : 0.0);
 
+            String? displayImg = item.imageUrl;
+            if (displayImg == null || displayImg.trim().isEmpty || displayImg.contains('photo-1505740420928')) {
+              final matched = allProducts.where((p) => p.id == item.productId).firstOrNull;
+              if (matched != null && matched.images.isNotEmpty) {
+                displayImg = matched.images.first.imageUrl;
+              }
+            }
+
             return Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -292,9 +330,13 @@ class CartScreen extends ConsumerWidget {
                       width: 80,
                       height: 80,
                       color: Colors.grey[100],
-                      child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                          ? Image.network(item.imageUrl!, fit: BoxFit.cover)
-                          : const Icon(Icons.headset, size: 40, color: Colors.grey),
+                      child: displayImg != null && displayImg.isNotEmpty
+                          ? Image.network(
+                              displayImg,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported, size: 30, color: Colors.grey),
+                            )
+                          : const Icon(Icons.shopping_bag_outlined, size: 36, color: Colors.grey),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -417,20 +459,29 @@ class CartScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Kargo Ücreti', style: TextStyle(color: Colors.black54)),
-                  Text('Ücretsiz', style: TextStyle(color: Color(0xFF16A34A), fontWeight: FontWeight.bold)),
+                  const Text('Kargo Ücreti', style: TextStyle(color: Colors.black54)),
+                  shippingFee == 0
+                      ? const Text('Ücretsiz', style: TextStyle(color: Color(0xFF16A34A), fontWeight: FontWeight.bold))
+                      : Text('₺${shippingFee.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)),
                 ],
               ),
+              if (total < 250) ...[
+                const SizedBox(height: 6),
+                Text(
+                  '₺${(250 - total).toStringAsFixed(2)} değerinde daha ürün ekleyin, kargo Bedava olsun!',
+                  style: const TextStyle(fontSize: 11, color: Color(0xFFD97706), fontWeight: FontWeight.w600),
+                ),
+              ],
               const Divider(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('Toplam', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   Text(
-                    '₺${total.toStringAsFixed(2)}',
+                    '₺${grandTotal.toStringAsFixed(2)}',
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
                   ),
                 ],

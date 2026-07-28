@@ -53,16 +53,6 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
     return Icons.category_rounded;
   }
 
-  // Varsayılan Unsplash görselleri (Eğer backend'den image_url gelmiyorsa)
-  String _getCategoryBgImage(String categoryName) {
-    final name = categoryName.toLowerCase();
-    if (name.contains('elektronik')) return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600';
-    if (name.contains('moda')) return 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=600';
-    if (name.contains('ev')) return 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=600';
-    if (name.contains('kozmetik')) return 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=600';
-    return 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?q=80&w=600';
-  }
-
   @override
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(categoryListProvider);
@@ -81,16 +71,6 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
           ),
         ),
         centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {
-              if (_searchController.text.isNotEmpty) {
-                _navigateToProductSearch(_searchController.text);
-              }
-            },
-          ),
-        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(categoryListProvider),
@@ -156,7 +136,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                       return _buildCategoryCard(
                         name: category.name,
                         icon: _getCategoryIcon(category.name),
-                        imageUrl: _getCategoryBgImage(category.name),
+                        imageUrl: category.imageUrl,
                         onTap: () {
                           // Kategori seçildiğinde arama metnini temizleyip o kategorideki ürünleri listele
                           ref.read(productSearchQueryProvider.notifier).state = '';
@@ -247,12 +227,33 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
     );
   }
 
+  Widget _buildBrokenImagePlaceholder() {
+    return Container(
+      color: const Color(0xFF374151),
+      child: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.broken_image_outlined, color: Colors.grey, size: 36),
+            SizedBox(height: 4),
+            Text(
+              'Görsel Yüklenemedi',
+              style: TextStyle(color: Colors.grey, fontSize: 11),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildCategoryCard({
     required String name,
     required IconData icon,
-    required String imageUrl,
+    required String? imageUrl,
     required VoidCallback onTap,
   }) {
+    final bool hasImage = imageUrl != null && imageUrl.trim().isNotEmpty;
+
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
@@ -260,11 +261,13 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(color: Colors.grey[300]),
-              ),
+              child: hasImage
+                  ? Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _buildBrokenImagePlaceholder(),
+                    )
+                  : _buildBrokenImagePlaceholder(),
             ),
             Positioned.fill(
               child: Container(
@@ -274,7 +277,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.75),
+                      Colors.black.withValues(alpha: 0.85),
                     ],
                     stops: const [0.3, 1.0],
                   ),

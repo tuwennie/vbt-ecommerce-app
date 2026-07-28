@@ -7,6 +7,8 @@ import '../../../orders/presentation/providers/order_provider.dart';
 import '../../data/models/address_model.dart';
 import '../providers/checkout_provider.dart';
 
+import '../../../products/presentation/providers/product_provider.dart';
+
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
 
@@ -31,6 +33,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   Widget build(BuildContext context) {
     final cartState = ref.watch(cartProvider);
     final checkoutState = ref.watch(checkoutProvider);
+    final allProducts = ref.watch(productListProvider(null)).value ?? [];
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -193,87 +196,119 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       ? const Text('Sepetinizde ürün bulunmamaktadır.', style: TextStyle(color: Colors.grey))
                       : Column(
                           children: [
-                            // Sepetteki Ürün Listesi
                             ...cartState.cart!.items.map(
-                              (item) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12.0),
-                                child: Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image.network(
-                                        item.imageUrl ?? '',
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => Container(
-                                          width: 50,
-                                          height: 50,
-                                          color: Colors.grey[200],
-                                          child: const Icon(Icons.image_not_supported, size: 20, color: Colors.grey),
+                              (item) {
+                                String? displayImg = item.imageUrl;
+                                if (displayImg == null || displayImg.trim().isEmpty || displayImg.contains('photo-1505740420928')) {
+                                  final matched = allProducts.where((p) => p.id == item.productId).firstOrNull;
+                                  if (matched != null && matched.images.isNotEmpty) {
+                                    displayImg = matched.images.first.imageUrl;
+                                  }
+                                }
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12.0),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: displayImg != null && displayImg.isNotEmpty
+                                            ? Image.network(
+                                                displayImg,
+                                                width: 50,
+                                                height: 50,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (_, __, ___) => Container(
+                                                  width: 50,
+                                                  height: 50,
+                                                  color: Colors.grey[200],
+                                                  child: const Icon(Icons.image_not_supported, size: 20, color: Colors.grey),
+                                                ),
+                                              )
+                                            : Container(
+                                                width: 50,
+                                                height: 50,
+                                                color: Colors.grey[200],
+                                                child: const Icon(Icons.shopping_bag_outlined, size: 20, color: Colors.grey),
+                                              ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.productName,
+                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              'Adet: ${item.quantity}',
+                                              style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            item.productName,
-                                            style: const TextStyle(fontWeight: FontWeight.bold),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            'Adet: ${item.quantity}',
-                                            style: const TextStyle(color: Colors.grey, fontSize: 12),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
                                     Text(
                                       '₺${item.totalPrice.toStringAsFixed(2)}',
                                       style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ),
-                            const Divider(),
+                              );
+                             }),
+                             const Divider(),
+                             Builder(builder: (context) {
+                             final double subTotal = cartState.cart!.totalPrice;
+                             final double shippingFee = subTotal >= 250 ? 0.0 : 39.99;
+                             final double grandTotal = subTotal + shippingFee;
+                             return Column(
+                             children: [
+                             // Ara Toplam
+                             Row(
+                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                               children: [
+                                 const Text('Ara Toplam', style: TextStyle(color: Colors.grey)),
+                                 Text('₺${subTotal.toStringAsFixed(2)}'),
+                               ],
+                             ),
+                             const SizedBox(height: 6),
 
-                            // Ara Toplam
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text('Ara Toplam', style: TextStyle(color: Colors.grey)),
-                                Text('₺${cartState.cart!.totalPrice.toStringAsFixed(2)}'),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
+                             // Kargo
+                             Row(
+                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                               children: [
+                                 const Text('Kargo', style: TextStyle(color: Colors.grey)),
+                                 shippingFee == 0
+                                     ? const Text('Ücretsiz', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))
+                                     : Text('₺${shippingFee.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)),
+                               ],
+                             ),
+                             if (subTotal < 250) ...[
+                               const SizedBox(height: 4),
+                               Text(
+                                 '₺${(250 - subTotal).toStringAsFixed(2)} daha ekleyin, kargo Bedava olsun!',
+                                 style: const TextStyle(fontSize: 11, color: Color(0xFFD97706), fontWeight: FontWeight.w600),
+                               ),
+                             ],
+                             const Divider(),
 
-                            // Kargo
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Kargo', style: TextStyle(color: Colors.grey)),
-                                Text('Ücretsiz', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-                              ],
-                            ),
-                            const Divider(),
-
-                            // Genel Toplam
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text('Genel Toplam', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                Text(
-                                  '₺${cartState.cart!.totalPrice.toStringAsFixed(2)}',
-                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
-                                ),
-                              ],
-                            ),
+                             // Genel Toplam
+                             Row(
+                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                               children: [
+                                 const Text('Genel Toplam', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                 Text(
+                                   '₺${grandTotal.toStringAsFixed(2)}',
+                                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+                                 ),
+                               ],
+                             ),       
+                             ],
+                             );
+                             }),
                           ],
                         ),
             ),

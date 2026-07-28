@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/cart/presentation/screens/cart_screen.dart';
@@ -20,6 +21,7 @@ import 'main_scaffold.dart';
 
 class AppRouter {
   // Rota İsimleri
+  static const String splash = '/splash';
   static const String login = '/login';
   static const String register = '/register';
   static const String productList = '/products';
@@ -43,8 +45,15 @@ class AppRouter {
 
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: login, 
+    initialLocation: splash, 
     routes: [
+      // Splash (Dinamik Oturum Açılış Ekranı)
+      GoRoute(
+        path: splash,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const SplashScreen(),
+      ),
+
       // Auth Rotaları (Alt bar görünmeyecek olan bağımsız ekranlar)
       GoRoute(
         path: login,

@@ -6,7 +6,7 @@ import '../../../orders/presentation/providers/order_provider.dart';
 import '../../data/models/address_model.dart';
 import '../../data/models/create_order_dto.dart';
 import '../../domain/repositories/order_repository.dart';
-import '../../domain/repositories/order_repository_impl.dart';
+import '../../data/repositories/order_repository_impl.dart';
 
 
 // 1. OrderRepository Provider Tanımı
@@ -115,11 +115,9 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
         targetAddressId = created.id;
       }
 
-      final fullNote = '$address, $city, PK: $zipCode (Mobil uygulama)';
       final dto = CreateOrderDto(
         addressId: targetAddressId,
         paymentMethod: 'CREDIT_CARD',
-        note: fullNote,
       );
 
       final orderResponse = await _orderRepository.createOrder(dto);
@@ -145,18 +143,33 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
         );
         return false;
       }
+    } on CustomApiException catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.message);
+      return false;
     } on DioException catch (e) {
       final serverData = e.response?.data;
       String message = 'Sipariş oluşturulamadı.';
 
       if (serverData is Map<String, dynamic>) {
-        final msg = serverData['message'];
-        if (msg is List) {
-          message = msg.join('\n');
-        } else if (msg is String) {
-          message = msg;
-        } else if (serverData['error'] is String) {
-          message = serverData['error'];
+        final errors = serverData['errors'];
+        if (errors is List && errors.isNotEmpty) {
+          final details = errors.map((err) {
+            if (err is Map<String, dynamic>) {
+              return err['message'] ?? err.toString();
+            }
+            return err.toString();
+          }).join('\n');
+          final baseMsg = serverData['message'] is String ? serverData['message'] : 'Doğrulama hatası';
+          message = '$baseMsg:\n$details';
+        } else {
+          final msg = serverData['message'];
+          if (msg is List) {
+            message = msg.join('\n');
+          } else if (msg is String) {
+            message = msg;
+          } else if (serverData['error'] is String) {
+            message = serverData['error'];
+          }
         }
       }
 
@@ -165,7 +178,7 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Beklenmeyen bir hata oluştu.',
+        errorMessage: e.toString().replaceFirst('Exception: ', ''),
       );
       return false;
     }

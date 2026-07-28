@@ -49,10 +49,6 @@ class CartItemModel {
       }
     }
 
-    if (imgUrl == null || imgUrl.trim().isEmpty) {
-      imgUrl = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600';
-    }
-
     return CartItemModel(
       id: json['id']?.toString() ?? '',
       productId: json['productId']?.toString() ?? product['id']?.toString() ?? '',
