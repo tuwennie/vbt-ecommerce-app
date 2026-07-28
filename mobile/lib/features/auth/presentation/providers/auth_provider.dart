@@ -42,7 +42,7 @@ class AuthState {
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _authRepository;
 
-  AuthNotifier(this._authRepository) : super(AuthState()) {
+  AuthNotifier(this._authRepository) : super(AuthState(isLoading: true)) {
     checkAuthStatus();
   }
 
@@ -51,7 +51,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final isLoggedIn = await _authRepository.isLoggedIn();
       if (isLoggedIn) {
-        final user = await _authRepository.getCurrentUser();
+        UserModel? user;
+        try {
+          user = await _authRepository.getCurrentUser();
+        } catch (_) {
+          // Sunucuya geçici olarak ulaşılamasa bile token olduğu için oturumu açık tut
+        }
         state = state.copyWith(
           isLoading: false,
           isAuthenticated: true,

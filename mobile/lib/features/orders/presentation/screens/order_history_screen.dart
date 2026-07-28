@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/navigation/app_router.dart';
 import '../../../../core/widgets/error_state_widget.dart';
+import '../../../products/data/models/product_model.dart';
+import '../../../products/presentation/providers/product_provider.dart';
 import '../providers/order_provider.dart';
 import '../../data/models/order_model.dart';
 
@@ -12,6 +14,7 @@ class OrderHistoryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final orderState = ref.watch(orderProvider);
+    final allProducts = ref.watch(productListProvider(null)).value ?? [];
 
     if (orderState.isLoading && orderState.orders.isEmpty) {
       return Scaffold(
@@ -176,7 +179,7 @@ class OrderHistoryScreen extends ConsumerWidget {
     }
 
     final List<OrderUiModel> ordersToDisplay =
-        orderState.orders.map((o) => _mapResponseToUi(o)).toList();
+        orderState.orders.map((o) => _mapResponseToUi(o, allProducts)).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
@@ -350,21 +353,34 @@ class OrderHistoryScreen extends ConsumerWidget {
     Color bgColor;
     Color textColor;
     IconData iconData;
+    String displayStatus;
 
     final lower = status.toLowerCase();
-    if (lower.contains('kargo') || lower.contains('shipped')) {
+    if (lower == 'pending' || lower.contains('bekleyen') || lower.contains('beklemede')) {
+      displayStatus = 'Beklemede';
+      bgColor = const Color(0xFFFEF3C7); // Açık Sarı
+      textColor = const Color(0xFF92400E);
+      iconData = Icons.access_time;
+    } else if (lower == 'paid' || lower.contains('hazırlan') || lower.contains('processing')) {
+      displayStatus = 'Hazırlanıyor';
+      bgColor = const Color(0xFF86EFAC); // Canlı Yeşil
+      textColor = const Color(0xFF14532D);
+      iconData = Icons.inventory_2_outlined;
+    } else if (lower == 'shipped' || lower.contains('kargo')) {
+      displayStatus = 'Kargoya Verildi';
       bgColor = const Color(0xFF2563EB); // Canlı Mavi
       textColor = Colors.white;
       iconData = Icons.local_shipping_outlined;
-    } else if (lower.contains('hazırlan') || lower.contains('processing')) {
-      bgColor = const Color(0xFF86EFAC); // Canlı Yeşil (Görseldeki yeşil)
-      textColor = const Color(0xFF14532D);
-      iconData = Icons.inventory_2_outlined;
-    } else {
-      // Teslim Edildi / Tamamlandı
+    } else if (lower == 'delivered' || lower.contains('teslim') || lower.contains('tamamlandı')) {
+      displayStatus = 'Teslim Edildi';
       bgColor = const Color(0xFFE5E7EB); // Açık Gri
       textColor = const Color(0xFF374151);
       iconData = Icons.check_circle_outline;
+    } else {
+      displayStatus = status;
+      bgColor = const Color(0xFFE5E7EB);
+      textColor = const Color(0xFF374151);
+      iconData = Icons.info_outline;
     }
 
     return Container(
@@ -379,7 +395,7 @@ class OrderHistoryScreen extends ConsumerWidget {
           Icon(iconData, size: 14, color: textColor),
           const SizedBox(width: 4),
           Text(
-            status,
+            displayStatus,
             style: TextStyle(
               color: textColor,
               fontSize: 12,
@@ -441,7 +457,7 @@ class OrderHistoryScreen extends ConsumerWidget {
   }
 
   // Model Eşleme
-  OrderUiModel _mapResponseToUi(OrderResponseModel o) {
+  OrderUiModel _mapResponseToUi(OrderResponseModel o, List<ProductModel> products) {
     final monthNames = [
       '', 'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
       'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
@@ -452,8 +468,18 @@ class OrderHistoryScreen extends ConsumerWidget {
     final names = <String>[];
 
     for (var item in o.items) {
-      if (item is Map<String, dynamic>) {
-        if (item['imageUrl'] != null) images.add(item['imageUrl'].toString());
+      if (item is Map) {
+        final pId = item['productId']?.toString();
+        String? img = item['imageUrl']?.toString() ?? item['product']?['images']?[0]?['imageUrl']?.toString();
+
+        if ((img == null || img.isEmpty) && pId != null && pId.isNotEmpty) {
+          final matched = products.where((p) => p.id == pId).firstOrNull;
+          if (matched != null && matched.images.isNotEmpty) {
+            img = matched.images.first.imageUrl;
+          }
+        }
+
+        if (img != null && img.isNotEmpty) images.add(img);
         if (item['productName'] != null) names.add(item['productName'].toString());
       }
     }

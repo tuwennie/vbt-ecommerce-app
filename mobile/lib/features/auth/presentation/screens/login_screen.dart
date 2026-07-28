@@ -79,6 +79,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 }
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+
+    // Oturum zaten açık ise doğrudan Ana Sayfa'ya yönlendir
+    if (authState.isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          ref.read(profileProvider.notifier).fetchProfile();
+          ref.read(cartProvider.notifier).fetchCart();
+          context.go(AppRouter.productList);
+        }
+      });
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    // Oturum durumu sorgulanırken bekleme göstergesi
+    if (authState.isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(

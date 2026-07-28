@@ -14,9 +14,9 @@ class ApiEndpoints {
       return 'http://localhost:3000/api/v1';
     }
 
-    // Android Emülatör için
+    // Android Cihazlar (Fiziki Telefon & Emülatör) için
     if (Platform.isAndroid) {
-      return 'http://10.0.2.2:3000/api/v1';
+      return 'http://192.168.1.104:3000/api/v1';
     }
 
     // iOS Simülatör / Masaüstü varsayılanı

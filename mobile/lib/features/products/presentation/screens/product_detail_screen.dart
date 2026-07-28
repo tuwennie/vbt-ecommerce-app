@@ -146,11 +146,6 @@ class ProductDetailScreen extends ConsumerWidget {
                         price: product.price,
                         imageUrl: product.images.isNotEmpty ? product.images.first.imageUrl : null,
                       );
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('${product.name} sepete eklendi!')),
-                        );
-                      }
                     },
                   ),
                 ),

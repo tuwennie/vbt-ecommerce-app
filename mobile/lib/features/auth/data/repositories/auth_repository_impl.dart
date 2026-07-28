@@ -30,10 +30,17 @@ class AuthRepositoryImpl implements AuthRepository {
                     response.data['accessToken'] ?? 
                     response.data['token'] ?? 
                     authResponse.accessToken).toString();
+    final dynamic rawRefresh = response.data['refresh_token'] ?? 
+                              response.data['refreshToken'] ?? 
+                              authResponse.refreshToken;
+    final String? refreshToken = (rawRefresh != null && rawRefresh.toString() != 'null')
+        ? rawRefresh.toString()
+        : null;
                     
     // Token'ları güvenli hafızaya kaydet
     await _dioClient.saveTokens(
       accessToken: token,
+      refreshToken: refreshToken,
     );
     
     return authResponse;
@@ -61,6 +68,7 @@ class AuthRepositoryImpl implements AuthRepository {
     // Token'ları güvenli hafızaya kaydet
     await _dioClient.saveTokens(
       accessToken: authResponse.accessToken,
+      refreshToken: authResponse.refreshToken,
     );
     
     return authResponse;

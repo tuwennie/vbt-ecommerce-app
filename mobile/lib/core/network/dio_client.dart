@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'api_endpoints.dart';
 
 /// UI ve Repository katmanına anlaşılır mesaj dönmek için özel Exception sınıfı
@@ -32,11 +33,11 @@ class DioClient {
         },
       ),
     );
-  
+
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await _storage.read(key: _accessTokenKey);
+          final token = await getAccessToken();
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
@@ -44,14 +45,48 @@ class DioClient {
         },
         onError: (DioException error, handler) async {
           final statusCode = error.response?.statusCode;
+
+          // 1. 401 Unauthorized durumunda sessizce Refresh Token kullanarak yeni Access Token almayı deniyoruz
+          if (statusCode == 401 && !error.requestOptions.path.contains('/auth/')) {
+            final refreshToken = await getRefreshToken();
+            if (refreshToken != null && refreshToken.isNotEmpty) {
+              try {
+                final refreshResponse = await _dio.post(
+                  ApiEndpoints.refresh,
+                  data: {'refreshToken': refreshToken},
+                  options: Options(headers: {'X-Client-Type': 'MOBILE'}),
+                );
+
+                final responseData = refreshResponse.data;
+                final newAccessToken = (responseData['accessToken'] ?? responseData['access_token'])?.toString();
+                final newRefreshToken = (responseData['refreshToken'] ?? responseData['refresh_token'])?.toString();
+
+                if (newAccessToken != null && newAccessToken.isNotEmpty) {
+                  await saveTokens(
+                    accessToken: newAccessToken,
+                    refreshToken: newRefreshToken,
+                  );
+
+                  final opts = error.requestOptions;
+                  opts.headers['Authorization'] = 'Bearer $newAccessToken';
+                  final clonedResponse = await _dio.fetch(opts);
+                  return handler.resolve(clonedResponse);
+                }
+              } catch (_) {
+                await clearTokens();
+              }
+            } else {
+              await clearTokens();
+            }
+          }
+
           String errorMessage = "Beklenmedik bir ağ hatası oluştu.";
 
-          // 1. Backend'den gelen özel hata mesajını ayıklama (NestJS Validation/HttpException)
+          // 2. Backend'den gelen özel hata mesajını ayıklama
           final responseData = error.response?.data;
           if (responseData is Map<String, dynamic>) {
             if (responseData['message'] != null) {
               if (responseData['message'] is List) {
-                // NestJS Class-Validator list dönerse ilk hatayı al
                 errorMessage = (responseData['message'] as List).first.toString();
               } else {
                 errorMessage = responseData['message'].toString();
@@ -61,11 +96,10 @@ class DioClient {
             }
           }
 
-          // 2. HTTP Durum Kodlarına Göre Varsayılan Mesajları Tamamlama
+          // 3. HTTP Durum Kodlarına Göre Varsayılan Mesajları Tamamlama
           if (responseData == null || errorMessage == "Beklenmedik bir ağ hatası oluştu.") {
             if (statusCode == 401) {
               errorMessage = "Oturum süreniz doldu, lütfen tekrar giriş yapın.";
-              await clearTokens(); // Güvenli hafızadaki token'ları temizle
             } else if (statusCode == 403) {
               errorMessage = "Bu işlemi gerçekleştirmek için yetkiniz bulunmamaktadır.";
             } else if (statusCode == 404) {
@@ -74,9 +108,7 @@ class DioClient {
               errorMessage = "Bu kayıt zaten mevcut.";
             } else if (statusCode != null && statusCode >= 500) {
               errorMessage = "Sunucu şu anda yanıt vermiyor. Lütfen daha sonra tekrar deneyin.";
-            } 
-            // 3. Dio Zaman Aşımı ve Bağlantı Hataları Kontrolü
-            else if (error.type == DioExceptionType.connectionTimeout || 
+            } else if (error.type == DioExceptionType.connectionTimeout || 
                      error.type == DioExceptionType.receiveTimeout ||
                      error.type == DioExceptionType.sendTimeout) {
               errorMessage = "Sunucu bağlantı zaman aşımına uğradı, lütfen internetinizi ve sunucuyu kontrol edin.";
@@ -87,7 +119,6 @@ class DioClient {
             }
           }
 
-          // 4. Hata Nesnesini Düzgün Bir Exception Olarak Paketleme
           final customException = CustomApiException(
             errorMessage,
             statusCode: statusCode,
@@ -106,7 +137,6 @@ class DioClient {
     );
   }
 
-  
   static DioClient? _instance;
   late final Dio _dio;
   final FlutterSecureStorage _storage;
@@ -120,19 +150,61 @@ class DioClient {
 
   // Token İşlemleri
   Future<void> saveTokens({required String accessToken, String? refreshToken}) async {
-    await _storage.write(key: _accessTokenKey, value: accessToken);
-    if (refreshToken != null) {
-      await _storage.write(key: _refreshTokenKey, value: refreshToken);
-    }
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_accessTokenKey, accessToken);
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        await prefs.setString(_refreshTokenKey, refreshToken);
+      }
+    } catch (_) {}
+
+    try {
+      await _storage.write(key: _accessTokenKey, value: accessToken);
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        await _storage.write(key: _refreshTokenKey, value: refreshToken);
+      }
+    } catch (_) {}
   }
 
   Future<String?> getAccessToken() async {
-    return await _storage.read(key: _accessTokenKey);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(_accessTokenKey);
+      if (token != null && token.isNotEmpty) return token;
+    } catch (_) {}
+
+    try {
+      return await _storage.read(key: _accessTokenKey);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<String?> getRefreshToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(_refreshTokenKey);
+      if (token != null && token.isNotEmpty) return token;
+    } catch (_) {}
+
+    try {
+      return await _storage.read(key: _refreshTokenKey);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> clearTokens() async {
-    await _storage.delete(key: _accessTokenKey);
-    await _storage.delete(key: _refreshTokenKey);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_accessTokenKey);
+      await prefs.remove(_refreshTokenKey);
+    } catch (_) {}
+
+    try {
+      await _storage.delete(key: _accessTokenKey);
+      await _storage.delete(key: _refreshTokenKey);
+    } catch (_) {}
   }
 
   // Repository ve Service Katmanları İçin Güvenli Yardımcı HTTP Metotları

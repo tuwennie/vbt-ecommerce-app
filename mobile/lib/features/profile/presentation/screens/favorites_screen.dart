@@ -98,9 +98,9 @@ class FavoritesScreen extends ConsumerWidget {
               ),
             )
           : ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               itemCount: favorites.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 16),
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
                 final item = _mapProductToUi(favorites[index]);
                 return _buildFavoriteCard(context, ref, item);
@@ -111,10 +111,10 @@ class FavoritesScreen extends ConsumerWidget {
 
   Widget _buildFavoriteCard(BuildContext context, WidgetRef ref, FavoriteUiModel item) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
@@ -122,25 +122,25 @@ class FavoritesScreen extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Sol: Ürün Görseli
+              // 1. Sol: Ürün Görseli (Kompakt 70x70)
               ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
                 child: Container(
-                  width: 90,
-                  height: 90,
+                  width: 70,
+                  height: 70,
                   color: Colors.grey[100],
                   child: item.imageUrl.isNotEmpty
                       ? Image.network(
                           item.imageUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported, color: Colors.grey),
+                          errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported, color: Colors.grey, size: 22),
                         )
-                      : const Icon(Icons.image, color: Colors.grey),
+                      : const Icon(Icons.image, color: Colors.grey, size: 22),
                 ),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 12),
 
-              // 2. Orta: Marka, Başlık, Açıklama, Fiyat
+              // 2. Orta: Marka, Başlık, Fiyat
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,11 +149,11 @@ class FavoritesScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          item.brand.toUpperCase(),
+                          item.brand,
                           style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2563EB), // Canlı Mavi Marka Etiketi
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF6B7280),
                           ),
                         ),
                         // Çöp Kutusu Silme Butonu
@@ -172,70 +172,42 @@ class FavoritesScreen extends ConsumerWidget {
                             child: Icon(
                               Icons.delete_outline,
                               color: Color(0xFF9CA3AF),
-                              size: 20,
+                              size: 18,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       item.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF1F2937),
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      item.description,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         Text(
                           '₺${item.price.toStringAsFixed(item.price.truncateToDouble() == item.price ? 0 : 2)}',
                           style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
                         ),
                         if (item.oldPrice != null) ...[
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           Text(
                             '₺${item.oldPrice!.toStringAsFixed(0)}',
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 11,
                               color: Colors.grey[400],
                               decoration: TextDecoration.lineThrough,
-                            ),
-                          ),
-                        ],
-                        if (item.discountTag != null) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF86EFAC),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              item.discountTag!,
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF14532D),
-                              ),
                             ),
                           ),
                         ],
@@ -246,18 +218,18 @@ class FavoritesScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
 
-          // 3. Alt Kısım: Sepete Ekle Butonu (Canlı Yeşil Background & Beyaz Metin)
+          // 3. Alt Kısım: Sepete Ekle Butonu (Tam Genişlik Canlı Yeşil Buton)
           SizedBox(
             width: double.infinity,
-            height: 46,
+            height: 38,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF16A34A), // Canlı Yeşil Background
+                backgroundColor: const Color(0xFF16A34A),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               onPressed: () async {
@@ -267,25 +239,17 @@ class FavoritesScreen extends ConsumerWidget {
                   price: item.price,
                   imageUrl: item.imageUrl,
                 );
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('${item.title} sepete eklendi!'),
-                      backgroundColor: const Color(0xFF16A34A),
-                    ),
-                  );
-                }
               },
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.shopping_cart_outlined, color: Colors.white, size: 20),
-                  SizedBox(width: 8),
+                  Icon(Icons.shopping_cart_outlined, color: Colors.white, size: 18),
+                  SizedBox(width: 6),
                   Text(
                     'Sepete Ekle',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

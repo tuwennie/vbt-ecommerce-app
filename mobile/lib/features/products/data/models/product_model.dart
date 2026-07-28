@@ -40,6 +40,20 @@ class ProductModel {
               .toList() ?? [],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'price': price,
+      'currency': currency,
+      'stock': stock,
+      'isActive': isActive,
+      'category': category.toJson(),
+      'images': images.map((i) => i.toJson()).toList(),
+    };
+  }
 }
 
 class CategoryModel {
@@ -47,12 +61,14 @@ class CategoryModel {
   final String name;
   final String slug;
   final bool isActive;
+  final String? imageUrl;
 
   CategoryModel({
     required this.id,
     required this.name,
     required this.slug,
     required this.isActive,
+    this.imageUrl,
   });
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
@@ -61,7 +77,18 @@ class CategoryModel {
       name: json['name'] as String,
       slug: json['slug'] as String,
       isActive: json['isActive'] ?? true,
+      imageUrl: json['imageUrl'] as String?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'slug': slug,
+      'isActive': isActive,
+      'imageUrl': imageUrl,
+    };
   }
 }
 
@@ -85,5 +112,14 @@ class ProductImageModel {
       isPrimary: json['isPrimary'] ?? false,
       sortOrder: json['sortOrder'] as int,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'imageUrl': imageUrl,
+      'isPrimary': isPrimary,
+      'sortOrder': sortOrder,
+    };
   }
 }

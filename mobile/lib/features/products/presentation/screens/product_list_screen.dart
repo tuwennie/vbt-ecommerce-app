@@ -278,11 +278,6 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                             price: product.price,
                             imageUrl: imageUrl,
                           );
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('${product.name} sepete eklendi!')),
-                            );
-                          }
                         },
                         onTap: () {
                           context.push(

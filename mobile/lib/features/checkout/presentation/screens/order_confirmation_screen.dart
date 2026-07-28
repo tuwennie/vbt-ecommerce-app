@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/navigation/app_router.dart';
+import '../../../products/presentation/providers/product_provider.dart';
 import '../providers/checkout_provider.dart';
 
 class OrderConfirmationScreen extends ConsumerWidget {
@@ -36,6 +37,7 @@ class OrderConfirmationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final order = ref.watch(checkoutProvider).completedOrder;
+    final allProducts = ref.watch(productListProvider(null)).value ?? [];
 
     final orderNo = (order?.orderNo != null && order!.orderNo.isNotEmpty)
         ? order.orderNo
@@ -191,7 +193,15 @@ class OrderConfirmationScreen extends ConsumerWidget {
                               final double price = item is Map
                                   ? (double.tryParse(item['subtotal']?.toString() ?? item['unitPrice']?.toString() ?? '0') ?? 0.0)
                                   : 0.0;
-                              final String? imgUrl = item is Map ? item['imageUrl']?.toString() : null;
+                              final String pId = item is Map ? (item['productId']?.toString() ?? '') : '';
+                              String? imgUrl = item is Map ? item['imageUrl']?.toString() : null;
+
+                              if ((imgUrl == null || imgUrl.isEmpty) && pId.isNotEmpty) {
+                                final matched = allProducts.where((p) => p.id == pId).firstOrNull;
+                                if (matched != null && matched.images.isNotEmpty) {
+                                  imgUrl = matched.images.first.imageUrl;
+                                }
+                              }
 
                               return Row(
                                 children: [
