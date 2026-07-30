@@ -5,7 +5,7 @@ Modern, ölçeklenebilir ve tam yığın (full-stack) mimariyle geliştirilmiş 
 [![VBT E-Commerce App Demo Videosu](https://img.shields.io/badge/YouTube-Demo%20Videosunu%20İzle-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=2vR1B23MF7w&t=2s)
 
 ## Proje Hakkında
-Bu proje; kullanıcıların güvenli kimlik doğrulama ile kayıt olabildiği, ürünleri kategorize edip sepetine ekleyebildiği, çok adımlı (multi-step) akışlarla sipariş verebildiği ve admin panelinden yönetim sağlayabildiği uçtan uca bir e-ticaret çözümüdür. Web, Mobil ve Backend katmanları modern teknolojilerle micro-service / modular yapıda tasarlanmıştır.
+Bu proje; kullanıcıların ürünleri kategorize edip sepetine ekleyebildiği, çok adımlı (multi-step) akışlarla sipariş verebildiği ve admin panelinden yönetim sağlayabildiği uçtan uca bir e-ticaret çözümüdür. Web, Mobil ve Backend katmanları modern teknolojilerle micro-service / modular yapıda tasarlanmıştır.
 
 ## Kullanılan Teknolojiler ve Mimari Gerekçeler
 
