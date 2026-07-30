@@ -1,98 +1,208 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# VBT E-Ticaret — Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Staj 2026 kapsamında geliştirilen e-ticaret projesinin backend API'si. [NestJS](https://nestjs.com/) ve [Prisma ORM](https://www.prisma.io/) ile geliştirilmiştir, PostgreSQL veritabanı kullanır.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Sözleşme-öncelikli (contract-first) yaklaşımla geliştirilmiştir — tüm endpoint'ler `docs/openapi.yaml` sözleşmesine birebir uyumludur.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Proje Yapısı
 
-## Project setup
+```text
+backend/
+├── docs/
+│   └── openapi.yaml           # API sözleşmesi
+├── prisma/
+│   ├── migrations/            # Migration geçmişi
+│   ├── schema.prisma          # Veritabanı şeması
+│   ├── seed.ts                # Seed script'i
+│   └── seed-data/             # Referans veri (JSON)
+├── src/
+│   ├── addresses/             # Teslimat adresleri
+│   ├── auth/                  # Kimlik doğrulama, JWT, guard'lar
+│   ├── cart/                  # Sepet
+│   ├── categories/            # Kategori (herkese açık + admin)
+│   ├── common/
+│   │   ├── filters/           # Global hata yakalama
+│   │   └── interceptors/      # Global response zarfı
+│   ├── favorites/             # Favoriler
+│   ├── orders/                # Sipariş / checkout
+│   ├── products/              # Ürün (herkese açık + admin)
+│   ├── users/                 # Profil, şifre/email değiştirme
+│   ├── app.module.ts
+│   └── main.ts
+├── .env
+├── .env.example
+├── docker-compose.yml         # PostgreSQL konteyneri
+└── package.json
+```
+---
 
+## Teknoloji Yığını
+
+| Katman | Teknoloji |
+| :--- | :--- |
+| **Framework** | NestJS (Node.js / TypeScript) |
+| **Veritabanı** | PostgreSQL 16 (Docker) |
+| **ORM** | Prisma 6.19.3 |
+| **Kimlik Doğrulama** | JWT (access + refresh token) |
+| **Şifre Hash'leme** | bcryptjs |
+| **Validasyon** | class-validator / class-transformer |
+| **Rate Limiting** | @nestjs/throttler |
+| **Konteynerleştirme** | Docker Compose |
+
+---
+
+## Özellikler
+
+### Kimlik Doğrulama (Auth)
+- Kayıt, giriş, token yenileme, çıkış
+- Access token (15 dk) + refresh token (7 gün), refresh token rotation
+- `X-Client-Type` header'ına göre davranış: `WEB` istemcilerde refresh token `httpOnly` cookie'de saklanır (XSS koruması), `MOBILE` istemcilerde JSON gövdesinde döner.
+- Register/login/refresh endpoint'lerinde rate limiting (dakikada 5 istek)
+- Şifre ve email değiştirme (mevcut şifre doğrulaması ile); şifre değişince tüm oturumlar geçersiz kılınır.
+
+### Kullanıcı ve Adres Yönetimi
+- Profil görüntüleme/güncelleme
+- Teslimat adresleri: listeleme, ekleme, güncelleme, silme (sahiplik kontrolü ile)
+
+### Ürün ve Kategori Kataloğu
+- Sayfalama, arama, çoklu kategori filtresi, fiyat aralığı, sıralama ile ürün listeleme
+- Kategori bazlı ürün gruplandırma, otomatik slug üretimi
+- Admin: ürün/kategori oluşturma, güncelleme, aktif/pasif yapma (kalıcı silme yok)
+
+### Sepet ve Sipariş
+- Sepet fiyatları her zaman güncel ürün fiyatından canlı hesaplanır.
+- Stok ve ürün aktiflik kontrolleri (ekleme/güncelleme anında ve checkout anında)
+- Checkout adres sahiplik kontrolü, stok yeniden kontrolü, `Idempotency-Key` header ile tekrar isteklerin önlenmesi
+- Sipariş oluşturma tek bir veritabanı transaction'ı içinde yapılır (sipariş kaydı + stok azaltma + sepet temizleme atomik olarak birlikte gerçekleşir).
+- Ürün ad/fiyat ve teslimat adresi, sipariş anında donmuş (snapshot) olarak saklanır — sonradan ürün/adres değişse bile geçmiş sipariş etkilenmez.
+- **Idempotency:** Checkout endpoint'i zorunlu `Idempotency-Key` header'ı bekler, aynı anahtarla gelen tekrar istekler yeni sipariş oluşturmaz, ilk sonucu döner.
+- **Transaction Bütünlüğü:** Sipariş oluşturma, stok azaltma ve sepet temizleme işlemleri Prisma `$transaction` ile atomik olarak yürütülür.
+
+### Favoriler
+- Ürün favoriye ekleme/çıkarma, favori listesi
+
+---
+
+## Kurulum
+
+### Gereksinimler
+- [Node.js](https://nodejs.org/) 18+
+- [Docker Desktop](https://www.docker.com/)
+
+### Adımlar
+
+1. Depoyu klonla:
 ```bash
-$ npm install
+git clone [https://github.com/tuwennie/vbt-ecommerce-app.git](https://github.com/tuwennie/vbt-ecommerce-app.git)
+
+Proje dizinine geç ve bağımlılıkları kur:
+cd vbt-ecommerce-app/backend
+npm install
+
+.env dosyasını oluştur (aşağıdaki ortama göre düzenle):
+cp .env.example .env
+
+PostgreSQL'i Docker ile ayağa kaldır:
+docker compose up -d
+
+Veritabanı şemasını uygula:
+npx prisma migrate dev
+
+Örnek verileri yükle:
+npx prisma db seed
+```
+---
+
+## Ortam Değişkenleri
+```.env.example``` dosyasını referans alarak kendi ```.env``` dosyanı oluştur:
+```
+DATABASE_URL="postgresql://vbt_user:vbt_password@localhost:5432/vbt_ecommerce?schema=public"
+JWT_ACCESS_SECRET=
+JWT_REFRESH_SECRET=
+JWT_ACCESS_EXPIRES_IN=900
+JWT_REFRESH_EXPIRES_IN=604800
+```
+```JWT_ACCESS_SECRET``` / ```JWT_REFRESH_SECRET``` — boş bırakılmalı, her geliştirici kendi anahtarını üretmeli:
+```
+node -e "console.log(require('crypto').randomBy tes(32).toString('hex'))"
+```
+```JWT_ACCESS_EXPIRES_IN``` / ```JWT_REFRESH_EXPIRES_IN``` — saniye cinsinden token ömrü, genel bilgi olduğu için değeriyle bırakılabilir.
+```.env``` dosyası asla Git'e eklenmemelidir (```.gitignore```'da zaten hariç tutulmuştur).
+
+---
+
+## Çalıştırma
+```npm run start:dev```
+Sunucu varsayılan olarak ```http://localhost:3000/api/v1``` adresinde çalışır.
+
+Yararlı Docker / Prisma komutları:
+```
+docker compose ps       # PostgreSQL container durumunu kontrol et
+npx prisma studio       # Veritabanını görsel arayüzde incele
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+## Veritabanı and Seed Verisi
+Seed script'i ```(prisma/seed.ts)```, ```prisma/seed-data/``` klasöründeki JSON dosyalarından (kategoriler, ürünler, kullanıcılar) referans veri oluşturur. Script idempotent'tir — kaç kere çalıştırılırsa çalıştırılsın güvenlidir, tekrar tekrar çalıştırıldığında çift kayıt oluşturmaz, mevcut kayıtları günceller.
+```
+npx prisma db seed
+```
+Şema değişikliği (migration) sonrası, her geliştirici kendi ortamında şu sırayı izlemelidir:
+```
+git pull origin main
+npx prisma migrate dev
+npx prisma generate
+npx prisma db seed
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ npm run test
+## Test Kullanıcıları
 
-# e2e tests
-$ npm run test:e2e
+Seed verisiyle birlikte gelen test hesapları (tüm hesaplar aynı şifreyi kullanır):
 
-# test coverage
-$ npm run test:cov
-```
+| Email | Rol | Şifre |
+| :--- | :--- | :--- |
+| `admin@vbt.com` | ADMIN | `password123!` |
+| `test1@vbt.com` | USER | `password123!` |
+| `ahmet@example.com` | USER | `password123!` |
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+---
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## API Sözleşmesi
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+Tüm endpoint'ler, `docs/openapi.yaml` dosyasındaki OpenAPI 3.1 sözleşmesine birebir uyumludur. Sözleşmeyi görsel olarak incelemek için içeriğini [Swagger Editor](https://editor.swagger.io/)'a yapıştırabilirsin.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+**Genel kurallar:**
+- Tüm başarılı yanıtlar `{ success: true, data: ... }` zarfı ile döner.
+- Tüm hata yanıtları `{ success: false, message, statusCode, status, errors? }` şeklinde tek bir formatta döner.
+- Sayfalı liste endpoint'leri `?page=&size=` parametrelerini destekler.
+- Tarih/saat alanları her zaman UTC (`Z` sonekli) formatındadır.
+- Parasal alanlar TRY cinsinden, en fazla 2 ondalık basamaklıdır.
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+## Mimari Kararlar
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- **Guard Zinciri:** Korumalı endpoint'ler `JwtAuthGuard` (kimlik doğrulama) ve gerektiğinde `RolesGuard` (`@Roles('ADMIN')`) ile korunur.
+- **Sahiplik Kontrolü:** Kullanıcıya özel kaynaklarda (adres, sipariş, sepet) her istek, kaynağın gerçekten istek sahibine ait olduğunu doğrular.
+- **Fiyat Güvenliği:** Sepet/sipariş fiyatları hiçbir zaman istemciden alınmaz, her zaman backend'de güncel `Product.price` üzerinden hesaplanır.
+- **Snapshot Mantığı:** Sipariş oluşturulduğunda ürün adı/fiyatı ve adres bilgisi doğrudan `Order` / `OrderItem` tablolarına kopyalanır, ürün veya adres sonradan değişse bile geçmiş sipariş etkilenmez.
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Bilinen Sınırlamalar
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Proje kapsamı belgesinde v1 için bilinçli olarak dışarıda bırakılan özellikler:
+- Misafir sepeti (sepet için giriş zorunludur)
+- Ürün varyantları (beden/renk/kapasite)
+- Kupon sistemi, kargo ücreti
+- Gerçek ödeme entegrasyonu (yalnızca simülasyon)
+- Sipariş iptali
+- Ürün yorum/puanlama
+- E-posta doğrulama, "şifremi unuttum" (email tabanlı sıfırlama)
